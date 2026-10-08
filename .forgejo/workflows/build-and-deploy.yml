@@ -1,0 +1,70 @@
+# lubobali.com — CI/CD for staging (Gate 7 S7).
+# Every push to develop: check -> build -> deploy -> smoke test.
+# Any failing check = nothing deployed. Failing smoke test = auto-rollback.
+# Plan + security notes: docs/phase-1-gate-7-ci-and-security.md
+#
+# Runs ONLY on the dedicated, sandboxed lubobali-runner (1 CPU / 3 GB /
+# 256 pids, no docker socket, only the staging deploy folder mountable).
+# Never `ubuntu-latest` — that is LuBot's shared runner.
+
+name: build-and-deploy
+
+on:
+  push:
+    branches: [develop]
+
+permissions:
+  contents: read
+
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
+  DEPLOY_ROOT: /srv/lubobali-www/staging
+  SITE_URL: https://staging.lubobali.com
+
+jobs:
+  staging:
+    runs-on: lubobali
+    timeout-minutes: 15
+    container:
+      volumes:
+        - /srv/lubobali-www/staging:/srv/lubobali-www/staging
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0 # full history for the secrets scan
+
+      - name: Secrets scan (gitleaks, full history)
+        run: gitleaks git . --config .gitleaks.toml --redact --no-banner --log-opts=--all
+
+      - name: Install dependencies (lockfile only, install scripts blocked)
+        run: pnpm install --frozen-lockfile
+
+      - name: Vulnerability audit (high + critical fail the build)
+        run: pnpm audit --prod --audit-level high
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Type check
+        run: |
+          pnpm exec next typegen
+          pnpm exec tsc --noEmit
+
+      - name: Build (static export)
+        run: pnpm build
+
+      - name: Test deploy scripts
+        run: bash scripts/tests/test-deploy.sh
+
+      - name: Deploy (atomic release switch)
+        run: ./scripts/deploy.sh out "$DEPLOY_ROOT" "$(git rev-parse --short HEAD)"
+
+      - name: Smoke test (auto-rollback on failure)
+        run: |
+          if ! ./scripts/smoke.sh "$SITE_URL" out staging; then
+            echo "Smoke test failed -> rolling back"
+            ./scripts/rollback.sh "$DEPLOY_ROOT" || echo "rollback: nothing older to roll back to"
+            exit 1
+          fi
