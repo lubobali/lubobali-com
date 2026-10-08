@@ -1,0 +1,21 @@
+# gitleaks config for lubobali-com (Gate 7 S5, 2026-10-08).
+# All default rules ON. CI (S7) runs gitleaks on every push to develop, so a
+# secret can never reach the PUBLIC GitHub mirror.
+# Pinned tool: ghcr.io/gitleaks/gitleaks:v8.30.1
+#   @sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f
+
+title = "lubobali-com"
+
+[extend]
+useDefault = true
+
+# Only for `gitleaks dir` scans of the working tree: these folders are
+# gitignored build output / deps (never committed). .next/ holds random
+# per-build preview-mode keys that are not used by a static export.
+[[allowlists]]
+description = "gitignored build caches and dependencies"
+paths = [
+  '''(^|/)\.next/''',
+  '''(^|/)node_modules/''',
+  '''(^|/)out/''',
+]
