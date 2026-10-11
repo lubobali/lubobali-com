@@ -1,7 +1,7 @@
 # lubobali.com — CI/CD for staging (Gate 7 S7).
 # Every push to develop: check -> build -> deploy -> smoke test.
 # Any failing check = nothing deployed. Failing smoke test = auto-rollback.
-# Plan + security notes: docs/phase-1-gate-7-ci-and-security.md
+# Design + security notes live in a private planning repo.
 #
 # Runs ONLY on the dedicated, sandboxed lubobali-runner (1 CPU / 3 GB /
 # 256 pids, no docker socket, only the staging deploy folder mountable).
