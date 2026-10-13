@@ -52,6 +52,11 @@ jobs:
           pnpm exec next typegen
           pnpm exec tsc --noEmit
 
+      - name: Contrast check (colour tokens, WCAG)
+        run: |
+          node --test scripts/tests/contrast.test.mjs
+          node scripts/check-contrast.mjs
+
       - name: Build (static export)
         run: pnpm build
 
