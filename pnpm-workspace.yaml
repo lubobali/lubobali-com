@@ -1,3 +1,7 @@
 allowBuilds:
   sharp: false
   unrs-resolver: false
+
+# Supply-chain guard: never resolve a package version younger than 7 days
+# (minutes). Hacked versions are usually caught and pulled within days.
+minimumReleaseAge: 10080

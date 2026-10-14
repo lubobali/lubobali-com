@@ -1,39 +1,52 @@
 @import "tailwindcss";
 
+/* Dark only: `dark:` styles always apply (layout.tsx sets class="dark"),
+   not just when the visitor's OS is in dark mode. */
+@custom-variant dark (&:is(.dark *));
+
 /*
- * Design tokens — warm-dark, dark only (locked direction).
+ * Design tokens — dark navy + LuBot blues, dark only.
+ * Same palette as lubot.ai on purpose: one brand across Lubo's products.
  * Names follow shadcn/ui so its components use them as-is.
  * Every text/background pair is checked by scripts/check-contrast.mjs (CI).
- * Colours are OKLCH: lightness 0-1, chroma, hue (70-85 = warm).
+ * Colours are OKLCH (lightness 0-1, chroma, hue); hex = the lubot.ai value.
  */
 :root {
   color-scheme: dark;
 
-  /* Surfaces, darkest to lightest. Not pure black. */
-  --background: oklch(0.17 0.006 70);
-  --card: oklch(0.205 0.007 70);
-  --popover: oklch(0.205 0.007 70);
-  --secondary: oklch(0.25 0.008 70);
-  --muted: oklch(0.25 0.008 70);
-  --accent: oklch(0.27 0.009 70);
+  /* Surfaces, darkest to lightest */
+  --background: oklch(0.166 0.026 269.4); /* #0a0e1a */
+  --card: oklch(0.222 0.041 268.3); /* #131a2e */
+  --popover: oklch(0.222 0.041 268.3); /* #131a2e */
+  --secondary: oklch(0.288 0.052 265.1); /* #1e2a45 */
+  --muted: oklch(0.288 0.052 265.1); /* #1e2a45 */
+  --accent: oklch(0.288 0.052 265.1); /* #1e2a45 */
 
   /* Text */
-  --foreground: oklch(0.95 0.008 85);
-  --card-foreground: oklch(0.95 0.008 85);
-  --popover-foreground: oklch(0.95 0.008 85);
-  --secondary-foreground: oklch(0.95 0.008 85);
-  --accent-foreground: oklch(0.95 0.008 85);
-  --muted-foreground: oklch(0.74 0.012 80);
+  --foreground: oklch(0.984 0.003 247.9); /* #f8fafc */
+  --card-foreground: oklch(0.984 0.003 247.9);
+  --popover-foreground: oklch(0.984 0.003 247.9);
+  --secondary-foreground: oklch(0.984 0.003 247.9);
+  --accent-foreground: oklch(0.984 0.003 247.9);
+  --muted-foreground: oklch(0.711 0.035 256.8); /* #94a3b8 */
 
-  /* Brand accent: warm clay */
-  --primary: oklch(0.72 0.13 45);
-  --primary-foreground: oklch(0.17 0.006 70);
+  /* LuBot blue scale (glows, gradients, illustrations) */
+  --brand-deep: oklch(0.558 0.188 264.4); /* #3a6ae0 */
+  --brand: oklch(0.615 0.186 264.7); /* #4b7cf3 */
+  --brand-light: oklch(0.68 0.155 266); /* #6b93f7 */
+  --brand-soft: oklch(0.746 0.118 267); /* #8baaf8 */
+
+  /* Buttons: deep blue + white. Deep blue as TEXT is too dark (3.96:1),
+     so blue text and links use --link (light blue) instead. */
+  --primary: oklch(0.558 0.188 264.4); /* #3a6ae0 */
+  --primary-foreground: oklch(0.984 0.003 247.9); /* #f8fafc */
+  --link: oklch(0.68 0.155 266); /* #6b93f7 */
 
   /* Lines, inputs, focus, errors */
-  --border: oklch(0.3 0.008 70);
-  --input: oklch(0.52 0.01 70);
-  --ring: oklch(0.72 0.13 45);
-  --destructive: oklch(0.68 0.17 25);
+  --border: oklch(0.288 0.052 265.1); /* #1e2a45, decorative */
+  --input: oklch(0.554 0.041 257.4); /* #64748b, form fields need 3:1 */
+  --ring: oklch(0.68 0.155 266); /* #6b93f7 */
+  --destructive: oklch(0.637 0.208 25.3); /* #ef4444 */
 
   --radius: 0.75rem;
 }
@@ -57,6 +70,11 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-link: var(--link);
+  --color-brand-deep: var(--brand-deep);
+  --color-brand: var(--brand);
+  --color-brand-light: var(--brand-light);
+  --color-brand-soft: var(--brand-soft);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

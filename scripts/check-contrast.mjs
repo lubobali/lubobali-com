@@ -21,9 +21,10 @@ const PAIRS = [
   ["muted-foreground", "background", TEXT],
   ["muted-foreground", "card", TEXT],
   ["muted-foreground", "muted", TEXT],
-  ["primary", "background", TEXT], // accent-coloured text / links
-  ["primary", "card", TEXT],
-  ["primary-foreground", "primary", TEXT], // text on the accent button
+  ["link", "background", TEXT], // blue text and links
+  ["link", "card", TEXT],
+  ["link", "muted", TEXT],
+  ["primary-foreground", "primary", TEXT], // text on the blue button
   ["destructive", "background", TEXT],
   ["ring", "background", UI],
   ["ring", "card", UI],

@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { Button } from "@/components/ui/button";
+
+const variants = ["default", "outline", "secondary", "ghost", "destructive", "link"] as const;
+const sizes = ["sm", "default", "lg", "xl"] as const;
 
 // Internal preview of the design tokens. Not linked, not in the sitemap,
 // noindex. Staging only — removed before the production launch.
@@ -11,8 +15,15 @@ export const metadata: Metadata = {
 const surfaces = [
   { name: "background", className: "bg-background", note: "Page" },
   { name: "card", className: "bg-card", note: "Cards, panels" },
-  { name: "secondary / muted", className: "bg-muted", note: "Raised, chips" },
-  { name: "accent", className: "bg-accent", note: "Hover" },
+  { name: "secondary / muted / accent", className: "bg-muted", note: "Raised, chips, hover" },
+];
+
+// Same blue scale as lubot.ai (one brand across Lubo's products).
+const blues = [
+  { name: "brand-deep", className: "bg-brand-deep", hex: "#3a6ae0", note: "Buttons" },
+  { name: "brand", className: "bg-brand", hex: "#4b7cf3", note: "Main blue, glows" },
+  { name: "brand-light", className: "bg-brand-light", hex: "#6b93f7", note: "Links, focus ring" },
+  { name: "brand-soft", className: "bg-brand-soft", hex: "#8baaf8", note: "Soft highlights" },
 ];
 
 const typeScale = [
@@ -39,8 +50,8 @@ export default function Styleguide() {
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-col gap-16 px-6 py-20">
       <header className="flex flex-col gap-4">
-        <p className="font-mono text-sm text-primary">Phase 2 · P3 · design tokens</p>
-        <h1 className="text-display font-semibold">Warm-dark, built to read.</h1>
+        <p className="font-mono text-sm text-link">Phase 2 · design system</p>
+        <h1 className="text-display font-semibold">Dark navy, built to read.</h1>
         <p className="max-w-2xl text-lg text-muted-foreground">
           Every colour below is a token in <code className="font-mono">globals.css</code>.
           Each text and background pair is contrast-checked in CI: main text at
@@ -49,7 +60,7 @@ export default function Styleguide() {
       </header>
 
       <Section title="Surfaces">
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           {surfaces.map((s) => (
             <div
               key={s.name}
@@ -62,32 +73,38 @@ export default function Styleguide() {
         </div>
       </Section>
 
+      <Section title="Brand blues (lubot.ai)">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          {blues.map((b) => (
+            <div key={b.name} className="flex flex-col gap-2">
+              <div className={`${b.className} h-24 rounded-lg`} />
+              <span className="text-sm font-medium">{b.name}</span>
+              <span className="font-mono text-sm text-muted-foreground">
+                {b.hex} · {b.note}
+              </span>
+            </div>
+          ))}
+        </div>
+      </Section>
+
       <Section title="Text">
         <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-6">
           <p className="text-lg">foreground — main text, headlines.</p>
           <p className="text-lg text-muted-foreground">
             muted-foreground — supporting text, captions, dates.
           </p>
-          <p className="text-lg text-primary">primary — accent text and links.</p>
+          <p className="text-lg text-link">link — blue text and links.</p>
           <p className="text-lg text-destructive">destructive — errors only.</p>
         </div>
       </Section>
 
-      <Section title="Accent + focus">
+      <Section title="Calls to action + focus">
         <div className="flex flex-wrap items-center gap-4">
-          <button
-            type="button"
-            className="rounded-md bg-primary px-5 py-2.5 font-medium text-primary-foreground transition-opacity hover:opacity-90"
-          >
-            Book a call
-          </button>
-          <button
-            type="button"
-            className="rounded-md border border-border bg-secondary px-5 py-2.5 font-medium text-secondary-foreground transition-colors hover:bg-accent"
-          >
+          <Button size="xl">Book a call</Button>
+          <Button size="xl" variant="outline">
             See case studies
-          </button>
-          <a href="#type" className="text-primary underline underline-offset-4">
+          </Button>
+          <a href="#type" className="text-link underline underline-offset-4">
             A text link
           </a>
           <input
@@ -97,9 +114,26 @@ export default function Styleguide() {
           />
         </div>
         <p className="text-sm text-muted-foreground">
-          Press Tab to see the focus ring on each control. Plain HTML for now —
-          shadcn Button arrives in P4.
+          Press Tab to see the focus ring on each control.
         </p>
+      </Section>
+
+      <Section title="Button (shadcn)">
+        <div className="flex flex-wrap items-center gap-3">
+          {variants.map((v) => (
+            <Button key={v} variant={v}>
+              {v}
+            </Button>
+          ))}
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          {sizes.map((s) => (
+            <Button key={s} size={s}>
+              size {s}
+            </Button>
+          ))}
+          <Button disabled>disabled</Button>
+        </div>
       </Section>
 
       <Section title="Type">
