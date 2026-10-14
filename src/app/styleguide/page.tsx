@@ -3,6 +3,14 @@ import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/motion/reveal";
 import { DataRain } from "@/components/ambient/data-rain";
+import { Picture } from "@/components/picture";
+
+const photos = [
+  { name: "lubo-bali-portrait", use: "home hero", alt: "Lubo Bali, AI and Data Platform Engineer, in a dark suit" },
+  { name: "lubo-bali-about", use: "about", alt: "Lubo Bali in a gray suit, arms crossed" },
+  { name: "lubo-bali-basketball", use: "about: who I was", alt: "Lubo Bali in a white shirt and tie, arms spread wide, holding a basketball" },
+  { name: "lubo-bali-headshot", use: "contact", alt: "Headshot of Lubo Bali in a gray suit" },
+];
 
 const ambients = [
   {
@@ -172,6 +180,28 @@ export default function Styleguide() {
               SELECT tenant_id, count(*) FROM events GROUP BY 1;
             </span>
           </div>
+        </div>
+      </Section>
+
+      <Section title="Photos (build-time pipeline)">
+        <p className="text-sm text-muted-foreground">
+          AVIF, then WebP, in several widths; your browser picks the smallest
+          file that fits. Lazy-loaded, no layout shift.
+        </p>
+        <div className="grid items-start gap-4 sm:grid-cols-2">
+          {photos.map((p) => (
+            <figure key={p.name} className="flex flex-col gap-2">
+              <Picture
+                name={p.name}
+                alt={p.alt}
+                sizes="(min-width: 640px) 50vw, 100vw"
+                className="h-auto w-full rounded-lg border border-border"
+              />
+              <figcaption className="font-mono text-sm text-muted-foreground">
+                {p.name} · {p.use}
+              </figcaption>
+            </figure>
+          ))}
         </div>
       </Section>
 
