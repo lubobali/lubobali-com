@@ -31,14 +31,25 @@ export function hexToRgb(hex) {
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((c) => c / 255);
 }
 
-/** Parses `oklch(L C H)` (L as 0-1 or %). Other syntaxes throw on purpose. */
+/**
+ * Parses `oklch(L C H)` or `oklch(L C H / a)` (L as 0-1 or %).
+ * Returns { rgb, inGamut, alpha }. Other syntaxes throw on purpose.
+ */
 export function parseColor(value) {
   const m = value
     .trim()
-    .match(/^oklch\(\s*([\d.]+)(%?)\s+([\d.]+)\s+([\d.]+)\s*\)$/);
+    .match(
+      /^oklch\(\s*([\d.]+)(%?)\s+([\d.]+)\s+([\d.]+)\s*(?:\/\s*([\d.]+)\s*)?\)$/,
+    );
   if (!m) throw new Error(`unsupported colour: ${value}`);
   const L = Number(m[1]) / (m[2] ? 100 : 1);
-  return oklchToRgb(L, Number(m[3]), Number(m[4]));
+  const alpha = m[5] === undefined ? 1 : Number(m[5]);
+  return { ...oklchToRgb(L, Number(m[3]), Number(m[4])), alpha };
+}
+
+/** A see-through colour ({rgb, alpha}) laid over an opaque sRGB colour. */
+export function composite(top, bottomRgb) {
+  return top.rgb.map((c, i) => c * top.alpha + bottomRgb[i] * (1 - top.alpha));
 }
 
 const luminance = ([r, g, b]) =>

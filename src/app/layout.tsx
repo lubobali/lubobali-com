@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { MotionProvider } from "@/components/motion/motion-provider";
 import "./globals.css";
 
 // Self-hosted fonts: no Google fetch at build time or in the browser.
@@ -30,7 +31,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`dark ${interTight.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {/* Without JavaScript, Reveal content would stay invisible. */}
+        <noscript>
+          <style>{"[data-reveal]{opacity:1!important;transform:none!important}"}</style>
+        </noscript>
+        <MotionProvider>{children}</MotionProvider>
+      </body>
     </html>
   );
 }

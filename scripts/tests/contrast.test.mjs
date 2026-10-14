@@ -3,6 +3,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
+  composite,
   contrastRatio,
   hexToRgb,
   oklchToRgb,
@@ -44,6 +45,23 @@ test("parseColor reads the oklch() syntax we use, incl. percent", () => {
   const b = parseColor("oklch(70% 0.1 45)");
   a.rgb.forEach((c, i) => close(c, b.rgb[i], 1e-9));
   assert.throws(() => parseColor("rgb(1 2 3)"), /unsupported colour/);
+});
+
+test("parseColor reads an alpha (oklch(L C H / a)); opaque colours get 1", () => {
+  const glow = parseColor("oklch(0.7 0.1 45 / 0.12)");
+  const solid = parseColor("oklch(0.7 0.1 45)");
+  assert.equal(glow.alpha, 0.12);
+  assert.equal(solid.alpha, 1);
+  glow.rgb.forEach((c, i) => close(c, solid.rgb[i], 1e-9));
+});
+
+test("composite lays a see-through colour over an opaque one", () => {
+  const black = [0, 0, 0];
+  const halfWhite = { rgb: [1, 1, 1], alpha: 0.5 };
+  composite(halfWhite, black).forEach((c) => close(c, 0.5, 1e-9));
+  composite({ rgb: [1, 0, 0], alpha: 1 }, black).forEach((c, i) =>
+    close(c, [1, 0, 0][i], 1e-9),
+  );
 });
 
 test("readTokens takes --name: oklch(...) from the :root block only", () => {

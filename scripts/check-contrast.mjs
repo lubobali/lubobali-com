@@ -4,7 +4,12 @@
 // because thin text on dark backgrounds needs more than the minimum.
 // Usage: node scripts/check-contrast.mjs
 import { readFileSync } from "node:fs";
-import { contrastRatio, parseColor, readTokens } from "./lib/contrast.mjs";
+import {
+  composite,
+  contrastRatio,
+  parseColor,
+  readTokens,
+} from "./lib/contrast.mjs";
 
 const MAIN = 7; // main text
 const TEXT = 4.5; // all other text
@@ -31,15 +36,36 @@ const PAIRS = [
   ["input", "background", UI],
 ];
 
+// See-through glow tokens (`--glow-*`, ambient backgrounds): text on top
+// must still pass when the glow is laid over the page background.
+// GLOW_STACKS lists glows that can overlap (worst case: all at full strength).
+const GLOW_TEXT = [
+  ["foreground", MAIN],
+  ["muted-foreground", TEXT],
+  ["link", TEXT],
+];
+const GLOW_STACKS = [["glow-brand", "glow-soft"]];
+
 const cssPath = new URL("../src/app/globals.css", import.meta.url);
 const tokens = readTokens(readFileSync(cssPath, "utf8"));
 const colours = {};
 let failed = 0;
 
+const report = (ok, ratio, min, label) => {
+  if (!ok) failed++;
+  console.log(
+    `${ok ? "ok  " : "FAIL"}  ${ratio.toFixed(2).padStart(5)}:1 (min ${min})  ${label}`,
+  );
+};
+
 for (const [name, value] of Object.entries(tokens)) {
   colours[name] = parseColor(value);
   if (!colours[name].inGamut) {
     console.log(`FAIL  --${name} ${value} is outside sRGB`);
+    failed++;
+  }
+  if (colours[name].alpha < 1 && !name.startsWith("glow-")) {
+    console.log(`FAIL  --${name} is see-through; only --glow-* may be`);
     failed++;
   }
 }
@@ -51,11 +77,26 @@ for (const [fg, bg, min] of PAIRS) {
     continue;
   }
   const ratio = contrastRatio(colours[fg].rgb, colours[bg].rgb);
-  const ok = ratio >= min;
-  if (!ok) failed++;
-  console.log(
-    `${ok ? "ok  " : "FAIL"}  ${ratio.toFixed(2).padStart(5)}:1 (min ${min})  ${fg} on ${bg}`,
+  report(ratio >= min, ratio, min, `${fg} on ${bg}`);
+}
+
+const glows = Object.keys(colours).filter((n) => n.startsWith("glow-"));
+const layers = [...glows.map((g) => [g]), ...GLOW_STACKS];
+for (const stack of layers) {
+  const missing = stack.find((g) => !colours[g]);
+  if (missing) {
+    console.log(`FAIL  missing token --${missing}`);
+    failed++;
+    continue;
+  }
+  const lit = stack.reduce(
+    (under, g) => composite(colours[g], under),
+    colours.background.rgb,
   );
+  for (const [fg, min] of GLOW_TEXT) {
+    const ratio = contrastRatio(colours[fg].rgb, lit);
+    report(ratio >= min, ratio, min, `${fg} on background + ${stack.join(" + ")}`);
+  }
 }
 
 console.log(

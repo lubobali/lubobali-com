@@ -1,6 +1,28 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import { Reveal } from "@/components/motion/reveal";
+import { DataRain } from "@/components/ambient/data-rain";
+
+const ambients = [
+  {
+    id: "A + B",
+    name: "Aurora with stars",
+    note: "Soft LuBot-blue glows drifting, with tiny stars twinkling on top.",
+    layers: (
+      <>
+        <div aria-hidden className="ambient ambient-aurora" />
+        <div aria-hidden className="ambient ambient-stars" />
+      </>
+    ),
+  },
+  {
+    id: "D",
+    name: "Data rain",
+    note: "Streams of data characters rising from bottom to top, in three layers of depth.",
+    layers: <DataRain />,
+  },
+];
 
 const variants = ["default", "outline", "secondary", "ghost", "destructive", "link"] as const;
 const sizes = ["sm", "default", "lg", "xl"] as const;
@@ -150,6 +172,52 @@ export default function Styleguide() {
               SELECT tenant_id, count(*) FROM events GROUP BY 1;
             </span>
           </div>
+        </div>
+      </Section>
+
+      <Section title="Ambient background — pick one">
+        <p className="text-sm text-muted-foreground">
+          CSS only, no JavaScript. Stops moving when your device asks for
+          reduced motion. Each panel shows real text on top to judge readability.
+        </p>
+        <div className="flex flex-col gap-8">
+          {ambients.map((a) => (
+            <div
+              key={a.id}
+              className="relative flex min-h-[28rem] flex-col justify-end overflow-hidden rounded-xl border border-border bg-background p-8 md:h-[70vh] md:p-12"
+            >
+              {a.layers}
+              <div className="relative z-10 flex flex-col gap-4">
+                <p className="font-mono text-sm text-link">
+                  Option {a.id} · {a.name}
+                </p>
+                <p className="text-5xl font-semibold tracking-tight">Lubo Bali</p>
+                <p className="max-w-xl text-lg text-muted-foreground">{a.note}</p>
+                <div className="flex flex-wrap items-center gap-4">
+                  <Button size="xl">Book a call</Button>
+                  <a href="#type" className="text-link underline underline-offset-4">
+                    See case studies
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section title="Reveal on scroll">
+        <p className="text-sm text-muted-foreground">
+          Each card fades and slides in once. Never used on the first screen.
+        </p>
+        <div className="grid gap-4 md:grid-cols-3">
+          {["Multi-tenant AI SaaS", "Data platforms", "LLM + evals"].map((t, i) => (
+            <Reveal key={t} delay={i * 0.1}>
+              <div className="flex h-40 flex-col justify-end rounded-lg border border-border bg-card p-6">
+                <span className="text-xl font-medium">{t}</span>
+                <span className="text-sm text-muted-foreground">Reveal, delay {i * 0.1}s</span>
+              </div>
+            </Reveal>
+          ))}
         </div>
       </Section>
     </main>

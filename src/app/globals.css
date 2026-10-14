@@ -36,6 +36,13 @@
   --brand-light: oklch(0.68 0.155 266); /* #6b93f7 */
   --brand-soft: oklch(0.746 0.118 267); /* #8baaf8 */
 
+  /* Glow colours with the strength built in (ambient backgrounds). Links
+     stay >= 4.5:1 over blue glow up to 25%; keep these below that. */
+  --glow-brand: oklch(0.615 0.186 264.7 / 0.12);
+  --glow-soft: oklch(0.746 0.118 267 / 0.12);
+  /* Data rain glyphs at their brightest (data-rain.tsx RAIN_MAX_ALPHA). */
+  --glow-rain: oklch(0.68 0.155 266 / 0.22);
+
   /* Buttons: deep blue + white. Deep blue as TEXT is too dark (3.96:1),
      so blue text and links use --link (light blue) instead. */
   --primary: oklch(0.558 0.188 264.4); /* #3a6ae0 */
@@ -100,4 +107,133 @@ body {
 :focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
+}
+
+/*
+ * Ambient backgrounds: A+B (aurora + stars) and D (data rain). Both kept;
+ * Lubo picks one on the real pages in Phase 3.
+ * Rules: CSS only (no JS loop), only `transform`/`opacity` animate (GPU,
+ * no layout work), static when the OS asks for reduced motion.
+ * Contrast: blue glow over navy keeps links >= 4.5:1 up to 25% strength
+ * (measured); every glow here stays below that, also where two overlap.
+ */
+.ambient {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.ambient::before,
+.ambient::after {
+  content: "";
+  position: absolute;
+}
+
+/* Option A — aurora: two soft blue glows drifting slowly. Peak 12% each. */
+.ambient-aurora::before,
+.ambient-aurora::after {
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+.ambient-aurora::before {
+  width: 110%;
+  top: -55%;
+  left: -35%;
+  background: radial-gradient(closest-side, var(--glow-brand), transparent);
+}
+.ambient-aurora::after {
+  width: 100%;
+  bottom: -60%;
+  right: -40%;
+  background: radial-gradient(closest-side, var(--glow-soft), transparent);
+}
+
+/* Option B — stars: tiny dots on two layers that twinkle out of step. */
+.ambient-stars::before,
+.ambient-stars::after {
+  inset: 0;
+}
+.ambient-stars::before {
+  background-image:
+    radial-gradient(2px 2px at 23px 41px, var(--brand-soft), transparent),
+    radial-gradient(1.5px 1.5px at 117px 89px, var(--foreground), transparent),
+    radial-gradient(2px 2px at 171px 23px, var(--brand-light), transparent),
+    radial-gradient(1.5px 1.5px at 61px 153px, var(--foreground), transparent);
+  background-size: 200px 180px;
+  opacity: 0.6;
+}
+.ambient-stars::after {
+  background-image:
+    radial-gradient(1.5px 1.5px at 47px 97px, var(--foreground), transparent),
+    radial-gradient(2px 2px at 211px 61px, var(--brand-soft), transparent),
+    radial-gradient(1.5px 1.5px at 139px 211px, var(--brand-light), transparent);
+  background-size: 260px 240px;
+  opacity: 0.35;
+}
+
+/* Option D — data rain: character streams rising (data-rain.tsx).
+   Layers are taller than the box by one pattern height and move up by
+   exactly that height, so the loop is seamless. Fades at top + bottom. */
+.ambient-rain {
+  mask-image: linear-gradient(to top, transparent, #000 15%, #000 70%, transparent);
+}
+.ambient-rain-layer {
+  position: absolute;
+  inset: 0 0 auto 0;
+  background-repeat: repeat;
+}
+.ambient-rain-far {
+  opacity: 0.5;
+}
+.ambient-rain-mid {
+  opacity: 0.75;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ambient-rain-far {
+    animation: ambient-rise 34s linear infinite;
+  }
+  .ambient-rain-mid {
+    animation: ambient-rise 24s linear infinite;
+  }
+  .ambient-rain-near {
+    animation: ambient-rise 17s linear infinite;
+  }
+  .ambient-aurora::before {
+    animation: ambient-drift-a 12s ease-in-out infinite alternate;
+  }
+  .ambient-aurora::after {
+    animation: ambient-drift-b 15s ease-in-out infinite alternate;
+  }
+  .ambient-stars::before {
+    animation: ambient-twinkle 2.5s ease-in-out infinite alternate;
+  }
+  .ambient-stars::after {
+    animation: ambient-twinkle 3.5s ease-in-out -1.5s infinite alternate;
+  }
+}
+
+@keyframes ambient-drift-a {
+  to {
+    transform: translate3d(50%, 30%, 0) scale(1.3);
+  }
+}
+@keyframes ambient-drift-b {
+  to {
+    transform: translate3d(-45%, -25%, 0) scale(1.25);
+  }
+}
+@keyframes ambient-rise {
+  to {
+    transform: translate3d(0, var(--rain-shift), 0);
+  }
+}
+@keyframes ambient-twinkle {
+  from {
+    opacity: 0.05;
+  }
+  to {
+    opacity: 1;
+  }
 }
