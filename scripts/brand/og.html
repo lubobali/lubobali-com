@@ -1,0 +1,39 @@
+<!doctype html>
+<!-- Social share image (1200x630). Rendered by render.mjs -> public/og.png.
+     Colours = tokens in src/app/globals.css. -->
+<html><head><meta charset="utf-8"><style>
+@font-face { font-family: "Inter Tight"; src: url("../../src/app/fonts/InterTight-latin-wght.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "JetBrains Mono"; src: url("../../src/app/fonts/JetBrainsMono-latin-wght.woff2") format("woff2"); font-weight: 100 800; }
+* { margin: 0; box-sizing: border-box; }
+body { width: 1200px; height: 630px; overflow: hidden; position: relative;
+  background: #0a0e1a; color: #f8fafc; font-family: "Inter Tight", sans-serif; }
+/* Studio black -> navy: "lighten" keeps the brighter pixel, so the black
+   backdrop becomes the page navy while the person stays as shot. */
+.photo { position: absolute; top: 0; left: 400px; height: 630px; mix-blend-mode: lighten;
+  /* Fade in from the left (into the text) and from the top 24px (hides a
+     studio light at the photo's top edge). */
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 260px),
+    linear-gradient(to bottom, transparent 0, #000 24px);
+  -webkit-mask-composite: source-in; mask-composite: intersect; }
+.glow { position: absolute; width: 760px; height: 760px; left: -260px; top: -300px;
+  background: radial-gradient(closest-side, rgb(75 124 243 / 0.22), transparent); }
+.text { position: absolute; left: 72px; top: 0; bottom: 0; width: 620px;
+  display: flex; flex-direction: column; justify-content: center; gap: 22px; }
+.site { font-family: "JetBrains Mono", monospace; font-size: 24px; color: #6b93f7; }
+h1 { font-size: 96px; font-weight: 600; letter-spacing: -0.03em; line-height: 1; }
+.role { font-size: 38px; font-weight: 500; line-height: 1.2; color: #f8fafc; }
+.proof { font-size: 26px; line-height: 1.4; color: #94a3b8; }
+.proof b { color: #f8fafc; font-weight: 500; }
+.bar { position: absolute; left: 0; right: 0; bottom: 0; height: 6px;
+  background: linear-gradient(to right, #3a6ae0, #6b93f7, #8baaf8); }
+</style></head><body>
+<div class="glow"></div>
+<img class="photo" src="../../assets/photos/DSC04525.JPG" alt="">
+<div class="text">
+  <p class="site">lubobali.com</p>
+  <h1>Lubo Bali</h1>
+  <p class="role">Senior AI &amp; Data<br>Platform Engineer</p>
+  <p class="proof">Solo-built <b>LuBot.ai</b>, a production AI SaaS.<br>Featured by <b>Neon</b> (Databricks).</p>
+</div>
+<div class="bar"></div>
+</body></html>

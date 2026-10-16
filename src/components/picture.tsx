@@ -1,24 +1,6 @@
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { fallbackSource, getImage, type ImageSource } from "@/lib/images";
 
-// Built by scripts/build-images.mjs before `next build` (not committed).
-type Source = { src: string; width: number };
-type ImageEntry = {
-  width: number;
-  height: number;
-  sources: { avif: Source[]; webp: Source[] };
-};
-type Manifest = Record<string, ImageEntry>;
-
-let manifest: Manifest | undefined;
-function getManifest(): Manifest {
-  manifest ??= JSON.parse(
-    readFileSync(join(process.cwd(), "src/generated/images.json"), "utf8"),
-  ) as Manifest;
-  return manifest;
-}
-
-const srcSet = (sources: Source[]) =>
+const srcSet = (sources: ImageSource[]) =>
   sources.map((s) => `${s.src} ${s.width}w`).join(", ");
 
 /**
@@ -41,18 +23,16 @@ export function Picture({
   priority?: boolean;
   className?: string;
 }) {
-  const image = getManifest()[name];
-  if (!image) throw new Error(`Picture: unknown image "${name}"`);
-  const fallback =
-    image.sources.webp.find((s) => s.width >= 960) ?? image.sources.webp.at(-1)!;
+  const image = getImage(name);
+  const fallback = fallbackSource(image);
 
   return (
     <picture>
       <source type="image/avif" srcSet={srcSet(image.sources.avif)} sizes={sizes} />
       <source type="image/webp" srcSet={srcSet(image.sources.webp)} sizes={sizes} />
-      {/* Plain <img>: static export has no next/image optimizer; files
-          come from our own build-time pipeline. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
+      {/* Plain <img> inside <picture> (allowed by the Next lint rule):
+          static export has no next/image optimizer; files come from our
+          own build-time pipeline. */}
       <img
         src={fallback.src}
         alt={alt}

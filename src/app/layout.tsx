@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { MotionProvider } from "@/components/motion/motion-provider";
+import { site } from "@/lib/site";
 import "./globals.css";
 
 // Self-hosted fonts: no Google fetch at build time or in the browser.
@@ -19,10 +20,30 @@ const jetbrainsMono = localFont({
   display: "swap",
 });
 
+// Site-wide defaults; pages override title/description. Relative URLs
+// resolve against the production origin (staging is noindex + Disallow).
+// "./" = the page's own path, so every page gets its own canonical.
+// Note: a page that sets `openGraph` replaces this whole object (shallow
+// merge), so it must repeat `images` too. scripts/check-seo.mjs catches it.
 export const metadata: Metadata = {
-  title: "Lubo Bali — AI & Data Platform Engineer",
-  description:
-    "Senior AI & Data Platform Engineer. Solo-built LuBot.ai. Featured by Neon (Databricks).",
+  metadataBase: new URL(site.url),
+  title: {
+    default: `${site.name} — ${site.jobTitle}`,
+    template: `%s — ${site.name}`,
+  },
+  description: site.description,
+  authors: [{ name: site.name, url: site.url }],
+  alternates: { canonical: "./" },
+  openGraph: {
+    type: "website",
+    url: "./",
+    siteName: site.name,
+    locale: site.locale,
+    title: `${site.name} — ${site.jobTitle}`,
+    description: site.description,
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: `${site.name}, ${site.jobTitle}` }],
+  },
+  twitter: { card: "summary_large_image", creator: "@Lubo_Bali" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

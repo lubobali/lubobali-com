@@ -60,6 +60,11 @@ jobs:
       - name: Build (static export)
         run: pnpm build
 
+      - name: SEO + AI discovery check (raw HTML, robots, sitemap, llms.txt, JSON-LD)
+        run: |
+          node --test scripts/tests/seo.test.mjs
+          node scripts/check-seo.mjs out
+
       - name: Test deploy scripts
         run: bash scripts/tests/test-deploy.sh
 
