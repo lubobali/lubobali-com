@@ -11,6 +11,7 @@
 #   4. SEO + AI files served as built (sitemap, llms.txt, social image);
 #      robots.txt: staging = "Disallow: /" (nginx), prod = the built file
 #   5. one URL style: "/page/" -> 301 "/page"
+#   6. good bots get the same homepage as people (no blocking, no cloaking)
 # Never requests scanner paths (/.env etc.): CI traffic would feed our own
 # fail2ban jail. Exit 0 = healthy, 1 = broken (caller rolls back).
 set -euo pipefail
@@ -77,5 +78,13 @@ read -r code loc < <(get -o /dev/null -w '%{http_code} %{redirect_url}\n' "$url/
 [[ "$code" == 301 && "$loc" == "$url/smoke-test-page" ]] \
   || die "trailing slash: got $code $loc, want 301 $url/smoke-test-page"
 echo "smoke: ok  /page/ -> 301 /page"
+
+# 6. good bots (search + AI): 200 and byte-identical to the build
+for bot in "Googlebot/2.1; +http://www.google.com/bot.html" "GPTBot/1.3; +https://openai.com/gptbot" \
+           "ClaudeBot/1.0; +claudebot@anthropic.com" "PerplexityBot/1.0; +https://perplexity.ai/perplexitybot"; do
+  got="$(get -A "Mozilla/5.0 (compatible; $bot)" "$url/" | sha256sum | cut -d' ' -f1)"
+  [[ "$got" == "$want" ]] || die "${bot%%;*} does not get the built homepage"
+done
+echo "smoke: ok  Googlebot, GPTBot, ClaudeBot, PerplexityBot get the same homepage"
 
 echo "smoke: PASS $url"
