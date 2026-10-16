@@ -1,9 +1,10 @@
 # lubobali.com — CI/CD for staging (Gate 7 S7).
-# Every push to develop: check -> build -> deploy -> smoke test.
-# Any failing check = nothing deployed. Failing smoke test = auto-rollback.
+# Every push to develop: check -> build -> deploy -> smoke test -> Lighthouse.
+# Any failing check = nothing deployed. Failing smoke test or Lighthouse
+# budget = auto-rollback.
 # Design + security notes live in a private planning repo.
 #
-# Runs ONLY on the dedicated, sandboxed lubobali-runner (1 CPU / 3 GB /
+# Runs ONLY on the dedicated, sandboxed lubobali-runner (2 CPU / 3 GB /
 # 256 pids, no docker socket, only the staging deploy folder mountable).
 # Never `ubuntu-latest` — that is LuBot's shared runner.
 
@@ -60,9 +61,9 @@ jobs:
       - name: Build (static export)
         run: pnpm build
 
-      - name: SEO + AI discovery check (raw HTML, robots, sitemap, llms.txt, JSON-LD)
+      - name: SEO + AI-bot check (raw HTML text, robots, sitemap, llms.txt, JSON-LD)
         run: |
-          node --test scripts/tests/seo.test.mjs
+          node --test scripts/tests/seo.test.mjs scripts/tests/lighthouse.test.mjs
           node scripts/check-seo.mjs out
 
       - name: Test deploy scripts
@@ -75,6 +76,17 @@ jobs:
         run: |
           if ! ./scripts/smoke.sh "$SITE_URL" out staging; then
             echo "Smoke test failed -> rolling back"
+            ./scripts/rollback.sh "$DEPLOY_ROOT" || echo "rollback: nothing older to roll back to"
+            exit 1
+          fi
+
+      # Phone Lighthouse on the live pages, median of 3 runs (~1 min).
+      # Hard budgets on indexable pages: LCP, CLS, TBT, requests,
+      # accessibility, best practices, SEO. Speed score = warning only.
+      - name: Lighthouse gate (auto-rollback on failure)
+        run: |
+          if ! node scripts/lighthouse.mjs "$SITE_URL" out staging; then
+            echo "Lighthouse budget broken -> rolling back"
             ./scripts/rollback.sh "$DEPLOY_ROOT" || echo "rollback: nothing older to roll back to"
             exit 1
           fi

@@ -1,12 +1,14 @@
 // Post-build SEO + AI-discovery check on the static export (Phase 2 P7).
 // Reads the HTML exactly as bots get it (no JS). Fails the build if a page
-// lost its title/description/canonical/social tags, the home page's
+// lost its title/description/canonical/social tags or its readable text
+// (AI-bot test: one <h1>, <main>, name + job title), the home page's
 // JSON-LD is broken, or robots.txt / sitemap.xml / llms.txt / the social
 // image are wrong. Usage: node scripts/check-seo.mjs out
 import { readdir, readFile } from "node:fs/promises";
 import { join, relative } from "node:path";
 import {
   ORIGIN,
+  checkBotText,
   checkJsonLd,
   checkLlmsTxt,
   checkPage,
@@ -20,6 +22,11 @@ const out = process.argv[2] ?? "out";
 const problems = [];
 const fail = (where, list) => list.forEach((p) => problems.push(`${where}: ${p}`));
 
+// AI-bot test: what must be readable text on every indexable page, and
+// extra phrases per page. Keep in sync with src/lib/site.ts.
+const NAME = "Lubo Bali";
+const PAGE_TEXT = { "/": ["Senior AI & Data Platform Engineer"] };
+
 // out/index.html -> "/", out/about.html -> "/about" (one URL style, no
 // trailing slash). Error pages are not real pages.
 const SKIP = new Set(["404.html", "_not-found.html"]);
@@ -29,8 +36,12 @@ const indexable = [];
 let home;
 for (const file of files) {
   const path = file === "index.html" ? "/" : "/" + file.replace(/\.html$/, "");
-  const page = parsePage(await readFile(join(out, file), "utf8"));
-  if (!/noindex/.test(page.metas.robots ?? "")) indexable.push(path);
+  const html = await readFile(join(out, file), "utf8");
+  const page = parsePage(html);
+  if (!/noindex/.test(page.metas.robots ?? "")) {
+    indexable.push(path);
+    fail(`${path} (AI-bot text)`, checkBotText(html, [NAME, ...(PAGE_TEXT[path] ?? [])]));
+  }
   if (path === "/") home = page;
   fail(path, checkPage(page, path));
 }

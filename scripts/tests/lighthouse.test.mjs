@@ -1,0 +1,88 @@
+// node --test scripts/tests/lighthouse.test.mjs
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { BUDGETS, checkBudgets, gatePage, median, medianSummary, summarize } from "../lib/lighthouse.mjs";
+
+// Smallest Lighthouse JSON shape that summarize() reads.
+const report = ({ perf = 0.95, a11y = 1, bp = 1, seo = 1, lcp = 1800, cls = 0, tbt = 200, requests = 12 } = {}) => ({
+  categories: {
+    performance: { score: perf },
+    accessibility: { score: a11y },
+    "best-practices": { score: bp },
+    seo: { score: seo },
+  },
+  audits: {
+    "largest-contentful-paint": { numericValue: lcp },
+    "cumulative-layout-shift": { numericValue: cls },
+    "total-blocking-time": { numericValue: tbt },
+    "network-requests": { details: { items: Array.from({ length: requests }, () => ({})) } },
+  },
+});
+
+test("summarize reads scores, metrics and request count", () => {
+  assert.deepEqual(summarize(report()), {
+    performance: 0.95, accessibility: 1, bestPractices: 1, seo: 1,
+    lcpMs: 1800, cls: 0, tbtMs: 200, requests: 12,
+  });
+});
+
+test("summarize throws on a failed run (no scores)", () => {
+  const broken = report();
+  broken.categories.performance.score = null;
+  assert.throws(() => summarize(broken), /no score/);
+});
+
+test("median: odd, even, single", () => {
+  assert.equal(median([3, 1, 2]), 2);
+  assert.equal(median([4, 1, 3, 2]), 2.5);
+  assert.equal(median([7]), 7);
+});
+
+test("medianSummary takes the median of each field separately", () => {
+  const runs = [{ tbtMs: 700, lcpMs: 1700 }, { tbtMs: 300, lcpMs: 2300 }, { tbtMs: 400, lcpMs: 1800 }];
+  assert.deepEqual(medianSummary(runs), { tbtMs: 400, lcpMs: 1800 });
+});
+
+test("checkBudgets: a good page passes, slow score is only a warning", () => {
+  const good = summarize(report({ perf: 0.85 }));
+  const { fails, warns } = checkBudgets(good);
+  assert.deepEqual(fails, []);
+  assert.equal(warns.length, 1);
+  assert.match(warns[0], /performance 0.85 < 0.9/);
+});
+
+test("checkBudgets: each hard budget fails on its own", () => {
+  const bad = {
+    lcp: { lcp: BUDGETS.lcpMs + 1 },
+    cls: { cls: 0.06 },
+    tbt: { tbt: BUDGETS.tbtMs + 1 },
+    requests: { requests: BUDGETS.requests + 1 },
+    a11y: { a11y: 0.94 },
+    bp: { bp: 0.94 },
+    seo: { seo: 0.99 },
+  };
+  for (const [name, override] of Object.entries(bad)) {
+    const { fails } = checkBudgets(summarize(report(override)));
+    assert.equal(fails.length, 1, `${name}: ${fails}`);
+  }
+});
+
+test("checkBudgets: exactly at the limit passes", () => {
+  const edge = summarize(report({ lcp: BUDGETS.lcpMs, cls: BUDGETS.cls, tbt: BUDGETS.tbtMs, requests: BUDGETS.requests }));
+  assert.deepEqual(checkBudgets(edge).fails, []);
+});
+
+test("gatePage: indexable pages fail hard on a broken budget", () => {
+  const slow = summarize(report({ lcp: BUDGETS.lcpMs + 500 }));
+  const { fails, warns } = gatePage(slow, { indexable: true });
+  assert.equal(fails.length, 1);
+  assert.equal(warns.length, 0);
+});
+
+test("gatePage: noindex pages only warn (internal, e.g. /styleguide)", () => {
+  const slow = summarize(report({ lcp: BUDGETS.lcpMs + 500, perf: 0.8 }));
+  const { fails, warns } = gatePage(slow, { indexable: false });
+  assert.deepEqual(fails, []);
+  assert.equal(warns.length, 2);
+  assert.ok(warns.every((w) => /noindex/.test(w)), warns.join("\n"));
+});

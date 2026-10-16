@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { MotionProvider } from "@/components/motion/motion-provider";
 import { site } from "@/lib/site";
 import "./globals.css";
 
@@ -13,6 +12,9 @@ const interTight = localFont({
   display: "swap",
 });
 
+// Preloaded on purpose (P9 measured): without preload, mono text inside a
+// paragraph swaps late, re-wraps the line (CLS) and delays LCP — and the
+// home page got no faster (LCP 2068 vs 2070 ms).
 const jetbrainsMono = localFont({
   src: "./fonts/JetBrainsMono-latin-wght.woff2",
   weight: "100 800",
@@ -57,7 +59,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <noscript>
           <style>{"[data-reveal]{opacity:1!important;transform:none!important}"}</style>
         </noscript>
-        <MotionProvider>{children}</MotionProvider>
+        {children}
       </body>
     </html>
   );

@@ -90,6 +90,30 @@ export function checkJsonLd(blocks) {
   return p;
 }
 
+/** Text a no-JavaScript reader sees: tags, scripts, styles removed. */
+export function visibleText(html) {
+  return html
+    .replace(/<(script|style|noscript|head)\b[\s\S]*?<\/\1>/g, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replaceAll("&amp;", "&")
+    .replace(/\s+/g, " ");
+}
+
+/** "AI-bot test": AI crawlers don't run JavaScript, so the page's real
+ * text must be in the raw HTML: one <h1>, a <main>, and the given phrases
+ * (e.g. name, job title) as visible text — not only in meta/JSON-LD. */
+export function checkBotText(html, phrases) {
+  const p = [];
+  const h1 = (html.match(/<h1[\s>]/g) ?? []).length;
+  if (h1 !== 1) p.push(`want 1 <h1>, found ${h1}`);
+  if (!/<main[\s>]/.test(html)) p.push("no <main> element");
+  const text = visibleText(html);
+  for (const phrase of phrases) {
+    if (!text.includes(phrase)) p.push(`missing text "${phrase}" in raw HTML`);
+  }
+  return p;
+}
+
 /** Production robots.txt: open to crawlers, links the sitemap. */
 export function checkRobots(txt) {
   const p = [];

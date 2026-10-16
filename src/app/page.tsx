@@ -1,16 +1,17 @@
 import { JsonLd } from "@/components/seo/json-ld";
 import { homeGraph } from "@/lib/schema";
+import { site } from "@/lib/site";
 
+// Placeholder until the real home page (Phase 3). Name and job title are
+// real text, so search and AI bots (no JavaScript) can read them —
+// scripts/check-seo.mjs checks this.
 export default function Home() {
-  const today = new Date().toISOString().slice(0, 10);
-
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-4">
+    <main className="flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
       <JsonLd data={homeGraph()} />
-      <h1 className="text-4xl font-bold tracking-tight">Hello Lubo v2</h1>
-      <p className="font-mono text-sm text-muted-foreground">
-        Phase 2 colour tokens — {today}
-      </p>
+      <p className="font-mono text-sm text-link">New site in progress</p>
+      <h1 className="text-display font-semibold tracking-tight">{site.name}</h1>
+      <p className="text-xl text-muted-foreground">{site.jobTitle}</p>
     </main>
   );
 }

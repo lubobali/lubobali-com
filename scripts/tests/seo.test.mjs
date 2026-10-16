@@ -2,6 +2,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
+  checkBotText,
   checkJsonLd,
   checkLlmsTxt,
   checkPage,
@@ -116,4 +117,24 @@ test("pngSize reads the IHDR size, rejects non-PNG", () => {
   buf.writeUInt32BE(630, 20);
   assert.deepEqual(pngSize(buf), { width: 1200, height: 630 });
   assert.equal(pngSize(Buffer.from("GIF89a")), null);
+});
+
+test("checkBotText: name, one h1 and <main> in raw HTML pass", () => {
+  const html = `<body><main><h1>Lubo Bali</h1><p>Senior AI &amp; Data Platform Engineer</p></main></body>`;
+  assert.deepEqual(checkBotText(html, ["Lubo Bali"]), []);
+  assert.deepEqual(checkBotText(html, ["Lubo Bali", "Senior AI & Data Platform Engineer"]), []);
+});
+
+test("checkBotText: text only in scripts/meta does not count", () => {
+  // AI bots read text, not JSON-LD or React's script payload.
+  const html = `<head><title>Lubo Bali</title></head><body><main><h1>Hello</h1>
+    <script>self.__next_f.push("Lubo Bali")</script>
+    <script type="application/ld+json">{"name":"Lubo Bali"}</script></main></body>`;
+  assert.match(checkBotText(html, ["Lubo Bali"]).join(), /missing text "Lubo Bali"/);
+});
+
+test("checkBotText: no h1, two h1s, or no <main> fail", () => {
+  assert.match(checkBotText("<main><p>Lubo Bali</p></main>", ["Lubo Bali"]).join(), /want 1 <h1>, found 0/);
+  assert.match(checkBotText("<main><h1>A</h1><h1>Lubo Bali</h1></main>", ["Lubo Bali"]).join(), /found 2/);
+  assert.match(checkBotText("<div><h1>Lubo Bali</h1></div>", ["Lubo Bali"]).join(), /no <main>/);
 });
