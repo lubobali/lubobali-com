@@ -61,10 +61,11 @@ jobs:
       - name: Build (static export)
         run: pnpm build
 
-      - name: SEO + AI-bot check (raw HTML text, robots, sitemap, llms.txt, JSON-LD)
+      - name: SEO, AI-bot + CSP check (raw HTML, robots, sitemap, llms.txt, JSON-LD, script hashes)
         run: |
-          node --test scripts/tests/seo.test.mjs scripts/tests/lighthouse.test.mjs
+          node --test scripts/tests/seo.test.mjs scripts/tests/lighthouse.test.mjs scripts/tests/csp.test.mjs
           node scripts/check-seo.mjs out
+          node scripts/csp.mjs check out
 
       - name: Test deploy scripts
         run: bash scripts/tests/test-deploy.sh

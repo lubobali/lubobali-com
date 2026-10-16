@@ -7,7 +7,7 @@
 #   1. homepage body is byte-identical to <build_dir>/index.html
 #      (proves the NEW release is live — not just "some 200")
 #   2. unknown path -> real 404
-#   3. security headers present; staging also has noindex
+#   3. security headers present (CSP enforced, HSTS 1 year); staging also has noindex
 #   4. SEO + AI files served as built (sitemap, llms.txt, social image);
 #      robots.txt: staging = "Disallow: /" (nginx), prod = the built file
 #   5. one URL style: "/page/" -> 301 "/page"
@@ -45,9 +45,17 @@ echo "smoke: ok  unknown path -> 404"
 # 3. security headers
 headers="$(get -o /dev/null -D - "$url/" | tr -d '\r' | tr '[:upper:]' '[:lower:]')"
 for h in strict-transport-security x-content-type-options x-frame-options \
-         referrer-policy permissions-policy content-security-policy-report-only; do
+         referrer-policy permissions-policy content-security-policy; do
   grep -q "^$h:" <<<"$headers" || die "missing header: $h"
 done
+# CSP: nginx header = what a <meta> can't do (framing); the page's own
+# <meta> policy = strict script hashes (scripts/csp.mjs). Both enforced.
+grep -q "^content-security-policy:.*frame-ancestors 'none'" <<<"$headers" \
+  || die "CSP header must enforce frame-ancestors 'none'"
+grep -q '<meta http-equiv="Content-Security-Policy"' "$build/index.html" \
+  || die "homepage has no CSP meta policy"
+grep -q '^strict-transport-security: max-age=31536000' <<<"$headers" \
+  || die "HSTS must be 1 year"
 if [[ "$env" == staging ]]; then
   grep -q '^x-robots-tag: noindex' <<<"$headers" || die "staging missing x-robots-tag noindex"
 fi
