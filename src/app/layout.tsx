@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
 import { site } from "@/lib/site";
 import "./globals.css";
 
@@ -59,7 +61,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <noscript>
           <style>{"[data-reveal]{opacity:1!important;transform:none!important}"}</style>
         </noscript>
-        {children}
+        <SiteHeader />
+        {/* Skip-link target on every page (pages own their <main>). */}
+        <div id="main" tabIndex={-1} className="flex flex-1 flex-col outline-none">
+          {children}
+        </div>
+        <SiteFooter />
       </body>
     </html>
   );

@@ -7,7 +7,7 @@ import { site } from "@/lib/site";
 // scripts/check-seo.mjs checks this.
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
+    <main className="flex flex-1 flex-col py-24 items-center justify-center gap-4 px-6 text-center">
       <JsonLd data={homeGraph()} />
       <p className="font-mono text-sm text-link">New site in progress</p>
       <h1 className="text-display font-semibold tracking-tight">{site.name}</h1>

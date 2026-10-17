@@ -54,6 +54,9 @@
   --input: oklch(0.554 0.041 257.4); /* #64748b, form fields need 3:1 */
   --ring: oklch(0.68 0.155 266); /* #6b93f7 */
   --destructive: oklch(0.637 0.208 25.3); /* #ef4444 */
+  /* "Available" status dot (next to the availability text, so not the
+     only signal); kept >= 3:1 like other UI parts. */
+  --success: oklch(0.773 0.153 163.2); /* #34d399 */
 
   --radius: 0.75rem;
 }
@@ -74,6 +77,7 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-success: var(--success);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);

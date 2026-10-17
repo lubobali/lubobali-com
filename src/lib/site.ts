@@ -15,6 +15,7 @@ export const site = {
   // Book-a-call button.
   availability: "Available for contract projects and full-time roles.",
   // The one call-to-action: free 30-min intro call (Phase 3 D3).
+  email: "data@lubobali.com",
   bookCall: {
     label: "Book a free 30-min call",
     url: "https://calendly.com/data-lubobali/30min",
@@ -36,6 +37,8 @@ export const site = {
     name: "LuBot",
     url: "https://lubot.ai/",
     description: "an AI analytics SaaS with one database per customer",
+    // Registered company (Lubo, 2026-10-17); also the invoicing entity.
+    legalName: "LuBot LLC",
   },
   knowsAbout: [
     "AI engineering",

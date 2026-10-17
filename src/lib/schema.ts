@@ -36,6 +36,7 @@ export function homeGraph(): Graph {
         "@type": "Organization",
         "@id": LUBOT_ID,
         name: site.product.name,
+        legalName: site.product.legalName,
         url: site.product.url,
         description: `LuBot is ${site.product.description}.`,
         founder: { "@id": id("person") },
