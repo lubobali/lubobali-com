@@ -1,6 +1,5 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { preload } from "react-dom";
 
 // "Data rain": columns of real-looking code/data fragments rising from
 // bottom to top (Matrix style). The tiles are static SVG files made at
@@ -19,13 +18,9 @@ function tiles(): Record<string, Tile> {
 
 export function DataRain() {
   const layers = Object.entries(tiles());
-  // The rain is the biggest thing on screen, so Chrome counts it as the
-  // Largest Contentful Paint. Preload (a <link> in <head>) starts the tile
-  // downloads with the CSS instead of after it (measured in H3: LCP 2.4 s
-  // without). Far layer first: it paints the largest area.
-  for (const [name, t] of layers) {
-    preload(t.src, { as: "image", fetchPriority: name === "far" ? "high" : "auto" });
-  }
+  // No preload on purpose: the rain fades in (globals.css), so it is not
+  // the LCP element, and early tile downloads only slowed the simulated
+  // phone LCP (Lighthouse counts every request started before first paint).
   return (
     <div aria-hidden className="ambient ambient-rain">
       {layers.map(([name, t]) => (
