@@ -63,7 +63,7 @@ jobs:
 
       - name: SEO, AI-bot + CSP check (raw HTML, robots, sitemap, llms.txt, JSON-LD, script hashes)
         run: |
-          node --test scripts/tests/seo.test.mjs scripts/tests/lighthouse.test.mjs scripts/tests/csp.test.mjs
+          node --test scripts/tests/seo.test.mjs scripts/tests/lighthouse.test.mjs scripts/tests/csp.test.mjs scripts/tests/rain.test.mjs
           node scripts/check-seo.mjs out
           node scripts/csp.mjs check out
 

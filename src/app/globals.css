@@ -40,8 +40,12 @@
      stay >= 4.5:1 over blue glow up to 25%; keep these below that. */
   --glow-brand: oklch(0.615 0.186 264.7 / 0.12);
   --glow-soft: oklch(0.746 0.118 267 / 0.12);
-  /* Data rain glyphs at their brightest (data-rain.tsx RAIN_MAX_ALPHA). */
-  --glow-rain: oklch(0.68 0.155 266 / 0.22);
+  /* Data rain where text sits on it: tiles go up to RAIN_MAX_ALPHA 0.5
+     (scripts/lib/rain.mjs), dimmed behind text to --rain-text-dim (0.28)
+     = 0.14. Text is contrast-checked on this, also under the headline glow.
+     Away from text the rain shows at full strength. */
+  --glow-rain: oklch(0.68 0.155 266 / 0.14);
+  --rain-text-dim: 0.28;
 
   /* Buttons: deep blue + white. Deep blue as TEXT is too dark (3.96:1),
      so blue text and links use --link (light blue) instead. */
@@ -99,6 +103,11 @@
   --text-display: clamp(2.5rem, 1.5rem + 5vw, 5.5rem);
   --text-display--line-height: 1.02;
   --text-display--letter-spacing: -0.035em;
+
+  /* Home hero headline: a full sentence, so smaller than display. 36 -> 68px. */
+  --text-hero: clamp(2.25rem, 1.4rem + 3.2vw, 4.25rem);
+  --text-hero--line-height: 1.06;
+  --text-hero--letter-spacing: -0.03em;
 }
 
 body {
@@ -114,8 +123,8 @@ body {
 }
 
 /*
- * Ambient backgrounds: A+B (aurora + stars) and D (data rain). Both kept;
- * Lubo picks one on the real pages in Phase 3.
+ * Ambient backgrounds: A+B (aurora + stars) and D (data rain). Lubo picked
+ * D for the home page (Phase 3 D1); A+B stay for the styleguide.
  * Rules: CSS only (no JS loop), only `transform`/`opacity` animate (GPU,
  * no layout work), static when the OS asks for reduced motion.
  * Contrast: blue glow over navy keeps links >= 4.5:1 up to 25% strength
@@ -176,11 +185,27 @@ body {
   opacity: 0.35;
 }
 
-/* Option D — data rain: character streams rising (data-rain.tsx).
+/* Option D — data rain: character streams rising (data-rain.tsx; tiles
+   from scripts/build-rain.mjs).
    Layers are taller than the box by one pattern height and move up by
    exactly that height, so the loop is seamless. Fades at top + bottom. */
 .ambient-rain {
-  mask-image: linear-gradient(to top, transparent, #000 15%, #000 70%, transparent);
+  /* Fade at top + bottom, AND the text zone (--rain-zone, set per layout):
+     dim where text sits, full strength elsewhere. Default: dim everywhere. */
+  --rain-dim: rgb(0 0 0 / var(--rain-text-dim));
+  mask-image:
+    linear-gradient(to top, transparent, #000 15%, #000 70%, transparent),
+    var(--rain-zone, linear-gradient(var(--rain-dim), var(--rain-dim)));
+  mask-composite: intersect;
+}
+/* Home hero: text on top (phone) / on the left (desktop), photo after. */
+.hero-rain .ambient-rain {
+  --rain-zone: linear-gradient(to bottom, var(--rain-dim) 0 64%, #000 76%);
+}
+@media (min-width: 1024px) {
+  .hero-rain .ambient-rain {
+    --rain-zone: linear-gradient(to right, var(--rain-dim) 0 56%, #000 70%);
+  }
 }
 .ambient-rain-layer {
   position: absolute;
@@ -192,6 +217,15 @@ body {
 }
 .ambient-rain-mid {
   opacity: 0.75;
+}
+/* Home hero photo: studio black blends into the navy/rain behind it
+   ("lighten" keeps the brighter pixel); edges fade out. */
+.hero-photo {
+  mix-blend-mode: lighten;
+  mask-image:
+    linear-gradient(to right, transparent 0, #000 22%, #000 85%, transparent),
+    linear-gradient(to bottom, transparent 0, #000 10%, #000 78%, transparent);
+  mask-composite: intersect;
 }
 
 @media (prefers-reduced-motion: no-preference) {

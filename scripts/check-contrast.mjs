@@ -45,7 +45,10 @@ const GLOW_TEXT = [
   ["muted-foreground", TEXT],
   ["link", TEXT],
 ];
-const GLOW_STACKS = [["glow-brand", "glow-soft"]];
+const GLOW_STACKS = [
+  ["glow-brand", "glow-soft"],
+  ["glow-brand", "glow-rain"], // home hero: headline glow + rain behind text
+];
 
 const cssPath = new URL("../src/app/globals.css", import.meta.url);
 const tokens = readTokens(readFileSync(cssPath, "utf8"));

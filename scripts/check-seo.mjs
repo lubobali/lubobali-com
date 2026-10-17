@@ -25,7 +25,13 @@ const fail = (where, list) => list.forEach((p) => problems.push(`${where}: ${p}`
 // AI-bot test: what must be readable text on every indexable page, and
 // extra phrases per page. Keep in sync with src/lib/site.ts.
 const NAME = "Lubo Bali";
-const PAGE_TEXT = { "/": ["Senior AI & Data Platform Engineer"] };
+const PAGE_TEXT = {
+  "/": [
+    "Senior AI & Data Platform Engineer",
+    "I build AI that works on your real data, in production.", // hero headline (Phase 3 H1)
+    "Available for contract projects and full-time roles.",
+  ],
+};
 
 // out/index.html -> "/", out/about.html -> "/about" (one URL style, no
 // trailing slash). Error pages are not real pages.
