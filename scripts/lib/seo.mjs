@@ -90,12 +90,15 @@ export function checkJsonLd(blocks) {
   return p;
 }
 
+const ENTITIES = { "#x27": "'", "#39": "'", quot: '"', lt: "<", gt: ">" };
+
 /** Text a no-JavaScript reader sees: tags, scripts, styles removed. */
 export function visibleText(html) {
   return html
     .replace(/<(script|style|noscript|head)\b[\s\S]*?<\/\1>/g, " ")
     .replace(/<[^>]+>/g, " ")
-    .replaceAll("&amp;", "&")
+    .replace(/&(#x27|#39|quot|lt|gt);/g, (_, e) => ENTITIES[e])
+    .replaceAll("&amp;", "&") // last, so "&amp;lt;" stays "&lt;"
     .replace(/\s+/g, " ");
 }
 

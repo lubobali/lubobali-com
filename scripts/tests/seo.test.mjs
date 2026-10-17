@@ -125,6 +125,12 @@ test("checkBotText: name, one h1 and <main> in raw HTML pass", () => {
   assert.deepEqual(checkBotText(html, ["Lubo Bali", "Senior AI & Data Platform Engineer"]), []);
 });
 
+test("checkBotText: HTML entities are decoded like a bot reads them", () => {
+  // React writes ' as &#x27;; bots see the apostrophe.
+  const html = `<main><h1>Hi</h1><a>Inside LuBot&#x27;s &quot;DB&quot; &lt;3 &#39;x&#39;</a></main>`;
+  assert.deepEqual(checkBotText(html, [`Inside LuBot's "DB" <3 'x'`]), []);
+});
+
 test("checkBotText: text only in scripts/meta does not count", () => {
   // AI bots read text, not JSON-LD or React's script payload.
   const html = `<head><title>Lubo Bali</title></head><body><main><h1>Hello</h1>

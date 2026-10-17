@@ -1,4 +1,5 @@
 import { Hero } from "@/components/home/hero";
+import { ProofStrip } from "@/components/home/proof-strip";
 import { SeeItWork } from "@/components/home/see-it-work";
 import { JsonLd } from "@/components/seo/json-ld";
 import { homeGraph } from "@/lib/schema";
@@ -12,6 +13,7 @@ export default function Home() {
       <JsonLd data={homeGraph()} />
       <Hero />
       <SeeItWork />
+      <ProofStrip />
     </main>
   );
 }
