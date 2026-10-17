@@ -1,4 +1,4 @@
-// One source of truth for who Lubo is and where to find him. Used by the
+// One source of truth for who Lubo is and where to find Lubo. Used by the
 // page metadata, the JSON-LD entity, sitemap/robots and llms.txt, so Google
 // and AI assistants all read the same facts.
 // Profile links: Phase 2 decision L3 (all checked live 2026-10-13).
@@ -9,8 +9,16 @@ export const site = {
   jobTitle: "Senior AI & Data Platform Engineer",
   // Meta description + llms.txt summary. 50-160 chars (scripts/check-seo.mjs).
   description:
-    "Senior AI & Data Platform Engineer. Solo-built LuBot.ai, a production multi-tenant AI SaaS featured by Neon (Databricks). Open to freelance projects.",
+    "Senior AI & Data Platform Engineer. Solo-built LuBot.ai, a production multi-tenant AI SaaS featured by Neon (Databricks). Open to contract and full-time roles.",
   locale: "en_US",
+  // Contract first, full-time also open (Phase 3 D2). Shown near every
+  // Book-a-call button.
+  availability: "Available for contract projects and full-time roles.",
+  // The one call-to-action: free 30-min intro call (Phase 3 D3).
+  bookCall: {
+    label: "Book a free 30-min call",
+    url: "https://calendly.com/data-lubobali/30min",
+  },
   // Own profiles (schema.org sameAs).
   sameAs: [
     "https://www.linkedin.com/in/lubo-bali",
