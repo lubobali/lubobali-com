@@ -16,13 +16,13 @@ function tiles(): Record<string, Tile> {
   return JSON.parse(readFileSync(join(process.cwd(), "src/generated/rain.json"), "utf8"));
 }
 
-export function DataRain() {
+export function DataRain({ className = "" }: { className?: string }) {
   const layers = Object.entries(tiles());
   // No preload on purpose: the rain fades in (globals.css), so it is not
   // the LCP element, and early tile downloads only slowed the simulated
   // phone LCP (Lighthouse counts every request started before first paint).
   return (
-    <div aria-hidden className="ambient ambient-rain">
+    <div aria-hidden className={`ambient ambient-rain ${className}`}>
       {layers.map(([name, t]) => (
         <div
           key={name}

@@ -198,8 +198,26 @@ body {
     var(--rain-zone, linear-gradient(var(--rain-dim), var(--rain-dim)));
   mask-composite: intersect;
 }
-/* Home hero: text on top (phone) / on the left (desktop), photo after. */
+/* Home top (page.tsx, hero + LuBot loop): one rain that flows down and
+   fades out before the proof strip (Lubo picked "C", Phase 3 H5).
+   Dim inside the 72rem text column, full strength in the side margins
+   (wide screens only; on narrower ones the column is the whole width). */
+.ambient-rain.rain-flow {
+  mask-image:
+    linear-gradient(to bottom, #000 0 60%, transparent),
+    linear-gradient(
+      to right,
+      #000 calc(50% - 38rem),
+      var(--rain-dim) calc(50% - 35rem) calc(50% + 35rem),
+      #000 calc(50% + 38rem)
+    );
+}
+/* Home hero: EXTRA rain at full strength by the photo only. Behind the
+   text it is off (the page rain already shows there, dimmed), so text
+   still sits on one dim rain = the contrast-checked --glow-rain level.
+   Text on top (phone) / on the left (desktop), photo after. */
 .hero-rain .ambient-rain {
+  --rain-dim: transparent;
   --rain-zone: linear-gradient(to bottom, var(--rain-dim) 0 64%, #000 76%);
 }
 @media (min-width: 1024px) {
@@ -222,6 +240,18 @@ body {
    ("lighten" keeps the brighter pixel); edges fade out. */
 .hero-photo {
   mix-blend-mode: lighten;
+}
+/* Navy with soft edges over the rain, e.g. around the LuBot loop. */
+.rain-clear {
+  mask-image:
+    linear-gradient(to right, transparent, #000 18%, #000 82%, transparent),
+    linear-gradient(to bottom, transparent, #000 15%, #000 85%, transparent);
+  mask-composite: intersect;
+}
+/* Navy behind the photo, same soft edges: no rain shows through Lubo
+   (Lubo, Phase 3 H5); the rain moves left and right of the photo. */
+.hero-photo,
+.hero-photo-backdrop {
   mask-image:
     linear-gradient(to right, transparent 0, #000 22%, #000 85%, transparent),
     linear-gradient(to bottom, transparent 0, #000 10%, #000 78%, transparent);
@@ -232,7 +262,8 @@ body {
   /* Soft entrance for the rain and the hero photo (H4). Also measured:
      faded-in elements stop being the LCP candidate, the headline text is. */
   .ambient-rain,
-  .hero-photo {
+  .hero-photo,
+  .hero-photo-backdrop {
     animation: ambient-fade-in 0.8s ease-out both;
   }
   .ambient-rain-far {

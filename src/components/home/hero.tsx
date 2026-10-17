@@ -48,6 +48,7 @@ function HeroContent() {
         </div>
       </div>
       <div className="relative mx-auto aspect-[4/5] w-full max-w-sm lg:max-w-none">
+        <div aria-hidden="true" className="hero-photo-backdrop absolute inset-0 bg-background" />
         <Picture
           name="lubo-bali-portrait"
           alt={PHOTO_ALT}
@@ -60,16 +61,16 @@ function HeroContent() {
   );
 }
 
-// The section is its own blend group (isolate) and paints the navy itself,
-// so the photo has navy + rain to blend into (mix-blend-mode). No z-index
-// on the content wrapper: that would start a new stacking context and cut
-// the photo off from them. Content after the rain in the DOM already
-// paints on top of it. `hero-rain`: rain dim behind text (globals.css).
+// The photo blends (mix-blend-mode) into the navy + flowing rain of the
+// wrapper in page.tsx (the blend group). So no isolate, z-index or
+// background here: each would cut the photo off from them. Content after
+// the rain in the DOM already paints on top of it. `hero-rain`: the
+// hero's extra, brighter rain shows only away from the text (globals.css).
 export function Hero() {
   return (
     <section
       aria-label="Introduction"
-      className="hero-rain relative isolate overflow-hidden bg-background"
+      className="hero-rain relative overflow-hidden"
     >
       <DataRain />
       {/* Strongest glow sits behind the headline (Phase 2 carry-over).

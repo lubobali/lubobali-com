@@ -1,3 +1,4 @@
+import { DataRain } from "@/components/ambient/data-rain";
 import { Hero } from "@/components/home/hero";
 import { ProofStrip } from "@/components/home/proof-strip";
 import { SeeItWork } from "@/components/home/see-it-work";
@@ -11,8 +12,13 @@ export default function Home() {
   return (
     <main className="flex flex-1 flex-col">
       <JsonLd data={homeGraph()} />
-      <Hero />
-      <SeeItWork />
+      {/* Blend group (isolate + navy) for the hero photo, and one rain that
+          flows from the top down behind the LuBot loop, then fades out. */}
+      <div className="relative isolate flex flex-col bg-background">
+        <DataRain className="rain-flow" />
+        <Hero />
+        <SeeItWork />
+      </div>
       <ProofStrip />
     </main>
   );
