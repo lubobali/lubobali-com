@@ -1,4 +1,5 @@
 import { Hero } from "@/components/home/hero";
+import { SeeItWork } from "@/components/home/see-it-work";
 import { JsonLd } from "@/components/seo/json-ld";
 import { homeGraph } from "@/lib/schema";
 
@@ -10,6 +11,7 @@ export default function Home() {
     <main className="flex flex-1 flex-col">
       <JsonLd data={homeGraph()} />
       <Hero />
+      <SeeItWork />
     </main>
   );
 }

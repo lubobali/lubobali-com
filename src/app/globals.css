@@ -229,6 +229,12 @@ body {
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  /* Soft entrance for the rain and the hero photo (H4). Also measured:
+     faded-in elements stop being the LCP candidate, the headline text is. */
+  .ambient-rain,
+  .hero-photo {
+    animation: ambient-fade-in 0.8s ease-out both;
+  }
   .ambient-rain-far {
     animation: ambient-rise 34s linear infinite;
   }
@@ -260,6 +266,11 @@ body {
 @keyframes ambient-drift-b {
   to {
     transform: translate3d(-45%, -25%, 0) scale(1.25);
+  }
+}
+@keyframes ambient-fade-in {
+  from {
+    opacity: 0;
   }
 }
 @keyframes ambient-rise {
