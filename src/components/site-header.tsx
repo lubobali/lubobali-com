@@ -16,12 +16,11 @@ export function SiteHeader() {
       </a>
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <Link href="/" prefetch={false} className="flex items-center gap-3 rounded-md font-semibold">
-          <span
-            aria-hidden="true"
-            className="grid size-8 place-items-center rounded-md bg-primary font-mono text-sm font-bold text-primary-foreground"
-          >
-            LB
-          </span>
+          {/* LB key logo, dark-site version (scripts/brand/logo.mjs). Decorative:
+              the name next to it is the link text. Plain <img>: a 3 KB file
+              needs no optimizer (static export). */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/brand/lb-logo.webp" alt="" width={46} height={48} className="h-10 w-auto" />
           <span>{site.name}</span>
         </Link>
         <BookCall size="lg" compact className="px-4" />
