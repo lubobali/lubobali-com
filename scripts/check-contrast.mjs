@@ -38,6 +38,12 @@ const PAIRS = [
   ["award", "card", TEXT], // service cards: "Proof" label + emblem
   ["tone-violet", "card", UI], // work cards: check marks + pictures
   ["tone-ice", "card", UI],
+  ["foreground", "card-blue", MAIN], // blue card faces (services + work)
+  ["muted-foreground", "card-blue", TEXT],
+  ["link", "card-blue", TEXT],
+  ["award", "card-blue", TEXT],
+  ["tone-violet", "card-blue", UI],
+  ["tone-ice", "card-blue", UI],
 ];
 
 // See-through glow tokens (`--glow-*`, ambient backgrounds): text on top

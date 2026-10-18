@@ -68,6 +68,13 @@
   /* Selected work tones (H7, Lubo: each card its own colour, still in the
      brand family): sapphire = --brand-light, plus a violet and an ice blue
      on each side of it. Used for the beam, picture and check marks. */
+  /* Card faces for the service + work cards: richer blue than --card so
+     they stand out (Lubo). Sky blue only as light: the top edge line and a
+     glow OUTSIDE the card. As the face it failed (white text 2:1), and
+     inside the card even an 18% glow dropped links to 3.3:1. */
+  --card-blue: oklch(0.3 0.093 264.9); /* #162a5c */
+  --sky: oklch(0.754 0.139 232.7); /* #38bdf8 */
+  --glow-sky: oklch(0.754 0.139 232.7 / 0.18);
   --tone-violet: oklch(0.72 0.14 292); /* #9f8ef4-ish */
   --tone-ice: oklch(0.8 0.1 228); /* #8ccaf0-ish */
   --glow-violet: oklch(0.72 0.14 292 / 0.22);
@@ -290,7 +297,9 @@ body {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  box-shadow: 0 28px 60px -32px var(--glow-award);
+  box-shadow:
+    0 0 36px -8px var(--glow-sky),
+    0 28px 60px -32px var(--glow-award);
   transition:
     transform 0.3s ease,
     box-shadow 0.3s ease;
@@ -321,13 +330,15 @@ body {
   z-index: -1;
   border-radius: calc(var(--radius-2xl, 1rem) - 1.5px);
   background:
-    radial-gradient(120% 60% at 20% 0%, color-mix(in oklch, var(--brand) 10%, var(--card)), transparent 70%),
-    var(--card);
+    linear-gradient(to bottom, var(--card-blue), color-mix(in oklch, var(--card-blue) 75%, var(--card)));
+  box-shadow: inset 0 1px 0 color-mix(in oklch, var(--sky) 55%, transparent);
 }
 .award-card:hover,
 .award-card:focus-within {
   transform: translateY(-4px);
-  box-shadow: 0 32px 70px -24px var(--glow-award);
+  box-shadow:
+    0 0 44px -6px var(--glow-sky),
+    0 32px 70px -24px var(--glow-award);
 }
 /* Selected work cards (H7). Same light-beam edge as the award cards, but
    each card has its own tone (data-tone) and beam: sapphire = one beam,
@@ -338,7 +349,9 @@ body {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  box-shadow: 0 28px 60px -36px var(--tone-glow);
+  box-shadow:
+    0 0 36px -8px var(--glow-sky),
+    0 28px 60px -36px var(--tone-glow);
 }
 .work-card[data-tone="violet"] {
   --tone: var(--tone-violet);
@@ -382,13 +395,8 @@ body {
   z-index: -1;
   border-radius: calc(var(--radius-2xl, 1rem) - 1.5px);
   background:
-    radial-gradient(70% 90% at 100% 0%, color-mix(in oklch, var(--tone) 9%, var(--card)), transparent 70%),
-    var(--card);
-}
-.work-card[data-tone="violet"]::after {
-  background:
-    radial-gradient(70% 90% at 0% 0%, color-mix(in oklch, var(--tone) 9%, var(--card)), transparent 70%),
-    var(--card);
+    linear-gradient(to bottom, var(--card-blue), color-mix(in oklch, var(--card-blue) 75%, var(--card)));
+  box-shadow: inset 0 1px 0 color-mix(in oklch, var(--sky) 55%, transparent);
 }
 .work-check {
   color: var(--tone);
