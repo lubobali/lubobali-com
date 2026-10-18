@@ -76,9 +76,13 @@ export function checkJsonLd(blocks) {
   const graph = data["@graph"] ?? [];
   const person = graph.find((n) => n["@type"] === "Person");
   if (!person) return [...p, "JSON-LD has no Person"];
-  for (const k of ["name", "url", "jobTitle", "image", "description", "knowsAbout", "sameAs"]) {
+  for (const k of ["name", "url", "jobTitle", "image", "description", "knowsAbout", "sameAs", "makesOffer"]) {
     if (!person[k] || (Array.isArray(person[k]) && !person[k].length)) p.push(`Person missing ${k}`);
   }
+  // What Lubo offers (Phase 3 H6): every Offer names its Service.
+  (person.makesOffer ?? []).forEach((o, i) => {
+    if (o.itemOffered?.["@type"] !== "Service" || !o.itemOffered.name) p.push(`Offer ${i + 1} has no named Service`);
+  });
   if (person.url !== ORIGIN + "/") p.push(`Person url is ${person.url}, want ${ORIGIN}/`);
   for (const u of [person.image?.url ?? person.image, ...(person.sameAs ?? [])]) {
     if (typeof u !== "string" || !u.startsWith("https://")) p.push(`not an https URL: ${u}`);

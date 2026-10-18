@@ -1,5 +1,6 @@
 import type { Graph } from "schema-dts";
 import { imageUrl } from "@/lib/images";
+import { services } from "@/lib/services";
 import { site } from "@/lib/site";
 
 // schema.org entity graph for the home page: who Lubo is (Person), the
@@ -25,6 +26,16 @@ export function homeGraph(): Graph {
         description: site.description,
         knowsAbout: [...site.knowsAbout],
         sameAs: [...site.sameAs],
+        // Same 3 services as the "What I do" cards (Phase 3 H6).
+        makesOffer: services.map((s) => ({
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: s.name,
+            description: s.description,
+            provider: { "@id": id("person") },
+          },
+        })),
         subjectOf: {
           "@type": "Article",
           headline: site.featuredIn.title,

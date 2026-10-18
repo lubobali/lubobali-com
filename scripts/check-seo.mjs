@@ -33,6 +33,10 @@ const PAGE_TEXT = {
     "Featured by Neon (Databricks)", // proof strip (Phase 3 H5)
     "Inside LuBot's database-per-tenant architecture",
     "12,000+",
+    "What I do", // service cards (Phase 3 H6)
+    "AI agents & RAG",
+    "AI-ready data platforms",
+    "AI in production",
   ],
 };
 

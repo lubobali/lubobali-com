@@ -61,6 +61,10 @@
   /* "Available" status dot (next to the availability text, so not the
      only signal); kept >= 3:1 like other UI parts. */
   --success: oklch(0.773 0.153 163.2); /* #34d399 */
+  /* Award metal = platinum, like the LB logo (service card emblems +
+     "Proof", Phase 3 H6; gold clashed with the navy/blue, Lubo). */
+  --award: oklch(0.906 0.031 265.3); /* #d6e0f5 */
+  --glow-award: oklch(0.68 0.155 266 / 0.22); /* blue, like --brand-light */
 
   --radius: 0.75rem;
 }
@@ -82,6 +86,7 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-success: var(--success);
+  --color-award: var(--award);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -258,6 +263,105 @@ body {
   mask-composite: intersect;
 }
 
+/* Service cards as awards (Phase 3 H6, Lubo): platinum-to-blue edge, soft
+   blue glow, glowing platinum emblem. Glows use --glow-award (contrast-checked under
+   text). Hover lift = transform only. */
+.award-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  box-shadow: 0 28px 60px -32px var(--glow-award);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+/* The edge: a 1.5px frame cut out of a turning cone of light, so a blue
+   to platinum beam runs around the card. ::before = the light (rotates,
+   transform only), ::after = the card face on top of it. */
+.award-card::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: -2;
+  width: 250%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  background: conic-gradient(
+    var(--border) 0 62%,
+    var(--brand-light) 76%,
+    var(--award) 82%,
+    var(--border) 94%
+  );
+}
+.award-card::after {
+  content: "";
+  position: absolute;
+  inset: 1.5px;
+  z-index: -1;
+  border-radius: calc(var(--radius-2xl, 1rem) - 1.5px);
+  background:
+    radial-gradient(120% 60% at 20% 0%, color-mix(in oklch, var(--brand) 10%, var(--card)), transparent 70%),
+    var(--card);
+}
+.award-card:hover,
+.award-card:focus-within {
+  transform: translateY(-4px);
+  box-shadow: 0 32px 70px -24px var(--glow-award);
+}
+/* Emblem: platinum ring, softly lit disc, glowing icon, halo. */
+.award-emblem {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 9999px;
+  color: var(--award);
+  border: 1.5px solid transparent;
+  background:
+    radial-gradient(
+        circle at 35% 30%,
+        color-mix(in oklch, var(--award) 26%, var(--card)),
+        var(--card) 75%
+      )
+      padding-box,
+    linear-gradient(
+        145deg,
+        var(--award),
+        color-mix(in oklch, var(--award) 30%, var(--card)) 55%,
+        var(--award)
+      )
+      border-box;
+}
+.award-emblem svg {
+  filter: drop-shadow(0 0 3px var(--glow-award)) drop-shadow(0 0 10px var(--glow-award));
+}
+/* A shine that sweeps across the emblem now and then (polished metal). */
+.award-emblem::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    115deg,
+    transparent 40%,
+    color-mix(in oklch, var(--award) 40%, transparent) 50%,
+    transparent 60%
+  );
+  background-size: 300% 100%;
+  background-position: 100% 0;
+}
+/* Halo behind the emblem (stays clear of the title below). */
+.award-emblem::before {
+  content: "";
+  position: absolute;
+  inset: -18px;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(closest-side, var(--glow-award), transparent);
+}
+
 @media (prefers-reduced-motion: no-preference) {
   /* Soft entrance for the rain and the hero photo (H4). Also measured:
      faded-in elements stop being the LCP candidate, the headline text is. */
@@ -265,6 +369,29 @@ body {
   .hero-photo,
   .hero-photo-backdrop {
     animation: ambient-fade-in 0.8s ease-out both;
+  }
+  /* The emblem glow slowly "breathes". */
+  .award-emblem::before {
+    animation: award-glow 3.2s ease-in-out infinite alternate;
+  }
+  /* Light beam around the card edge; each card starts elsewhere. */
+  .award-card::before {
+    animation: award-beam 7s linear infinite;
+  }
+  .award-card:nth-child(2)::before {
+    animation-delay: -2.3s;
+  }
+  .award-card:nth-child(3)::before {
+    animation-delay: -4.6s;
+  }
+  .award-emblem::after {
+    animation: award-shine 5s ease-in-out infinite;
+  }
+  .award-card:nth-child(2) .award-emblem::after {
+    animation-delay: -1.6s;
+  }
+  .award-card:nth-child(3) .award-emblem::after {
+    animation-delay: -3.2s;
   }
   .ambient-rain-far {
     animation: ambient-rise 34s linear infinite;
@@ -289,6 +416,31 @@ body {
   }
 }
 
+@keyframes award-beam {
+  to {
+    rotate: 1turn;
+  }
+}
+/* Shine crosses in the first 30%, then rests. */
+@keyframes award-shine {
+  0% {
+    background-position: 100% 0;
+  }
+  30%,
+  100% {
+    background-position: 0 0;
+  }
+}
+@keyframes award-glow {
+  from {
+    opacity: 0.5;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
 @keyframes ambient-drift-a {
   to {
     transform: translate3d(50%, 30%, 0) scale(1.3);

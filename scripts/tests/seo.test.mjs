@@ -32,6 +32,7 @@ const person = {
   image: "https://lubobali.com/img/a.webp",
   knowsAbout: ["RAG"],
   sameAs: ["https://github.com/lubobali"],
+  makesOffer: [{ "@type": "Offer", itemOffered: { "@type": "Service", name: "AI agents & RAG" } }],
 };
 const ld = (graph) => JSON.stringify({ "@context": "https://schema.org", "@graph": graph });
 
@@ -86,6 +87,14 @@ test("checkJsonLd: http sameAs and missing fields fail", () => {
   const bad = { ...person, sameAs: ["http://x.com/a"], knowsAbout: [] };
   const problems = checkJsonLd([ld([bad])]);
   assert.equal(problems.length, 2, problems.join("\n"));
+});
+
+test("checkJsonLd: Person must offer named services (makesOffer)", () => {
+  const { makesOffer, ...noOffer } = person;
+  assert.ok(makesOffer);
+  assert.match(checkJsonLd([ld([noOffer])]).join(), /Person missing makesOffer/);
+  const unnamed = { ...person, makesOffer: [{ "@type": "Offer", itemOffered: { "@type": "Service" } }] };
+  assert.match(checkJsonLd([ld([unnamed])]).join(), /Offer 1 has no named Service/);
 });
 
 test("checkRobots: open + sitemap passes, Disallow: / fails", () => {

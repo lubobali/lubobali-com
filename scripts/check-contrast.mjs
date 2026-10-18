@@ -35,6 +35,7 @@ const PAIRS = [
   ["ring", "card", UI],
   ["input", "background", UI],
   ["success", "background", UI], // "available" status dot
+  ["award", "card", TEXT], // service cards: "Proof" label + emblem
 ];
 
 // See-through glow tokens (`--glow-*`, ambient backgrounds): text on top
