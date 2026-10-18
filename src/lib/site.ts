@@ -9,11 +9,13 @@ export const site = {
   jobTitle: "Senior AI & Data Platform Engineer",
   // Meta description + llms.txt summary. 50-160 chars (scripts/check-seo.mjs).
   description:
-    "Senior AI & Data Platform Engineer. Solo-built LuBot.ai, a production multi-tenant AI SaaS featured by Neon (Databricks). Open to contract and full-time roles.",
+    "Senior AI & Data Platform Engineer. Solo-built LuBot.ai, a production multi-tenant AI SaaS featured by Neon (Databricks). Available for AI projects.",
   locale: "en_US",
-  // Contract first, full-time also open (Phase 3 D2). Shown near every
-  // Book-a-call button.
-  availability: "Available for contract projects and full-time roles.",
+  // Projects only (Lubo, 2026-10-18; replaces D2 "full-time also open").
+  // Shown near every Book-a-call button. Lubo updates the month by hand
+  // when it moves (set 2026-10-18 = about 2 months out).
+  availableFrom: "December 2026",
+  availability: "Available for new AI projects from December 2026.",
   // The one call-to-action: free 30-min intro call (Phase 3 D3).
   email: "data@lubobali.com",
   bookCall: {

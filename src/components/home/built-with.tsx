@@ -13,7 +13,7 @@ export function BuiltWith() {
     <section
       id="stack"
       aria-labelledby="stack-title"
-      className="relative mx-auto grid w-full max-w-6xl items-center justify-center overflow-x-clip gap-10 px-4 pt-8 pb-28 sm:px-6 lg:grid-cols-[minmax(0,24rem)_auto] lg:gap-14 lg:pt-12 lg:pb-32"
+      className="relative mx-auto grid w-full max-w-6xl items-center justify-center overflow-x-clip gap-10 px-4 py-8 sm:px-6 lg:grid-cols-[minmax(0,24rem)_auto] lg:gap-14 lg:py-12"
     >
       <div className="relative flex max-w-md flex-col gap-4">
         {/* Soft navy behind the text: the rain moves around it (Lubo). */}

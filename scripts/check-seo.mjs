@@ -29,7 +29,7 @@ const PAGE_TEXT = {
   "/": [
     "Senior AI & Data Platform Engineer",
     "I build AI that works on your real data, in production.", // hero headline (Phase 3 H1)
-    "Available for contract projects and full-time roles.",
+    "Available for new AI projects from December 2026.",
     "Featured by Neon (Databricks)", // proof strip (Phase 3 H5)
     "Inside LuBot's database-per-tenant architecture",
     "12,000+",
@@ -43,6 +43,10 @@ const PAGE_TEXT = {
     "Built with", // H8 wheel: names are link text, not only logos
     "AWS, used in LuBot.ai",
     "PyTorch, used in GraphGuard-AI",
+    "How it works", // H9
+    "Every 2 weeks: update + invoice",
+    "You own 100% of what I build",
+    "AI Engineer (contract) at Structured Fusion AI",
   ],
 };
 

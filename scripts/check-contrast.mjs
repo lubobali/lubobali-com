@@ -44,6 +44,16 @@ const PAIRS = [
   ["award", "card-blue", TEXT],
   ["tone-violet", "card-blue", UI],
   ["tone-ice", "card-blue", UI],
+  ["success", "card-blue", UI], // "Now" status dot (H9)
+  ["foreground", "card-sky-top", MAIN], // How it works cards, light top
+  ["foreground", "journey-1", MAIN], // step journey, lightest colour
+  ["card-text-soft", "journey-1", TEXT],
+  ["award", "journey-1", TEXT],
+  ["card-text-soft", "card-sky-top", TEXT],
+  ["award", "card-sky-top", TEXT],
+  ["success", "card-sky-top", UI],
+  ["soon", "card-sky-top", UI], // "Next project" amber dot (H9)
+  ["soon", "card-blue", UI],
 ];
 
 // See-through glow tokens (`--glow-*`, ambient backgrounds): text on top
