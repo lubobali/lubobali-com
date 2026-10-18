@@ -22,8 +22,13 @@ export default function Home() {
         <SeeItWork />
       </div>
       <ProofStrip />
-      <Services />
-      <SelectedWork />
+      {/* Second rain (same tiles, cached): shows around the cards, never on
+          them (cards are opaque), dim behind headings, full in the margins. */}
+      <div className="relative isolate flex flex-col">
+        <DataRain className="rain-around" />
+        <Services />
+        <SelectedWork />
+      </div>
     </main>
   );
 }

@@ -36,7 +36,7 @@ const EMBLEMS: Record<Award, React.ReactNode> = {
 
 export function Services() {
   return (
-    <section aria-labelledby="what-i-do" className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
+    <section aria-labelledby="what-i-do" className="relative mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
       <h2 id="what-i-do" className="text-3xl font-semibold text-balance sm:text-4xl">
         What I do
       </h2>

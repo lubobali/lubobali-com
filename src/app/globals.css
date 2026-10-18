@@ -224,6 +224,19 @@ body {
       #000 calc(50% + 38rem)
     );
 }
+/* Home cards (page.tsx, What I do + Selected work, Lubo H7): rain fades in
+   after the proof strip; full height under the last card too (Lubo), then
+   a short fade into the footer. Same dim/full zones. */
+.ambient-rain.rain-around {
+  mask-image:
+    linear-gradient(to bottom, transparent, #000 6%, #000 calc(100% - 2.5rem), transparent),
+    linear-gradient(
+      to right,
+      #000 calc(50% - 38rem),
+      var(--rain-dim) calc(50% - 35rem) calc(50% + 35rem),
+      #000 calc(50% + 38rem)
+    );
+}
 /* Home hero: EXTRA rain at full strength by the photo only. Behind the
    text it is off (the page rain already shows there, dimmed), so text
    still sits on one dim rain = the contrast-checked --glow-rain level.

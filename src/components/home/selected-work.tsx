@@ -11,7 +11,7 @@ export function SelectedWork() {
     <section
       id="work"
       aria-labelledby="work-title"
-      className="mx-auto w-full max-w-6xl scroll-mt-20 px-4 py-16 sm:px-6 lg:py-20"
+      className="relative mx-auto w-full max-w-6xl scroll-mt-20 px-4 pt-16 pb-28 sm:px-6 lg:pt-20 lg:pb-32"
     >
       <h2 id="work-title" className="text-3xl font-semibold text-balance sm:text-4xl">
         Selected work
