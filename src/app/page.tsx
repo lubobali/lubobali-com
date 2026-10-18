@@ -2,6 +2,7 @@ import { DataRain } from "@/components/ambient/data-rain";
 import { Hero } from "@/components/home/hero";
 import { ProofStrip } from "@/components/home/proof-strip";
 import { SeeItWork } from "@/components/home/see-it-work";
+import { SelectedWork } from "@/components/home/selected-work";
 import { Services } from "@/components/home/services";
 import { JsonLd } from "@/components/seo/json-ld";
 import { homeGraph } from "@/lib/schema";
@@ -22,6 +23,7 @@ export default function Home() {
       </div>
       <ProofStrip />
       <Services />
+      <SelectedWork />
     </main>
   );
 }

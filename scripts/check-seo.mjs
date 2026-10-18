@@ -37,6 +37,9 @@ const PAGE_TEXT = {
     "AI agents & RAG",
     "AI-ready data platforms",
     "AI in production",
+    "Selected work", // case study previews (Phase 3 H7)
+    "GraphGuard-AI",
+    "HelloPayments",
   ],
 };
 

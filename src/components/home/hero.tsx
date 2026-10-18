@@ -1,6 +1,7 @@
 import { DataRain } from "@/components/ambient/data-rain";
 import { BookCall } from "@/components/book-call";
 import { Picture } from "@/components/picture";
+import { buttonVariants } from "@/components/ui/button";
 import { site } from "@/lib/site";
 
 // Home hero (Phase 3 H3). Copy approved by Lubo 2026-10-17
@@ -45,6 +46,10 @@ function HeroContent() {
         <SubLine className="max-w-xl" />
         <div className="flex flex-wrap gap-3 pt-2">
           <BookCall />
+          {/* Second, quieter action (H7): jump to the case studies. */}
+          <a href="#work" className={buttonVariants({ variant: "outline", size: "xl" })}>
+            See my work
+          </a>
         </div>
       </div>
       <div className="relative mx-auto aspect-[4/5] w-full max-w-sm lg:max-w-none">
