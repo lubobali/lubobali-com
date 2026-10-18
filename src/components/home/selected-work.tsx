@@ -11,7 +11,7 @@ export function SelectedWork() {
     <section
       id="work"
       aria-labelledby="work-title"
-      className="relative mx-auto w-full max-w-6xl scroll-mt-20 px-4 pt-16 pb-28 sm:px-6 lg:pt-20 lg:pb-32"
+      className="relative mx-auto w-full max-w-6xl scroll-mt-20 px-4 py-16 sm:px-6 lg:py-20"
     >
       <h2 id="work-title" className="text-3xl font-semibold text-balance sm:text-4xl">
         Selected work
@@ -20,8 +20,9 @@ export function SelectedWork() {
         {work.map((w) => (
           <li
             key={w.name}
+            id={w.id}
             data-tone={w.tone}
-            className="work-card grid gap-6 rounded-2xl p-6 sm:p-8 lg:grid-cols-[1fr_1.1fr] lg:gap-12"
+            className="work-card scroll-mt-24 grid gap-6 rounded-2xl p-6 sm:p-8 lg:grid-cols-[1fr_1.1fr] lg:gap-12"
           >
             <div className="flex min-w-0 flex-col gap-3">
               <h3 className="text-2xl font-semibold">{w.name}</h3>

@@ -1,4 +1,5 @@
 import { DataRain } from "@/components/ambient/data-rain";
+import { BuiltWith } from "@/components/home/built-with";
 import { Hero } from "@/components/home/hero";
 import { ProofStrip } from "@/components/home/proof-strip";
 import { SeeItWork } from "@/components/home/see-it-work";
@@ -28,6 +29,7 @@ export default function Home() {
         <DataRain className="rain-around" />
         <Services />
         <SelectedWork />
+        <BuiltWith />
       </div>
     </main>
   );

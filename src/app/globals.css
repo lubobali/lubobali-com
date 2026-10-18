@@ -496,6 +496,187 @@ body {
   transform-box: view-box;
   transform-origin: 200px 82px;
 }
+/* Built with wheel (Phase 3 H8, Lubo): a luxury watch dial. Logos sit on a
+   ring (--n slots, slot --i set inline) that turns slowly; each coin turns
+   back the same amount, so logos stay upright. Hover / keyboard focus / the
+   LB checkbox stop it. Middle: LB logo, or the hovered tool + project
+   (:has, one rule per slot below; add rules if the list grows past 14). */
+.tech-wheel {
+  /* Coins and hub scale with the dial and fill it (Lubo: no empty ring). */
+  --size: min(34rem, calc(100vw - 2rem));
+  --coin: calc(var(--size) * 0.16);
+  --r: calc(var(--size) / 2 - var(--coin) / 2 - var(--size) * 0.025);
+  --hub: calc(var(--size) * 0.48);
+  position: relative;
+  justify-self: center;
+  width: var(--size);
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  background:
+    radial-gradient(closest-side, color-mix(in oklch, var(--card-blue) 70%, var(--background)), var(--background) 92%, transparent);
+  box-shadow: 0 0 60px -10px var(--glow-sky);
+}
+/* Bezel: platinum rim + fine ticks like a watch, and the orbit line. */
+.tech-wheel-bezel {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid color-mix(in oklch, var(--award) 40%, transparent);
+  background: repeating-conic-gradient(
+    color-mix(in oklch, var(--award) 45%, transparent) 0 0.35deg,
+    transparent 0.35deg 6deg
+  );
+  mask-image: radial-gradient(closest-side, transparent calc(100% - 0.6rem), #000 calc(100% - 0.55rem));
+}
+.tech-wheel-ring {
+  position: absolute;
+  inset: 0;
+}
+/* Orbit line through the coin centres (a circle, so turning is invisible). */
+.tech-wheel-ring::before {
+  content: "";
+  position: absolute;
+  inset: calc(var(--size) / 2 - var(--r));
+  border-radius: 9999px;
+  border: 1px solid color-mix(in oklch, var(--sky) 35%, transparent);
+}
+.tech-wheel-slot {
+  --a: calc(var(--i) * 1turn / var(--n));
+  position: absolute;
+  top: calc(50% - var(--coin) / 2);
+  left: calc(50% - var(--coin) / 2);
+  width: var(--coin);
+  height: var(--coin);
+  transform: rotate(var(--a)) translateY(calc(-1 * var(--r))) rotate(calc(-1 * var(--a)));
+}
+.tech-coin {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in oklch, var(--award) 35%, transparent);
+  background: radial-gradient(circle at 35% 30%, color-mix(in oklch, var(--card-blue) 85%, var(--award)), var(--background) 80%);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, var(--award) 30%, transparent),
+    0 6px 16px -6px #000;
+  transition:
+    scale 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.tech-coin svg {
+  width: 62%;
+  height: 62%;
+}
+.tech-coin[data-logo="aws"] svg {
+  width: 72%;
+}
+.tech-coin:hover,
+.tech-coin:focus-visible {
+  scale: 1.18;
+  border-color: var(--sky);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, var(--award) 40%, transparent),
+    0 0 24px -2px var(--glow-sky);
+}
+/* Middle: LB logo on a platinum-rimmed disc = the stop/start control. */
+.tech-wheel-hub {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: var(--hub);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 9999px;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  background:
+    radial-gradient(circle at 35% 30%, color-mix(in oklch, var(--award) 18%, var(--card-blue)), var(--card-blue) 75%) padding-box,
+    linear-gradient(145deg, var(--award), color-mix(in oklch, var(--award) 30%, var(--card)) 55%, var(--award)) border-box;
+  box-shadow: 0 0 40px -6px var(--glow-award);
+}
+/* The LB mark alone (Lubo: no caption). */
+.tech-wheel-mark {
+  display: grid;
+  transition: opacity 0.2s ease;
+}
+.tech-wheel-mark img {
+  width: auto;
+  height: calc(var(--hub) * 0.42);
+}
+/* Polished-metal glint across the middle now and then (like the award
+   emblems), over the LB logo. */
+.tech-wheel-hub::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 38%,
+    color-mix(in oklch, var(--award) 12%, transparent) 46%,
+    color-mix(in oklch, var(--award) 38%, transparent) 50%,
+    color-mix(in oklch, var(--award) 12%, transparent) 54%,
+    transparent 62%
+  );
+  background-size: 300% 100%;
+  background-position: 100% 0;
+}
+.tech-wheel-toggle:focus-visible ~ .tech-wheel-hub {
+  outline: 2px solid var(--ring);
+  outline-offset: 4px;
+}
+.tech-wheel-labels {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--hub) - 1rem);
+  translate: -50% -50%;
+  pointer-events: none;
+}
+.tech-wheel-label {
+  position: absolute;
+  inset: 50% 0 auto;
+  translate: 0 -50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  text-align: center;
+  font-size: clamp(0.95rem, calc(var(--size) * 0.036), 1.2rem);
+  font-weight: 600;
+  line-height: 1.25;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.tech-wheel-label span + span {
+  font-size: 0.85em;
+  font-weight: 500;
+}
+.tech-wheel:has(.tech-coin:is(:hover, :focus-visible)) .tech-wheel-mark {
+  opacity: 0;
+}
+.tech-wheel:has(.tech-wheel-slot:nth-child(1) .tech-coin:is(:hover, :focus-visible)) .tech-wheel-label:nth-child(1),
+.tech-wheel:has(.tech-wheel-slot:nth-child(2) .tech-coin:is(:hover, :focus-visible)) .tech-wheel-label:nth-child(2),
+.tech-wheel:has(.tech-wheel-slot:nth-child(3) .tech-coin:is(:hover, :focus-visible)) .tech-wheel-label:nth-child(3),
+.tech-wheel:has(.tech-wheel-slot:nth-child(4) .tech-coin:is(:hover, :focus-visible)) .tech-wheel-label:nth-child(4),
+.tech-wheel:has(.tech-wheel-slot:nth-child(5) .tech-coin:is(:hover, :focus-visible)) .tech-wheel-label:nth-child(5),
+.tech-wheel:has(.tech-wheel-slot:nth-child(6) .tech-coin:is(:hover, :focus-visible)) .tech-wheel-label:nth-child(6),
+.tech-wheel:has(.tech-wheel-slot:nth-child(7) .tech-coin:is(:hover, :focus-visible)) .tech-wheel-label:nth-child(7),
+.tech-wheel:has(.tech-wheel-slot:nth-child(8) .tech-coin:is(:hover, :focus-visible)) .tech-wheel-label:nth-child(8),
+.tech-wheel:has(.tech-wheel-slot:nth-child(9) .tech-coin:is(:hover, :focus-visible)) .tech-wheel-label:nth-child(9),
+.tech-wheel:has(.tech-wheel-slot:nth-child(10) .tech-coin:is(:hover, :focus-visible)) .tech-wheel-label:nth-child(10),
+.tech-wheel:has(.tech-wheel-slot:nth-child(11) .tech-coin:is(:hover, :focus-visible)) .tech-wheel-label:nth-child(11),
+.tech-wheel:has(.tech-wheel-slot:nth-child(12) .tech-coin:is(:hover, :focus-visible)) .tech-wheel-label:nth-child(12),
+.tech-wheel:has(.tech-wheel-slot:nth-child(13) .tech-coin:is(:hover, :focus-visible)) .tech-wheel-label:nth-child(13),
+.tech-wheel:has(.tech-wheel-slot:nth-child(14) .tech-coin:is(:hover, :focus-visible)) .tech-wheel-label:nth-child(14) {
+  opacity: 1;
+}
+
 /* Emblem: platinum ring, softly lit disc, glowing icon, halo. */
 .award-emblem {
   position: relative;
@@ -593,6 +774,30 @@ body {
   }
   .work-card:nth-child(3) .work-art::after {
     animation-delay: -4s;
+  }
+  /* Built with wheel: one turn in 90 s, coins turn back to stay upright. */
+  .tech-wheel-ring,
+  .tech-coin {
+    animation: award-beam 90s linear infinite;
+  }
+  .tech-coin {
+    animation-direction: reverse;
+  }
+  .tech-wheel-hub::after {
+    animation: award-shine 7s ease-in-out 1.5s infinite;
+  }
+  /* Stops: the LB checkbox, keyboard focus on a logo, mouse hover. Not
+     :focus-within (clicking LB focuses the checkbox, so "start" would never
+     start) and not hover on touch screens (a tap leaves a sticky hover). */
+  .tech-wheel-toggle:checked ~ .tech-wheel-ring,
+  .tech-wheel-toggle:checked ~ .tech-wheel-ring .tech-coin,
+  .tech-wheel:has(.tech-coin:focus-visible) :is(.tech-wheel-ring, .tech-coin) {
+    animation-play-state: paused;
+  }
+  @media (hover: hover) {
+    .tech-wheel:hover :is(.tech-wheel-ring, .tech-coin) {
+      animation-play-state: paused;
+    }
   }
   .work-art .art-draw {
     stroke-dasharray: 1;

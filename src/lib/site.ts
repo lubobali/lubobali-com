@@ -51,6 +51,7 @@ export const site = {
     "PostgreSQL",
     "Python",
     "Apache Spark",
+    // The "Built with" wheel tools (src/lib/tech.ts) are added in schema.ts.
   ],
 } as const;
 

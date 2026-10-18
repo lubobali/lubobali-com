@@ -43,6 +43,10 @@ export function SiteFooter() {
       </div>
       <p className="mx-auto max-w-6xl px-4 pb-8 text-xs text-muted-foreground sm:px-6">
         © {new Date().getFullYear()} {site.name} · {site.product.legalName}
+        {/* For the "Built with" logos (H8). */}
+        <span className="mt-1 block">
+          Logos are trademarks of their owners, shown only to name the tools used. No endorsement implied.
+        </span>
       </p>
     </footer>
   );

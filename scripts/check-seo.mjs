@@ -40,6 +40,9 @@ const PAGE_TEXT = {
     "Selected work", // case study previews (Phase 3 H7)
     "GraphGuard-AI",
     "HelloPayments",
+    "Built with", // H8 wheel: names are link text, not only logos
+    "AWS, used in LuBot.ai",
+    "PyTorch, used in GraphGuard-AI",
   ],
 };
 

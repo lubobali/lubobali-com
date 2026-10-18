@@ -9,6 +9,8 @@ import { site } from "@/lib/site";
 // `art` = the moving picture on the card, `tone` = its accent colour
 // (all three stay in the brand blue family; globals.css .work-card).
 export type Work = {
+  // Anchor of the card (#id), used by the "Built with" wheel links.
+  id: string;
   name: string;
   art: "candles" | "payments" | "laundry";
   tone: "sapphire" | "violet" | "ice";
@@ -19,8 +21,9 @@ export type Work = {
   links: readonly { label: string; url: string }[];
 };
 
-export const work: readonly Work[] = [
+export const work = [
   {
+    id: "lubot",
     name: "LuBot.ai",
     art: "candles",
     tone: "sapphire",
@@ -32,13 +35,14 @@ export const work: readonly Work[] = [
       "Runs inside Claude with 9 MCP tools, listed in 3 MCP directories",
       "260,000+ lines of code and 12,000+ automated tests",
     ],
-    stack: ["Python", "FastAPI", "PostgreSQL (Neon)", "React", "NVIDIA models", "MCP"],
+    stack: ["Python", "FastAPI", "PostgreSQL (Neon)", "React", "NVIDIA models", "MCP", "AWS S3", "Docker"],
     links: [
       { label: "Visit LuBot.ai", url: site.product.url },
       { label: "Read the Neon article", url: site.featuredIn.url },
     ],
   },
   {
+    id: "hellopayments",
     name: "HelloPayments",
     art: "payments",
     tone: "violet",
@@ -55,6 +59,7 @@ export const work: readonly Work[] = [
     links: [],
   },
   {
+    id: "graphguard-ai",
     name: "GraphGuard-AI",
     art: "laundry",
     tone: "ice",
@@ -69,4 +74,4 @@ export const work: readonly Work[] = [
     stack: ["Python", "XGBoost", "PyTorch Geometric", "Polars", "Optuna"],
     links: [{ label: "See the code on GitHub", url: "https://github.com/lubobali/GraphGuard-AI" }],
   },
-];
+] as const satisfies readonly Work[];

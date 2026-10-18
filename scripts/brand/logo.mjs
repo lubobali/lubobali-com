@@ -3,7 +3,9 @@
 // dark-background version: greys (key, B, the L's bevel) are inverted to
 // silver, the white inside the B becomes see-through. The blue L is kept.
 //   in:  assets/brand/lb-logo-original.png (not served)
-//   out: public/brand/lb-logo.webp (96 px tall = 48 px at 2x)
+//   out: public/brand/lb-logo.webp (96 px tall = 48 px at 2x, header)
+//        public/brand/lb-logo-lg.webp (240 px tall, "Built with" wheel middle;
+//        own file, loaded lazily: a bigger header logo slowed phone LCP)
 // Output is committed; re-run only when the logo changes:
 //   node scripts/brand/logo.mjs
 import sharp from "sharp";
@@ -28,10 +30,15 @@ for (let i = 0; i < data.length; i += 4) {
   data[i + 2] = Math.min(255, silver + 8);
 }
 
-await sharp(data, { raw: info })
-  .trim()
-  .resize({ height: HEIGHT })
-  .webp({ quality: 90, alphaQuality: 100 })
-  .toFile("public/brand/lb-logo.webp");
-const meta = await sharp("public/brand/lb-logo.webp").metadata();
-console.log(`logo: public/brand/lb-logo.webp ${meta.width}x${meta.height}`);
+for (const [file, height] of [
+  ["public/brand/lb-logo.webp", HEIGHT],
+  ["public/brand/lb-logo-lg.webp", 240],
+]) {
+  await sharp(data, { raw: info })
+    .trim()
+    .resize({ height })
+    .webp({ quality: 90, alphaQuality: 100 })
+    .toFile(file);
+  const meta = await sharp(file).metadata();
+  console.log(`logo: ${file} ${meta.width}x${meta.height}`);
+}

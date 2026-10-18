@@ -2,6 +2,7 @@ import type { Graph } from "schema-dts";
 import { imageUrl } from "@/lib/images";
 import { services } from "@/lib/services";
 import { site } from "@/lib/site";
+import { tech } from "@/lib/tech";
 
 // schema.org entity graph for the home page: who Lubo is (Person), the
 // site, the profile page, and LuBot (founded by Lubo). Google and AI
@@ -24,7 +25,8 @@ export function homeGraph(): Graph {
         image: imageUrl("lubo-bali-portrait"),
         jobTitle: site.jobTitle,
         description: site.description,
-        knowsAbout: [...site.knowsAbout],
+        // Skills + the "Built with" wheel tools (H8), without repeats.
+        knowsAbout: [...new Set([...site.knowsAbout, ...tech.map((t) => t.name)])],
         sameAs: [...site.sameAs],
         // Same 3 services as the "What I do" cards (Phase 3 H6).
         makesOffer: services.map((s) => ({
