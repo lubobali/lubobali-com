@@ -31,6 +31,15 @@ export function homeGraph(): Graph {
         // Skills + the "Built with" wheel tools (H8), without repeats.
         knowsAbout: [...new Set([...site.knowsAbout, ...tech.map((t) => t.name)])],
         sameAs: [...site.sameAs],
+        // How to reach Lubo (H12): email + the free intro call.
+        email: site.email,
+        contactPoint: {
+          "@type": "ContactPoint",
+          contactType: "AI project inquiries",
+          email: site.email,
+          url: site.bookCall.url,
+          availableLanguage: "en",
+        },
         // Same 3 services as the "What I do" cards (Phase 3 H6).
         makesOffer: services.map((s) => ({
           "@type": "Offer",

@@ -147,6 +147,12 @@ export function checkLlmsTxt(txt) {
   if (!/^# Lubo Bali\n/.test(txt)) p.push("llms.txt must start with '# Lubo Bali'");
   if (!/^> .+/m.test(txt)) p.push("llms.txt has no '> summary' line");
   if (!txt.includes(ORIGIN)) p.push(`llms.txt does not link ${ORIGIN}`);
+  // H12: AI assistants should learn how to hire Lubo, not just who he is.
+  for (const h of ["## Contact", "## What I do", "## Selected work", "## How it works"]) {
+    if (!txt.includes(`\n${h}\n`)) p.push(`llms.txt has no '${h}' section`);
+  }
+  if (!/https:\/\/calendly\.com\//.test(txt)) p.push("llms.txt has no booking link");
+  if (/[⁠ ]/.test(txt)) p.push("llms.txt has invisible layout characters");
   return p;
 }
 

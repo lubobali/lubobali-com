@@ -114,9 +114,22 @@ test("checkSitemap: must list exactly the indexable pages", () => {
   assert.equal(checkSitemap(xml, ["/", "/about"]).length, 1);
 });
 
-test("checkLlmsTxt: needs H1, summary and a site link", () => {
-  assert.deepEqual(checkLlmsTxt("# Lubo Bali\n\n> Engineer.\n\n- https://lubobali.com/\n"), []);
-  assert.equal(checkLlmsTxt("hello").length, 3);
+const LLMS_OK =
+  "# Lubo Bali\n\n> Engineer.\n\n## Contact\n\n- https://calendly.com/x\n\n## What I do\n\n- a\n\n## Selected work\n\n- b\n\n## How it works\n\n1. c\n\n- https://lubobali.com/\n";
+
+test("checkLlmsTxt: needs H1, summary, site link, hire sections, booking link", () => {
+  assert.deepEqual(checkLlmsTxt(LLMS_OK), []);
+  assert.equal(checkLlmsTxt("hello").length, 8);
+});
+
+test("checkLlmsTxt: names the missing section and the missing booking link", () => {
+  const p = checkLlmsTxt(LLMS_OK.replace("## Selected work\n", "").replace("https://calendly.com/x", "x"));
+  assert.ok(p.some((m) => m.includes("'## Selected work'")));
+  assert.ok(p.some((m) => m.includes("booking link")));
+});
+
+test("checkLlmsTxt: rejects invisible layout characters", () => {
+  assert.equal(checkLlmsTxt(LLMS_OK.replace("Engineer.", "Mar⁠–⁠Aug 2026")).length, 1);
 });
 
 test("pngSize reads the IHDR size, rejects non-PNG", () => {
