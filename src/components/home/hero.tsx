@@ -25,7 +25,11 @@ function SubLine({ className = "" }: { className?: string }) {
   return (
     <p className={`text-lg text-muted-foreground sm:text-xl ${className}`}>
       {site.jobTitle}. I built{" "}
-      <a href={site.product.url} className="text-link underline-offset-4 hover:underline">
+      {/* Underlined, not colour only (WCAG 1.4.1, H12); a soft line, full on hover. */}
+      <a
+        href={site.product.url}
+        className="text-link underline decoration-link/40 underline-offset-4 transition-colors hover:decoration-link"
+      >
         LuBot.ai
       </a>{" "}
       on my own: a multi-tenant AI analytics SaaS that Neon (Databricks) featured for its

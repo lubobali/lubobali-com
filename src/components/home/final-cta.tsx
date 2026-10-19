@@ -29,7 +29,7 @@ export function FinalCta() {
           className="finale-mark hidden sm:block"
         />
         <h2 id="contact-title" className="relative text-3xl font-semibold text-balance sm:text-5xl">
-          Tell me your problem.
+          Tell me your problem.{" "}
           <span className="finale-sub mt-2 block">{"I'll find a way to build the solution."}</span>
         </h2>
         <p className="finale-chip relative">

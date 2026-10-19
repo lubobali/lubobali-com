@@ -16,6 +16,8 @@ export function IntroPlayer({ video, label, duration }: { video: VideoEntry; lab
     const v = ref.current;
     if (!v) return;
     setStarted(true);
+    // Captions on. The track is off until now, so it was not downloaded.
+    if (v.textTracks[0]) v.textTracks[0].mode = "showing";
     v.play().catch(() => {});
   }
 
@@ -33,10 +35,9 @@ export function IntroPlayer({ video, label, duration }: { video: VideoEntry; lab
         aria-label={label}
         className="relative block h-auto w-full"
       >
-        {/* Added on click, so the captions file is not one more request at page load. */}
-        {started && video.captions && (
-          <track kind="captions" src={video.captions} srcLang="en" label="English" default />
-        )}
+        {/* Always in the page (screen readers + checkers see captions exist),
+            but not `default`: a disabled track is not downloaded at page load. */}
+        {video.captions && <track kind="captions" src={video.captions} srcLang="en" label="English" />}
       </video>
       {!started && (
         <button type="button" onClick={play} className="intro-play group">
