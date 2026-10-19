@@ -7,21 +7,26 @@ import "./globals.css";
 
 // Self-hosted fonts: no Google fetch at build time or in the browser.
 // Files, licenses and sources: src/app/fonts/README.md
+// Trimmed to weights 400–600 + Latin (H12, 45 → 26 KB): it is the hero
+// text font = the phone LCP. A new weight or script: see fonts/README.md.
 const interTight = localFont({
-  src: "./fonts/InterTight-latin-wght.woff2",
-  weight: "100 900",
+  src: "./fonts/InterTight-latin-wght400-600.woff2",
+  weight: "400 600",
   variable: "--font-inter-tight",
   display: "swap",
 });
 
-// Preloaded on purpose (P9 measured): without preload, mono text inside a
-// paragraph swaps late, re-wraps the line (CLS) and delays LCP — and the
-// home page got no faster (LCP 2068 vs 2070 ms).
+// Not preloaded (Phase 3 H12). P9 preloaded it because the Phase 2 home
+// page had mono text inside a paragraph (late swap = CLS). The real home
+// page has no mono text at all (no font-mono, no <code>), and the preload
+// made every phone download 40 KB of it before the hero text (the LCP)
+// could paint. Pages that use it (styleguide) still load it on demand.
 const jetbrainsMono = localFont({
   src: "./fonts/JetBrainsMono-latin-wght.woff2",
   weight: "100 800",
   variable: "--font-jetbrains-mono",
   display: "swap",
+  preload: false,
 });
 
 // Site-wide defaults; pages override title/description. Relative URLs

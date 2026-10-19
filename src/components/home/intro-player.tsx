@@ -2,11 +2,12 @@
 
 import { useRef, useState } from "react";
 import type { VideoEntry } from "@/lib/videos";
+import { LazyPoster } from "./lazy-poster";
 
 // Lubo's intro (H9b): click to play, with sound. Nothing downloads before
-// the click (preload="none"; only the poster loads). Then native controls
-// appear and the English captions are on. Styles: globals.css
-// .intro-play.
+// the click (preload="none"); the poster is a lazy <img> behind the video
+// (H12), so it loads only near the screen. Then native controls appear and
+// the English captions are on. Styles: globals.css .intro-play.
 export function IntroPlayer({ video, label, duration }: { video: VideoEntry; label: string; duration: string }) {
   const ref = useRef<HTMLVideoElement>(null);
   const [started, setStarted] = useState(false);
@@ -20,17 +21,17 @@ export function IntroPlayer({ video, label, duration }: { video: VideoEntry; lab
 
   return (
     <div className="relative">
+      <LazyPoster video={video} />
       <video
         ref={ref}
         src={video.src}
-        poster={video.poster}
         width={video.width}
         height={video.height}
         controls={started}
         playsInline
         preload="none"
         aria-label={label}
-        className="block h-auto w-full"
+        className="relative block h-auto w-full"
       >
         {/* Added on click, so the captions file is not one more request at page load. */}
         {started && video.captions && (
