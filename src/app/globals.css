@@ -1072,6 +1072,9 @@ body {
   .award-card:nth-child(3)::before {
     animation-delay: -4.6s;
   }
+  .award-card:nth-child(4)::before {
+    animation-delay: -1.2s;
+  }
   .award-emblem::after {
     animation: award-shine 5s ease-in-out infinite;
   }
@@ -1179,6 +1182,9 @@ body {
   }
   .award-card:nth-child(3) .award-emblem::after {
     animation-delay: -3.2s;
+  }
+  .award-card:nth-child(4) .award-emblem::after {
+    animation-delay: -0.8s;
   }
   .ambient-rain-far {
     animation: ambient-rise 34s linear infinite;

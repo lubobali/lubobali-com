@@ -1,33 +1,45 @@
 import { site } from "@/lib/site";
 
-// What Lubo offers (Phase 3 H6). One list for the home page cards AND the
-// JSON-LD (schema.ts), so Google, AI assistants and visitors read the same
-// thing. Copy approved by Lubo 2026-10-17 (plans repo docs/phase-3-copy.md §3).
-// Each proof links to something a visitor can check today. `award` = the
-// glowing emblem on the card (Lubo: cards should feel like awards).
+// What Lubo offers (Phase 3 H6, rewritten in H12). One list for the home
+// page cards AND the JSON-LD (schema.ts) and llms.txt, so Google, AI
+// assistants and visitors read the same thing.
+// H12 (Lubo, 2026-10-19): 4 cards = what companies ask for most in 2026
+// (agents that act, data readiness = the #1 blocker, trust, AI cost
+// control), in the same words as the intro video: the problem a buyer
+// fears, then the fix, then a proof they can check today.
+// `award` = the glowing emblem on the card (Lubo: cards feel like awards).
 export const services = [
   {
-    name: "AI agents & RAG",
+    name: "AI agents that do the work",
     award: "crystal",
     description:
-      "Chat and agents that answer from your own documents and databases, with tools, citations and MCP connectors for Claude.",
+      "Not another chatbot. Agents that read your data, use your tools and finish the job, connected to Claude, ChatGPT or your own apps.",
     proof: "LuBot runs inside Claude with 9 MCP tools.",
     proofUrl: "https://smithery.ai/servers/lubobali/lubot",
   },
   {
-    name: "AI-ready data platforms",
+    name: "Data that's ready for AI",
     award: "medal",
     description:
-      "Postgres, pipelines and multi-tenant data design, so each customer's data is clean, separate and ready for AI.",
-    proof: "One database per customer, featured by Neon.",
+      "Most AI projects fail on messy data. I clean it, connect it and keep it organized, so your AI has something solid to stand on.",
+    proof: "12 years in data. Neon (Databricks) featured my design.",
     proofUrl: site.featuredIn.url,
   },
   {
-    name: "AI in production",
+    name: "Answers you can trust",
     award: "trophy",
     description:
-      "AI that stays reliable and affordable: tests, model fallbacks, caching, cost limits, monitoring and safe deploys.",
-    proof: "12,000+ automated tests and automatic model fallback in LuBot.",
+      "Numbers come from your real data, calculated by code. The AI only explains them, so it can't make up a figure.",
+    proof: "Same question, same answer. 12,000+ automated tests.",
     proofUrl: site.product.url,
+  },
+  {
+    name: "AI bills that stay small",
+    award: "laurel",
+    description:
+      "Simple questions don't need an expensive model. Each question goes the cheapest way that works, with limits so costs never surprise you.",
+    proof: "80% of questions at $0 AI cost in a live project.",
+    // The HelloPayments card in Selected work (same page) shows it.
+    proofUrl: "/#hellopayments",
   },
 ] as const;

@@ -36,9 +36,10 @@ const PAGE_TEXT = {
     "Inside LuBot's database-per-tenant architecture",
     "12,000+",
     "What I do", // service cards (Phase 3 H6)
-    "AI agents & RAG",
-    "AI-ready data platforms",
-    "AI in production",
+    "AI agents that do the work", // H12: 4 cards
+    "Data that's ready for AI",
+    "Answers you can trust",
+    "AI bills that stay small",
     "Selected work", // case study previews (Phase 3 H7)
     "GraphGuard-AI",
     "HelloPayments",
