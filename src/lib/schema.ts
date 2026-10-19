@@ -1,11 +1,13 @@
 import type { Graph } from "schema-dts";
 import { imageUrl } from "@/lib/images";
+import { intro } from "@/lib/intro";
 import { services } from "@/lib/services";
 import { site } from "@/lib/site";
 import { tech } from "@/lib/tech";
+import { getVideo } from "@/lib/videos";
 
 // schema.org entity graph for the home page: who Lubo is (Person), the
-// site, the profile page, and LuBot (founded by Lubo). Google and AI
+// site, the profile page, LuBot (founded by Lubo) and his intro video. Google and AI
 // assistants use it to connect "Lubo Bali" to the right profiles.
 // Checked after every build by scripts/check-seo.mjs; validate changes at
 // https://validator.schema.org and Google's Rich Results Test.
@@ -14,6 +16,7 @@ const id = (name: string) => `${site.url}/#${name}`;
 const LUBOT_ID = `${site.product.url}#organization`;
 
 export function homeGraph(): Graph {
+  const video = getVideo("lubo-intro");
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -69,6 +72,21 @@ export function homeGraph(): Graph {
         name: `${site.name} — ${site.jobTitle}`,
         isPartOf: { "@id": id("website") },
         mainEntity: { "@id": id("person") },
+      },
+      {
+        // Intro video (H9b): Google can show it in video results.
+        "@type": "VideoObject",
+        "@id": id("intro-video"),
+        name: intro.name,
+        description: intro.description,
+        thumbnailUrl: `${site.url}${video.poster}`,
+        contentUrl: `${site.url}${video.src}`,
+        uploadDate: intro.uploadDate,
+        duration: intro.duration,
+        inLanguage: "en",
+        transcript: intro.transcript.join(" "),
+        creator: { "@id": id("person") },
+        isPartOf: { "@id": id("profile") },
       },
     ],
   };

@@ -24,3 +24,24 @@ ffmpeg -ss 0.5 -i lubot-demo-loop.mp4 -frames:v 1 -c:v libwebp -quality 80 lubot
 
 Check every new video for private info (e-mails, keys, customer data)
 before adding it: this folder is in the public GitHub mirror.
+
+## lubo-intro.mp4 (+ poster, captions)
+
+Lubo's 2:20 intro (Phase 3 H9b), recorded 2026-10-19 on a plain wall
+(OBS + GoPro + Rode), approved by Lubo. Click to play, so it has its own
+budget (12 MB); nothing downloads before the click.
+
+- Background removed offline (Robust Video Matting at 1080p, 2 px matte
+  choke against the GoPro's sharpening halo, clean-plate edge cleanup),
+  site navy + blue glow + the site's own data-rain tiles. Master + work
+  files stay on the server, not in git.
+- 1280×720, 30 fps, H.264 CRF 27 `-preset veryslow -tune film`, AAC 96k,
+  loudness -16 LUFS, `+faststart` (~10.5 MB).
+- Poster = frame at 1:02.3, WebP q78. Captions = `lubo-intro.en.vtt`
+  (Whisper timings, words checked by hand); same text as `src/lib/intro.ts`.
+
+```sh
+ffmpeg -i intro-v4.mp4 -map 0:v -map 0:a -c:v libx264 -preset veryslow -crf 27 \
+ -profile:v high -tune film -g 60 -movflags +faststart -c:a aac -b:a 96k -ac 2 lubo-intro.mp4
+ffmpeg -ss 62.3 -i lubo-intro.mp4 -frames:v 1 -c:v libwebp -quality 78 lubo-intro-poster.webp
+```

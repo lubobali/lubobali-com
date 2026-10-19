@@ -944,6 +944,59 @@ body {
   outline-offset: 2px;
 }
 
+/* Intro video (H9b): the whole poster is the play button. Round
+   platinum-edged button with a sky glow + label, together at the bottom
+   so Lubo's face stays clear (same family as the footer icons). */
+.intro-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.75rem;
+  padding-bottom: 1rem;
+  cursor: pointer;
+  background: linear-gradient(to top, color-mix(in oklch, var(--background) 70%, transparent), transparent 45%);
+}
+.intro-play-icon {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 9999px;
+  padding-left: 0.2rem; /* the triangle looks centred */
+  color: var(--foreground);
+  border: 1px solid color-mix(in oklch, var(--award) 45%, transparent);
+  background: radial-gradient(circle at 35% 30%, color-mix(in oklch, var(--sky) 30%, var(--card-blue)), var(--card-blue) 75%);
+  box-shadow:
+    0 0 0 6px color-mix(in oklch, var(--sky) 12%, transparent),
+    0 0 36px -4px var(--glow-sky);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.intro-play:hover .intro-play-icon,
+.intro-play:focus-visible .intro-play-icon {
+  transform: scale(1.06);
+  box-shadow:
+    0 0 0 8px color-mix(in oklch, var(--sky) 18%, transparent),
+    0 0 48px 0 var(--glow-sky);
+}
+.intro-play:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: -3px;
+}
+.intro-play-label {
+  margin-bottom: 0.6rem;
+  border-radius: 9999px;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--foreground);
+  background: color-mix(in oklch, var(--background) 80%, transparent);
+  border: 1px solid color-mix(in oklch, var(--award) 20%, transparent);
+}
+
 /* Emblem: platinum ring, softly lit disc, glowing icon, halo. */
 .award-emblem {
   position: relative;

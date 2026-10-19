@@ -30,6 +30,8 @@ const PAGE_TEXT = {
     "Senior AI & Data Platform Engineer",
     "I build AI that works on your real data, in production.", // hero headline (Phase 3 H1)
     "Available for new AI projects from December 2026.",
+    "Read the transcript", // intro video + transcript (Phase 3 H9b)
+    "And that's exactly what I fix.",
     "Featured by Neon (Databricks)", // proof strip (Phase 3 H5)
     "Inside LuBot's database-per-tenant architecture",
     "12,000+",

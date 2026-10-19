@@ -3,7 +3,14 @@ import { join } from "node:path";
 
 // Manifest built by scripts/build-videos.mjs before `next build` (not
 // committed). Server-only: read at build time.
-export type VideoEntry = { src: string; poster: string; width: number; height: number };
+export type VideoEntry = {
+  src: string;
+  poster: string;
+  width: number;
+  height: number;
+  // WebVTT subtitles (English), when the video has speech.
+  captions?: string;
+};
 
 let manifest: Record<string, VideoEntry> | undefined;
 
