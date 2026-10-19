@@ -15,6 +15,9 @@ export const site = {
   // Shown near every Book-a-call button. Lubo updates the month by hand
   // when it moves (set 2026-10-18 = about 2 months out).
   availableFrom: "December 2026",
+  // true = green "available now" dots; false = amber "next project" dots
+  // (components/status-dot.tsx). Change the texts here at the same time.
+  availableNow: false,
   availability: "Available for new AI projects from December 2026.",
   // The one call-to-action: free 30-min intro call (Phase 3 D3).
   email: "data@lubobali.com",

@@ -54,6 +54,16 @@ const PAIRS = [
   ["success", "card-sky-top", UI],
   ["soon", "card-sky-top", UI], // "Next project" amber dot (H9)
   ["soon", "card-blue", UI],
+  ["soon", "background", UI], // amber dots in the hero + footer (H11)
+  ["soon", "card", UI],
+  ["sky", "card-blue", TEXT], // final CTA heading line 2 (H11)
+  ["foreground", "card-finale-top", MAIN], // final CTA, lit top centre
+  ["muted-foreground", "card-finale-top", TEXT],
+  // No link up there: the email link sits in the bottom row, where the
+  // lit top has faded out to card-blue (checked above).
+  ["award", "card-finale-top", TEXT],
+  ["sky", "card-finale-top", TEXT],
+  ["soon", "card-finale-top", UI],
 ];
 
 // See-through glow tokens (`--glow-*`, ambient backgrounds): text on top

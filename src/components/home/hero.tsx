@@ -2,6 +2,7 @@ import { DataRain } from "@/components/ambient/data-rain";
 import { BookCall } from "@/components/book-call";
 import { Picture } from "@/components/picture";
 import { buttonVariants } from "@/components/ui/button";
+import { StatusDot } from "@/components/status-dot";
 import { site } from "@/lib/site";
 
 // Home hero (Phase 3 H3). Copy approved by Lubo 2026-10-17
@@ -14,7 +15,7 @@ function Availability({ className = "" }: { className?: string }) {
     <p
       className={`inline-flex w-fit items-center gap-2 rounded-full border border-border bg-card/70 px-3 py-1 text-sm text-muted-foreground ${className}`}
     >
-      <span aria-hidden="true" className="size-2 rounded-full bg-success" />
+      <StatusDot />
       {site.availability}
     </p>
   );

@@ -93,6 +93,9 @@
   --tone-ice: oklch(0.8 0.1 228); /* #8ccaf0-ish */
   --glow-violet: oklch(0.72 0.14 292 / 0.22);
   --glow-ice: oklch(0.8 0.1 228 / 0.16); /* lighter tone, so less (links stay 4.5:1) */
+  /* Final call to action (H11): a little lighter + more sky at the top
+     centre of the card, the brightest point at the end of the page. */
+  --card-finale-top: oklch(0.34 0.1 257);
 
   --radius: 0.75rem;
 }
@@ -806,6 +809,141 @@ body {
   opacity: 0;
 }
 
+/* Final call to action (H11, "the finish line", Lubo): the widest,
+   calmest card. Same beam-edge trick as the award cards (::before = a
+   slow turning cone with 2 beams, ::after = the face), a lit top centre
+   and a big soft sky glow outside it, over the rain. */
+.finale-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  box-shadow:
+    0 0 48px -8px var(--glow-sky),
+    0 0 140px -30px var(--glow-sky);
+}
+.finale-card::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: -2;
+  width: 250%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  background: conic-gradient(
+    var(--border) 0 30%,
+    var(--sky) 42%,
+    var(--award) 46%,
+    var(--border) 56% 80%,
+    var(--sky) 92%,
+    var(--award) 95%,
+    var(--border) 100%
+  );
+}
+.finale-card::after {
+  content: "";
+  position: absolute;
+  inset: 1.5px;
+  z-index: -1;
+  border-radius: calc(var(--radius-3xl, 1.5rem) - 1.5px);
+  background: radial-gradient(ellipse 80% 70% at 50% 0%, var(--card-finale-top), var(--card-blue));
+  box-shadow: inset 0 1px 0 color-mix(in oklch, var(--sky) 60%, transparent);
+}
+@media (width >= 64rem) {
+  .finale-card::before {
+    width: 130%;
+  }
+}
+/* Second line of the heading: platinum -> sky (both pass on the card). */
+.finale-sub {
+  color: var(--award);
+  background: linear-gradient(90deg, var(--award), var(--sky));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.finale-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border: 1px solid color-mix(in oklch, var(--award) 25%, transparent);
+  border-radius: 9999px;
+  background: color-mix(in oklch, var(--background) 35%, transparent);
+  padding: 0.4rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+/* The LB signature, bottom right, barely there. */
+.finale-mark {
+  position: absolute;
+  right: 1.5rem;
+  bottom: 1.25rem;
+  width: 5.5rem;
+  height: auto;
+  opacity: 0.07;
+  pointer-events: none;
+}
+/* The one fast thing on the card: a shine sweeping over the button. */
+.finale-button {
+  position: relative;
+  overflow: hidden;
+  padding-inline: 2rem;
+  box-shadow: 0 0 28px -4px var(--glow-sky);
+}
+.finale-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    110deg,
+    transparent 40%,
+    color-mix(in oklch, var(--award) 45%, transparent) 50%,
+    transparent 60%
+  );
+  background-size: 300% 100%;
+  background-position: 100% 0;
+}
+
+/* Footer (H11): a glow line on top (sky -> platinum, like the step line)
+   in place of a flat border, and round profile icons like small coins. */
+.site-footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: min(72rem, 100%);
+  height: 1px;
+  translate: -50% 0;
+  background: linear-gradient(90deg, transparent, var(--sky), var(--award), var(--sky), transparent);
+  box-shadow: 0 0 14px var(--glow-sky);
+  opacity: 0.7;
+}
+.footer-icon {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 9999px;
+  color: var(--award);
+  border: 1px solid color-mix(in oklch, var(--award) 25%, transparent);
+  background: radial-gradient(circle at 35% 30%, color-mix(in oklch, var(--award) 14%, var(--card-blue)), var(--card-blue) 75%);
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.footer-icon:hover,
+.footer-icon:focus-visible {
+  color: var(--foreground);
+  border-color: color-mix(in oklch, var(--sky) 60%, transparent);
+  box-shadow: 0 0 18px -2px var(--glow-sky);
+}
+.footer-icon:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}
+
 /* Emblem: platinum ring, softly lit disc, glowing icon, halo. */
 .award-emblem {
   position: relative;
@@ -917,6 +1055,13 @@ body {
   }
   .now-dot::after {
     animation: art-ping 2s ease-out infinite;
+  }
+  /* Final CTA (H11): slow beam round the card, shine over the button. */
+  .finale-card::before {
+    animation: award-beam 16s linear infinite;
+  }
+  .finale-button::after {
+    animation: award-shine 4.5s ease-in-out 1s infinite;
   }
   /* Stops: the LB checkbox, keyboard focus on a logo, mouse hover. Not
      :focus-within (clicking LB focuses the checkbox, so "start" would never

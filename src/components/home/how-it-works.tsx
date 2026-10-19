@@ -59,7 +59,7 @@ export function HowItWorks() {
     <section
       id="how-it-works"
       aria-labelledby="how-title"
-      className="relative mx-auto w-full max-w-6xl scroll-mt-20 px-4 pt-8 pb-28 sm:px-6 lg:pt-12 lg:pb-32"
+      className="relative mx-auto w-full max-w-6xl scroll-mt-20 px-4 pt-8 pb-8 sm:px-6 lg:pt-12 lg:pb-12"
     >
       <h2 id="how-title" className="text-3xl font-semibold text-balance sm:text-4xl">
         How it works

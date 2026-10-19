@@ -1,5 +1,6 @@
 import { DataRain } from "@/components/ambient/data-rain";
 import { BuiltWith } from "@/components/home/built-with";
+import { FinalCta } from "@/components/home/final-cta";
 import { Hero } from "@/components/home/hero";
 import { HowItWorks } from "@/components/home/how-it-works";
 import { ProofStrip } from "@/components/home/proof-strip";
@@ -32,6 +33,7 @@ export default function Home() {
         <SelectedWork />
         <BuiltWith />
         <HowItWorks />
+        <FinalCta />
       </div>
     </main>
   );
