@@ -29,8 +29,9 @@ class FakeAI:
     def __init__(self, follow=FOLLOW, draft=GOOD, fail=False):
         self.follow, self.draft, self.fail, self.calls = follow, draft, fail, []
 
-    def __call__(self, messages, model, *, max_tokens, **_):
+    def __call__(self, messages, model, *, max_tokens, context=None, **_):
         self.calls.append(model.__name__)
+        self.context = context
         if self.fail:
             raise LLMError("model down")
         data = self.follow if model is FollowUpQuestions else copy.deepcopy(self.draft)
@@ -343,3 +344,11 @@ def test_lubo_can_read_a_booked_blueprint_as_text(tmp_path):
     text = render(bp)
     assert bp["code"] in text and GOOD["app_name"] in text
     assert "MY 3 QUESTIONS FOR THE CALL" in text and "<- PAIN" in text
+
+
+def test_the_blueprint_call_gets_the_visitors_own_words_for_the_amount_check(tmp_path):
+    """B9.2b: prices/% the AI writes are checked against what the visitor said."""
+    client, ai = make(tmp_path)
+    blueprint_for(client)
+    words = ai.context["visitor_words"]
+    assert STORY in words and "The owner" in words

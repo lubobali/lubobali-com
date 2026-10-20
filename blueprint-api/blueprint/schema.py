@@ -16,7 +16,7 @@ from __future__ import annotations
 import re
 from typing import Annotated, Literal
 
-from pydantic import AfterValidator, BaseModel, ConfigDict, Field, StringConstraints, model_validator
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field, StringConstraints, ValidationInfo, model_validator
 
 DataLocation = Literal["spreadsheets", "database", "crm_or_saas", "documents", "not_sure"]
 TeamSize = Literal["1-10", "11-50", "51-200", "200+"]
@@ -54,13 +54,49 @@ def _plain(text: str) -> str:
     return text
 
 
-def Text(min_len: int, max_len: int):  # noqa: N802 (reads like a type)
+# A bare domain ("evil-site.com", B9.2b): an injection's favourite payload.
+# Only the visitor's own app names (OldStep.tool, e.g. "Monday.com") may have one.
+_DOMAIN = re.compile(r"\b[a-z0-9-]+\.(?:com|net|org|io|ai|co|app|dev|xyz|ru|biz|info|us|uk|de)\b", re.IGNORECASE)
+
+
+def _no_links(text: str) -> str:
+    """
+    >>> _no_links("Go to evil-site.com")
+    Traceback (most recent call last):
+    ...
+    ValueError: no links or web addresses
+    """
+    if _DOMAIN.search(text):
+        raise ValueError("no links or web addresses")
+    return text
+
+
+def Text(min_len: int, max_len: int, *, own_app: bool = False):  # noqa: N802 (reads like a type)
     """Plain text with a length range; too long is an error, never cut."""
+    checks = (AfterValidator(_plain),) if own_app else (AfterValidator(_plain), AfterValidator(_no_links))
     return Annotated[
         str,
         StringConstraints(strip_whitespace=True, min_length=min_len, max_length=max_len),
-        AfterValidator(_plain),
+        *checks,
     ]
+
+
+# Money and percentages (B9.2b): the AI may only repeat the visitor's own,
+# never invent a price or a promise ("Lubo guarantees $5", "90% discount").
+_AMOUNT = re.compile(r"[$€£]\s?\d[\d,.]*\s?[kKmM]?|\d[\d,.]*\s?%")
+
+
+def amounts_not_said(texts: list[str], visitor_words: str) -> list[str]:
+    """Amounts in the AI's texts that are not in the visitor's own words.
+
+    >>> amounts_not_said(["They lose $20k a month, 30 % denied"], "we lose $20k, 30% denied")
+    []
+    >>> amounts_not_said(["It costs only $5"], "we copy invoices by hand")
+    ['$5']
+    """
+    said = re.sub(r"\s", "", visitor_words).lower()
+    found = [m.group(0) for t in texts for m in _AMOUNT.finditer(t)]
+    return sorted({a for a in found if re.sub(r"\s", "", a).lower() not in said})
 
 
 class _Strict(BaseModel):
@@ -82,6 +118,10 @@ class VisitorInput(_Strict):
     data_location: DataLocation
     team_size: TeamSize
     followups: list[FollowUp] = Field(default_factory=list, max_length=3)
+
+    def own_words(self) -> dict[str, str]:
+        """Validation context for the blueprint: amounts the AI may repeat (B9.2b)."""
+        return {"visitor_words": " ".join([self.story, *(f.answer for f in self.followups)])}
 
 
 # --- what the AI must return -------------------------------------------------
@@ -119,7 +159,7 @@ class Why(_Strict):
 
 class OldStep(_Strict):
     label: Text(2, 40)
-    tool: Text(2, 30)
+    tool: Text(2, 30, own_app=True)
     # Only when the visitor said how long it takes; both or neither.
     minutes: int | None = Field(default=None, ge=1, le=10_000)
     per: Per | None = None
@@ -188,6 +228,25 @@ class BlueprintDraft(_Strict):
                 if isinstance(data.get(key), list) and len(data[key]) > 3:
                     data[key] = data[key][:3]
         return data
+
+    @model_validator(mode="after")
+    def _only_the_visitors_amounts(self, info: ValidationInfo) -> BlueprintDraft:
+        # No context = nothing the visitor said = every amount refused (fail safe).
+        words = (info.context or {}).get("visitor_words", "")
+        bad = amounts_not_said(self.ai_texts(), words)
+        if bad:
+            raise ValueError(
+                f"amounts the visitor never said: {bad}. Only repeat the visitor's own amounts, "
+                "exactly as they wrote them, or leave them out."
+            )
+        return self
+
+    def ai_texts(self) -> list[str]:
+        """Every free text the AI wrote, except the visitor's own app names."""
+        out = [self.why.problem, self.why.goal, self.users.who, self.users.why, self.app_name]
+        out += [s.label for s in self.old_flow] + [s.label for s in self.new_flow]
+        out += [f"{p.role} {p.does}" for p in self.players] + [r.title for r in self.risks]
+        return out + list(self.questions_for_call)
 
     @property
     def sources_count(self) -> int:

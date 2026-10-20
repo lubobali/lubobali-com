@@ -83,11 +83,11 @@ def ask[M: BaseModel](
     *,
     max_tokens: int,
     model_id: str | None = None,
-    key: str | None = None,
     client: httpx.Client | None = None,
+    context: dict | None = None,
 ) -> Result[M]:
     """Ask once, validate, retry once with the error, else LLMError."""
-    key = key or os.environ.get("OPENROUTER_API_KEY", "")
+    key = os.environ.get("OPENROUTER_API_KEY", "")  # server env only, never an argument
     if not key:
         raise LLMError("OPENROUTER_API_KEY is not set")
     model_id = model_id or os.environ.get("BLUEPRINT_MODEL", DEFAULT_MODEL)
@@ -106,7 +106,7 @@ def ask[M: BaseModel](
             tok_out += int(usage.get("completion_tokens") or 0)
             text = data["choices"][0]["message"].get("content") or ""
             try:
-                value = model.model_validate(json.loads(text))
+                value = model.model_validate(json.loads(text), context=context)
                 return Result(value=value, cost_usd=cost, tokens_in=tok_in, tokens_out=tok_out, tries=attempt)
             except (json.JSONDecodeError, ValidationError) as e:
                 if attempt == 2:

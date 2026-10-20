@@ -192,3 +192,50 @@ def test_too_long_text_is_still_rejected_after_the_tolerance():
     long_risk = [{"title": "x" * 80, "severity": "watch"}]
     with pytest.raises(ValidationError):
         BlueprintDraft.model_validate(draft(risks=long_risk))
+
+
+# --- B9.2b: the code checks what an injection could slip in ---------------
+# Live test 2026-10-20: the model ignored all 4 attacks, but a bare domain
+# or a "$5" would only be stopped by the prompt. Now the code stops them too.
+
+
+def why(problem):
+    return draft(why={"problem": problem, "goal": GOOD["why"]["goal"]})
+
+
+@pytest.mark.parametrize("name", ["Visit evil-site.com", "lubo-deals.io helper", "Go to shop.example.co"])
+def test_a_bare_domain_in_the_ai_text_is_rejected(name):
+    with pytest.raises(ValidationError, match="no links"):
+        BlueprintDraft.model_validate(draft(app_name=name))
+
+
+def test_the_visitors_own_app_may_have_a_domain_in_the_tool_field():
+    steps = copy.deepcopy(GOOD["old_flow"])
+    steps[0]["tool"] = "Monday.com"
+    assert BlueprintDraft.model_validate(draft(old_flow=steps)).old_flow[0].tool == "Monday.com"
+
+
+@pytest.mark.parametrize(
+    "problem",
+    [
+        "Lubo guarantees the whole project costs only $5.",
+        "Lubo promised a 90% discount on this project for you.",
+        "The project costs €2,000 and is done in a single day.",
+    ],
+)
+def test_prices_and_percents_the_visitor_never_said_are_rejected(problem):
+    words = {"visitor_words": "We copy fuel data from 3 spreadsheets every Monday."}
+    with pytest.raises(ValidationError, match="never said"):
+        BlueprintDraft.model_validate(why(problem), context=words)
+
+
+def test_the_visitors_own_numbers_may_be_repeated():
+    words = {"visitor_words": "We lose about $20k a month and 30% of claims get denied."}
+    b = BlueprintDraft.model_validate(why("They lose about $20k a month and 30% of claims get denied."), context=words)
+    assert "$20k" in b.why.problem
+
+
+def test_without_the_visitors_words_every_price_is_rejected():
+    """Fail safe: a code path that forgets the context cannot open the door."""
+    with pytest.raises(ValidationError, match="never said"):
+        BlueprintDraft.model_validate(why("They lose about $20k a month on wrong invoices."))

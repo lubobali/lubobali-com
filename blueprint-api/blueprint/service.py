@@ -114,7 +114,9 @@ class Service:
             self.store.count("refused", now=now)
             raise RefusalError(409, verdict)
         v = VisitorInput(story=r.story, data_location=r.data_location, team_size=r.team_size, followups=r.followups)
-        draft: BlueprintDraft = self._call_ai(blueprint_messages(v), BlueprintDraft, BLUEPRINT_MAX_TOKENS, now)
+        draft: BlueprintDraft = self._call_ai(
+            blueprint_messages(v), BlueprintDraft, BLUEPRINT_MAX_TOKENS, now, context=v.own_words()
+        )
         bp = build_blueprint(draft, v, now)
         bp["signature"] = sign_blueprint(self.s.signing_key, bp)
         bp["code"] = book_code(bp["signature"])  # travels to Calendly (B5.3)
@@ -172,7 +174,7 @@ class Service:
         one = tokens_in * self.s.price_in_per_m + max_tokens * self.s.price_out_per_m
         return 2 * one / 1_000_000  # a retry can double it
 
-    def _call_ai(self, messages: list[dict], model: type, max_tokens: int, now: datetime):
+    def _call_ai(self, messages: list[dict], model: type, max_tokens: int, now: datetime, context: dict | None = None):
         event = model.__name__
         reservation = self.store.reserve(estimate_usd=self._worst_case_usd(messages, max_tokens), now=now)
         if reservation is None:
@@ -180,7 +182,7 @@ class Service:
             raise RefusalError(503, "busy")
         t0, cost = time.monotonic(), 0.0
         try:
-            res = self.ask(messages, model, max_tokens=max_tokens, model_id=self.s.model_id)
+            res = self.ask(messages, model, max_tokens=max_tokens, model_id=self.s.model_id, context=context)
             cost = res.cost_usd
             return res.value
         except llm.LLMError as e:
