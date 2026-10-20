@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { DataLocation, TeamSize } from "./client";
 
 // Step 1: the visitor's story + 2 taps (Phase 3b B5.1). A real <form> with
@@ -99,7 +100,10 @@ export function StartForm({
 
       <p className="bpt-privacy">
         Please describe it in general terms: no customer data or passwords. Your story is used only to make your
-        blueprint and is not stored.
+        blueprint and is not stored.{" "}
+        <Link href="/blueprint#your-data" className="underline underline-offset-4">
+          How I handle your data <span aria-hidden="true">→</span>
+        </Link>
       </p>
       <div className="bpt-actions">
         <button type="submit" className="bpt-go" disabled={!ready}>

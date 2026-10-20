@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { ExampleTabs } from "@/components/blueprint/example-tabs";
 import { BlueprintTool } from "@/components/blueprint/tool";
+import { YourData } from "@/components/blueprint/your-data";
 import { site } from "@/lib/site";
 
 // /blueprint (Phase 3b B6): the AI Project Blueprint on its own page, the
 // link Lubo shares (LinkedIn). The tool first, then 6 example blueprints
-// behind industry tabs (all in raw HTML for search + AI assistants).
+// behind industry tabs (all in raw HTML for search + AI assistants), then
+// what happens to the visitor's data (B9.5, linked from the form).
 const title = "Free AI Project Blueprint";
 const description =
   "Describe your business problem and get a free first plan in about a minute: how it works today, with AI, the risks and a timeline.";
@@ -49,6 +51,7 @@ export default function BlueprintPage() {
         </p>
         <ExampleTabs />
       </section>
+      <YourData />
     </main>
   );
 }
