@@ -25,4 +25,7 @@ export type Blueprint = {
   time_saved: { before_minutes: number; after_minutes: number; after_is_estimate: true } | null;
   locked: string[];
   signature?: string;
+  // Short code for Calendly (utm_content), only on a visitor's own,
+  // signed blueprint (B5.3). The example has none.
+  code?: string;
 };

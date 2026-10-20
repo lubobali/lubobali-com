@@ -9,6 +9,14 @@
    not just when the visitor's OS is in dark mode. */
 @custom-variant dark (&:is(.dark *));
 
+/* In-page links glide (header "Free AI blueprint", footer links), only
+   when the visitor hasn't asked for less motion (Phase 3b B5.3). */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 /*
  * Design tokens — dark navy + LuBot blues, dark only.
  * Same palette as lubot.ai on purpose: one brand across Lubo's products.

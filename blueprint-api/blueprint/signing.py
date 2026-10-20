@@ -56,12 +56,32 @@ def ticket_ok(key: str, ticket: str, fingerprint: str, *, now: float) -> bool:
     )
 
 
+_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"  # 32 chars, no 0/O, 1/I
+_UNSIGNED = {"signature", "code"}
+
+
+def book_code(signature: str) -> str:
+    """Short code for Calendly (utm_content), derived from the signature:
+    the same blueprint always has the same code, nobody can invent one.
+
+    >>> book_code("abc") == book_code("abc"), len(book_code("abc"))
+    (True, 6)
+    """
+    digest = hashlib.sha256(signature.encode()).digest()
+    return "".join(_CODE_ALPHABET[b % 32] for b in digest[:6])
+
+
 def sign_blueprint(key: str, blueprint: dict) -> str:
-    """Signature over the blueprint (without its own signature field)."""
-    body = {k: v for k, v in blueprint.items() if k != "signature"}
+    """Signature over the blueprint (without its signature and code)."""
+    body = {k: v for k, v in blueprint.items() if k not in _UNSIGNED}
     return _hmac(key, json.dumps(body, sort_keys=True, separators=(",", ":"), ensure_ascii=False))
 
 
 def blueprint_ok(key: str, blueprint: dict) -> bool:
+    """Signed by us, unchanged, and carrying its own code."""
     sig = blueprint.get("signature")
-    return isinstance(sig, str) and hmac.compare_digest(sig, sign_blueprint(key, blueprint))
+    return (
+        isinstance(sig, str)
+        and hmac.compare_digest(sig, sign_blueprint(key, blueprint))
+        and blueprint.get("code") == book_code(sig)
+    )

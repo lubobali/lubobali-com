@@ -172,8 +172,9 @@ class Store:
 
     # -- booked blueprints + funnel -------------------------------------------
 
-    def save_booked(self, *, blueprint: dict, now: datetime) -> str:
-        """Keep a booked visitor's blueprint 90 days; return its short code."""
+    def save_booked(self, *, blueprint: dict, now: datetime, code: str | None = None) -> str:
+        """Keep a booked visitor's blueprint 90 days under its short code
+        (given = the code the page already showed; else a new random one)."""
         body = json.dumps(blueprint, ensure_ascii=False, separators=(",", ":"))
         sig = blueprint.get("signature")
         with self._tx() as c:
@@ -182,10 +183,12 @@ class Store:
                 row = c.execute("select code from booked where sig = ?", (sig,)).fetchone()
                 if row:
                     return row[0]
-            while True:
+            if code and c.execute("select 1 from booked where code = ?", (code,)).fetchone():
+                return code
+            while not code:
                 code = "".join(secrets.choice(_CODE_ALPHABET) for _ in range(6))
-                if not c.execute("select 1 from booked where code = ?", (code,)).fetchone():
-                    break
+                if c.execute("select 1 from booked where code = ?", (code,)).fetchone():
+                    code = None
             c.execute(
                 "insert into booked (code, blueprint, created, sig) values (?, ?, ?, ?)",
                 (code, body, _iso(now), sig if isinstance(sig, str) else None),

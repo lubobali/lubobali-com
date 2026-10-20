@@ -22,7 +22,7 @@ from blueprint.prompts import blueprint_messages, followup_messages
 from blueprint.requests import BookRequest, GenerateRequest, StartRequest
 from blueprint.rules import readiness, time_saved, timeline
 from blueprint.schema import BlueprintDraft, FollowUpQuestions, VisitorInput
-from blueprint.signing import blueprint_ok, make_ticket, sign_blueprint, story_fingerprint, ticket_ok
+from blueprint.signing import blueprint_ok, book_code, make_ticket, sign_blueprint, story_fingerprint, ticket_ok
 from blueprint.store import Store
 
 log = logging.getLogger("blueprint")
@@ -106,6 +106,7 @@ class Service:
         draft: BlueprintDraft = self._call_ai(blueprint_messages(v), BlueprintDraft, BLUEPRINT_MAX_TOKENS, now)
         bp = build_blueprint(draft, v, now)
         bp["signature"] = sign_blueprint(self.s.signing_key, bp)
+        bp["code"] = book_code(bp["signature"])  # travels to Calendly (B5.3)
         self.store.record_blueprint(visitor=str(r.visitor_id), ip=ip, now=now)
         self.store.count("finished", now=now)
         self._maybe_cleanup(now)
@@ -115,7 +116,7 @@ class Service:
         now = self.clock()
         if not blueprint_ok(self.s.signing_key, r.blueprint):
             raise RefusalError(400, "start_again")
-        code = self.store.save_booked(blueprint=r.blueprint, now=now)
+        code = self.store.save_booked(blueprint=r.blueprint, now=now, code=r.blueprint["code"])
         self.store.count("booked", now=now)
         query = urlencode({"utm_source": "lubobali.com", "utm_medium": "blueprint", "utm_content": code})
         return {"code": code, "calendly_url": f"{self.s.calendly_url}?{query}"}

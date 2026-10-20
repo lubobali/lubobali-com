@@ -143,3 +143,10 @@ def test_twenty_requests_at_the_same_moment_never_pass_the_cap(store):
         results = list(pool.map(lambda _: store.reserve(estimate_usd=0.20, now=NOW), range(20)))
     assert sum(r is not None for r in results) == 15  # $3.00 / $0.20
     assert store.spent_today(now=NOW) == pytest.approx(3.0)
+
+
+def test_booked_blueprint_can_be_saved_under_a_given_code(store):
+    code = store.save_booked(blueprint={"signature": "s1", "x": 1}, now=NOW, code="K7M2QX")
+    assert code == "K7M2QX"
+    assert store.get_booked("K7M2QX", now=NOW) == {"signature": "s1", "x": 1}
+    assert store.save_booked(blueprint={"signature": "s1", "x": 1}, now=NOW, code="K7M2QX") == "K7M2QX"

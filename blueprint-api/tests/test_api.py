@@ -308,3 +308,38 @@ def test_the_story_is_never_written_to_the_database(tmp_path):
     blueprint_for(client)
     raw = (tmp_path / "bp.sqlite").read_bytes() + b"".join(p.read_bytes() for p in tmp_path.glob("bp.sqlite-*"))
     assert b"Every Monday someone copies" not in raw
+
+
+# --- B5.3: the blueprint code that travels to Calendly ------------------------
+
+
+def test_each_blueprint_comes_with_its_short_code(tmp_path):
+    client, _ = make(tmp_path)
+    bp = blueprint_for(client)
+    assert len(bp["code"]) == 6 and bp["code"].isalnum() and bp["code"].isupper()
+
+
+def test_booking_uses_the_same_code_the_page_already_has(tmp_path):
+    client, _ = make(tmp_path)
+    bp = blueprint_for(client)
+    r = client.post("/api/blueprint/book", json={"blueprint": bp})
+    assert r.json()["code"] == bp["code"]
+    assert f"utm_content={bp['code']}" in r.json()["calendly_url"]
+
+
+def test_a_made_up_code_cannot_be_booked(tmp_path):
+    client, _ = make(tmp_path)
+    bp = blueprint_for(client)
+    bp["code"] = "AAAAAA" if bp["code"] != "AAAAAA" else "BBBBBB"
+    r = client.post("/api/blueprint/book", json={"blueprint": bp})
+    assert r.status_code == 400 and r.json()["code"] == "start_again"
+
+
+def test_lubo_can_read_a_booked_blueprint_as_text(tmp_path):
+    from blueprint.show import render
+
+    client, _ = make(tmp_path)
+    bp = blueprint_for(client)
+    text = render(bp)
+    assert bp["code"] in text and GOOD["app_name"] in text
+    assert "MY 3 QUESTIONS FOR THE CALL" in text and "<- PAIN" in text

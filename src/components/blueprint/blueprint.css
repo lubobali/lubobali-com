@@ -354,6 +354,14 @@
 .bp-locked-text {
   color: var(--card-text-soft);
 }
+.bp-code {
+  font-size: 0.8rem;
+  color: var(--muted-foreground);
+}
+.bp-code strong {
+  color: var(--award);
+  letter-spacing: 0.08em;
+}
 
 /* --- motion (never with "reduce motion") ------------------------------------------- */
 @media (prefers-reduced-motion: no-preference) {

@@ -1,4 +1,5 @@
 import { BookCall } from "@/components/book-call";
+import { BookWithCode } from "./book-with-code";
 import type { Blueprint } from "./types";
 
 // The "how" stays for the call (Lubo, D2): the visitor sees that a full
@@ -22,7 +23,16 @@ export function Locked({ bp }: { bp: Blueprint }) {
         ))}
       </ul>
       <p className="bp-locked-text">We go through it together on a free 30-min call.</p>
-      <BookCall className="finale-button" />
+      {bp.code ? (
+        <>
+          <BookWithCode bp={{ ...bp, code: bp.code }} className="finale-button" />
+          <p className="bp-code">
+            Your blueprint code: <strong>{bp.code}</strong>. I&apos;ll have your blueprint open on our call.
+          </p>
+        </>
+      ) : (
+        <BookCall className="finale-button" />
+      )}
     </section>
   );
 }
