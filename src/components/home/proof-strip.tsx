@@ -2,7 +2,9 @@ import { site } from "@/lib/site";
 
 // Proof strip (Phase 3 H5), below the LuBot loop: the Neon (Databricks)
 // article + LuBot numbers. Copy approved by Lubo 2026-10-17 (plans repo
-// docs/phase-3-copy.md §2); numbers counted on the LuBot repo that day (L4).
+// docs/phase-3-copy.md §2); numbers counted on the LuBot repo that day (L4),
+// re-checked 2026-10-20 (Phase 4 C1, method in the plans repo): 274,607
+// source lines without tests, 12,546 tests, 3 live MCP directories.
 // Neon as text, not their logo: 0 requests, no brand-rules question.
 export const PROOF = [
   { value: "260,000+", label: "lines of code, built solo" },

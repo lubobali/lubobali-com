@@ -35,7 +35,10 @@ export const work = [
       "Runs inside Claude with 9 MCP tools, listed in 3 MCP directories",
       "260,000+ lines of code and 12,000+ automated tests",
     ],
-    stack: ["Python", "FastAPI", "PostgreSQL (Neon)", "React", "NVIDIA models", "MCP", "AWS S3", "Docker"],
+    // Stack checked in LuBot's code 2026-10-20 (Phase 4 C1): LLMs via
+    // OpenRouter (best model per task), embeddings via DeepInfra, NVIDIA
+    // NIM only as fallback (NVIDIA stays in the "Built with" dial).
+    stack: ["Python", "FastAPI", "PostgreSQL (Neon)", "React", "OpenRouter", "DeepInfra", "MCP", "AWS S3"],
     links: [
       { label: "Visit LuBot.ai", url: site.product.url },
       { label: "Read the Neon article", url: site.featuredIn.url },
