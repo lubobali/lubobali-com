@@ -20,7 +20,8 @@ const MB = 1024 * 1024;
 // (preload="none"), so they may be bigger.
 const VIDEOS = {
   "lubot-demo-loop": { width: 1024, height: 768, budget: 1.5 * MB },
-  "lubo-intro": { width: 1280, height: 720, budget: 12 * MB },
+  // 1080p (Lubo: 720p looked soft full screen), streams from the click on.
+  "lubo-intro": { width: 1920, height: 1080, budget: 30 * MB },
 };
 
 await rm(OUT, { recursive: true, force: true });

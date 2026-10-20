@@ -29,19 +29,29 @@ before adding it: this folder is in the public GitHub mirror.
 
 Lubo's 2:20 intro (Phase 3 H9b), recorded 2026-10-19 on a plain wall
 (OBS + GoPro + Rode), approved by Lubo. Click to play, so it has its own
-budget (12 MB); nothing downloads before the click.
+budget (30 MB); nothing downloads before the click. Re-rendered at
+**1080p** on 2026-10-20 (Lubo: the 720p version looked soft full screen).
+**Lip sync:** the GoPro-as-webcam picture reached OBS late, so the voice
+was ahead of the mouth. Voice moved **300 ms later** (Lubo picked it from
+0/100/200/300/400 ms test clips), captions shifted +300 ms to match. Audio:
+`loudnorm` FIRST, then `adelay=300` (loudnorm on leading silence muted
+the first 4 s). Next recording: set the mic's Sync Offset in OBS instead.
 
-- Background removed offline (Robust Video Matting at 1080p, 2 px matte
-  choke against the GoPro's sharpening halo, clean-plate edge cleanup),
+- Background removed offline (Robust Video Matting at 1080p, matte kept
+  at 1080p, 3 px choke against the GoPro's sharpening halo, clean-plate
+  edge cleanup), every size from the approved 720p design x 1.5,
   site navy + blue glow + the site's own data-rain tiles. Master + work
   files stay on the server, not in git.
-- 1280×720, 30 fps, H.264 CRF 27 `-preset veryslow -tune film`, AAC 96k,
-  loudness -16 LUFS, `+faststart` (~10.5 MB).
-- Poster = frame at 1:02.3, WebP q78. Captions = `lubo-intro.en.vtt`
+- 1920×1080, 30 fps, H.264 CRF 24 `-preset veryslow -tune film`, AAC 128k,
+  loudness -16 LUFS, `+faststart` (~26.8 MB; CRF 22 = 33.5 MB looked the
+  same).
+- Poster = Lubo's smile at 2:19.87 (Lubo's pick: a smile shot), taken
+  before the fade, 1280 wide, WebP q82 (~24 KB). Captions = `lubo-intro.en.vtt`
   (Whisper timings, words checked by hand); same text as `src/lib/intro.ts`.
 
 ```sh
-ffmpeg -i intro-v4.mp4 -map 0:v -map 0:a -c:v libx264 -preset veryslow -crf 27 \
- -profile:v high -tune film -g 60 -movflags +faststart -c:a aac -b:a 96k -ac 2 lubo-intro.mp4
-ffmpeg -ss 62.3 -i lubo-intro.mp4 -frames:v 1 -c:v libwebp -quality 78 lubo-intro-poster.webp
+ffmpeg -i intro1080-master.mp4 -c:v libx264 -preset veryslow -crf 24 -profile:v high \
+ -tune film -g 60 -movflags +faststart -c:a aac -b:a 128k lubo-intro.mp4
+ffmpeg -ss 139.87 -i comp1080.mkv -frames:v 1 -vf "scale=1280:-2:flags=lanczos,format=yuv420p" \
+ -c:v libwebp -quality 82 lubo-intro-poster.webp   # comp = before the fade
 ```
