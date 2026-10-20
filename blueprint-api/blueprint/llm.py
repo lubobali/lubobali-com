@@ -28,7 +28,12 @@ RETRY_PAUSE_S = 2.0
 
 
 class LLMError(Exception):
-    """The model could not give a valid answer (after one retry)."""
+    """The model could not give a valid answer (after one retry). `status`
+    = the provider's HTTP status when there was one (402 = no credit)."""
+
+    def __init__(self, message: str, *, status: int | None = None) -> None:
+        super().__init__(message)
+        self.status = status
 
 
 @dataclass(frozen=True)
@@ -120,7 +125,8 @@ def ask[M: BaseModel](
                     },
                 ]
     except httpx.HTTPStatusError as e:
-        raise LLMError(f"model call failed: HTTP {e.response.status_code}") from e
+        code = e.response.status_code
+        raise LLMError(f"model call failed: HTTP {code}", status=code) from e
     except httpx.HTTPError as e:
         raise LLMError(f"model call failed: {type(e).__name__}") from e
     finally:

@@ -28,7 +28,10 @@ from pathlib import Path
 VISITOR_DAYS = 365
 BOOKED_DAYS = 90
 IP_WINDOW_DAYS = 7
-FUNNEL_EVENTS = frozenset({"started", "not_a_story", "finished", "refused", "booked", "copy_sent"})
+FUNNEL_EVENTS = frozenset(
+    {"started", "not_a_story", "finished", "refused", "booked", "copy_sent"}
+    | {"alert_no_credit", "alert_key_refused", "alert_budget"}  # B9.3: 1st of the day = email
+)
 _CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"  # no 0/O, 1/I
 
 _SCHEMA = """
@@ -226,14 +229,17 @@ class Store:
             row = c.execute("select blueprint from booked where code = ? and created > ?", (code, since)).fetchone()
         return json.loads(row[0]) if row else None
 
-    def count(self, event: str, *, now: datetime) -> None:
+    def count(self, event: str, *, now: datetime) -> int:
+        """Count an event; returns today's count (1 = the first today)."""
         if event not in FUNNEL_EVENTS:
             raise ValueError(f"unknown funnel event: {event}")
         with self._tx() as c:
-            c.execute(
-                "insert into funnel (day, event, n) values (?, ?, 1) on conflict (day, event) do update set n = n + 1",
+            row = c.execute(
+                "insert into funnel (day, event, n) values (?, ?, 1) on conflict (day, event) do update set n = n + 1"
+                " returning n",
                 (now.date().isoformat(), event),
-            )
+            ).fetchone()
+        return row[0]
 
     def funnel(self, *, day: date) -> dict[str, int]:
         with self._tx() as c:

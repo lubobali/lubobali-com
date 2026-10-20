@@ -77,10 +77,46 @@ def lead_mail(bp: dict, *, visitor: str, pdf: bytes, sender: str, to: str) -> Em
     return msg
 
 
+# Plain words for Lubo (B9.3, Lubo: "what the hell is this means"): what
+# visitors see, and the one thing to do.
+_NOW = 'Visitors can\'t make a blueprint right now. They see "busy, book a free call".'
+ALERTS = {
+    "no_credit": (
+        "OpenRouter is out of money",
+        _NOW,
+        "Fix: add credit at openrouter.ai/settings/credits (same balance as LuBot).",
+    ),
+    "key_refused": (
+        "the AI key doesn't work",
+        _NOW,
+        'Fix: tell Claude "the blueprint AI key stopped working". It\'s on the server.',
+    ),
+    "budget": (
+        "spending limit reached",
+        "Visitors can't make a blueprint until the limit resets (tomorrow, or on the 1st for the "
+        'monthly one). They see "busy, book a free call".',
+        "This means a lot of people used it, or someone is abusing it. Tell Claude to check.",
+    ),
+}
+
+
+def alert_mail(reason: str, *, sender: str, to: str) -> EmailMessage:
+    title, what, todo = ALERTS[reason]
+    msg = EmailMessage()
+    msg["Subject"] = f"Blueprint tool is paused: {title}"
+    msg["From"] = formataddr(("lubobali.com blueprint", sender))
+    msg["To"] = to
+    msg["Message-ID"] = make_msgid(domain=sender.split("@")[1])
+    msg.set_content(f"{what}\n\n{todo}\n\nYou get this email at most once a day.\n")
+    return msg
+
+
 def smtp_sender(*, host: str, port: int, user: str, password: str) -> Callable[[EmailMessage], None]:
     """One SMTP connection per email (a handful a day): STARTTLS, login, send."""
 
     def send(msg: EmailMessage) -> None:
+        if not user or not password:  # tests / a server without SMTP_*: no network call
+            raise OSError("SMTP is not set up")
         with smtplib.SMTP(host, port, timeout=20) as s:
             s.starttls()
             s.login(user, password)

@@ -134,3 +134,10 @@ def test_the_visitors_own_price_passes_first_time():
     c = client_with(reply(_with_problem("They lose about $20k a month on wrong invoices.")))
     r = ask(MSGS, BlueprintDraft, max_tokens=300, client=c, context={"visitor_words": "we lose $20k a month"})
     assert r.tries == 1
+
+
+def test_the_http_status_travels_with_the_error():
+    """B9.3: 402 (no credit) must be told apart from a broken answer."""
+    with pytest.raises(LLMError) as e:
+        ask(MSGS, FollowUpQuestions, max_tokens=300, client=client_with(httpx.Response(402)))
+    assert e.value.status == 402

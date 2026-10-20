@@ -17,7 +17,7 @@ from urllib.parse import urlencode
 
 from blueprint import llm
 from blueprint.config import Settings
-from blueprint.emailer import is_email, lead_mail, visitor_mail
+from blueprint.emailer import alert_mail, is_email, lead_mail, visitor_mail
 from blueprint.patterns import LOCKED, PATTERNS
 from blueprint.prompts import blueprint_messages, followup_messages
 from blueprint.requests import BookRequest, CopyRequest, GenerateRequest, StartRequest
@@ -27,6 +27,8 @@ from blueprint.signing import blueprint_ok, book_code, make_ticket, sign_bluepri
 from blueprint.store import Store
 
 log = logging.getLogger("blueprint")
+# Provider answers that no retry can fix (B9.3): the tool is "busy".
+_BUSY_STATUS = {402: "no_credit", 401: "key_refused", 403: "key_refused"}
 
 FOLLOWUP_MAX_TOKENS = 1000
 BLUEPRINT_MAX_TOKENS = 2500
@@ -179,6 +181,7 @@ class Service:
         reservation = self.store.reserve(estimate_usd=self._worst_case_usd(messages, max_tokens), now=now)
         if reservation is None:
             log.warning(json.dumps({"event": event, "result": "budget_breaker"}))
+            self._alert("budget", now)
             raise RefusalError(503, "busy")
         t0, cost = time.monotonic(), 0.0
         try:
@@ -187,10 +190,23 @@ class Service:
             return res.value
         except llm.LLMError as e:
             log.warning(json.dumps({"event": event, "result": "llm_error", "error": str(e)[:200]}))
+            reason = _BUSY_STATUS.get(e.status)
+            if reason:  # no retry can fix these: say "busy" and tell Lubo
+                self._alert(reason, now)
+                raise RefusalError(503, "busy") from e
             raise RefusalError(502, "try_again") from e
         finally:
             self.store.settle(reservation, actual_usd=cost)
             log.info(json.dumps({"event": event, "ms": int((time.monotonic() - t0) * 1000), "cost": round(cost, 5)}))
+
+    def _alert(self, reason: str, now: datetime) -> None:
+        """One email to Lubo per reason per day (B9.3); never breaks the answer."""
+        if self.store.count(f"alert_{reason}", now=now) != 1 or self.send_mail is None:
+            return
+        try:
+            self.send_mail(alert_mail(reason, sender=self.s.mail_from, to=self.s.leads_to))
+        except Exception as e:
+            log.error(json.dumps({"event": "alert_mail", "reason": reason, "error": type(e).__name__}))
 
     def _maybe_cleanup(self, now: datetime) -> None:
         if time.time() - self._last_cleanup > CLEANUP_EVERY_S:
