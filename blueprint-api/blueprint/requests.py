@@ -29,3 +29,8 @@ class GenerateRequest(StartRequest):
 
 class BookRequest(_Req):
     blueprint: dict
+
+
+class CopyRequest(_Req):
+    blueprint: dict
+    email: str = Field(max_length=254)

@@ -41,6 +41,7 @@ create table if not exists spend (
 );
 create table if not exists booked (code text primary key, blueprint text not null, created text not null,
     sig text unique);
+create table if not exists copies (hash text primary key, created text not null);
 create table if not exists funnel (day text not null, event text not null, n integer not null,
     primary key (day, event));
 """
@@ -53,6 +54,8 @@ class Limits:
     blueprints_per_visitor: int = 1
     blueprints_per_ip_week: int = 1
     followups_per_ip_day: int = 6
+    copies_per_ip_day: int = 3
+    copies_per_day: int = 30
 
 
 @dataclass(frozen=True)
@@ -132,6 +135,28 @@ class Store:
                 return False
             c.execute("insert into ip_events (hash, kind, ts) values (?, 'followup', ?)", (h, _iso(now)))
         return True
+
+    # -- "email me the PDF": 1 per blueprint, a few per IP, a daily cap ---------
+
+    def can_copy(self, *, signature: str, ip: str, now: datetime) -> str:
+        """'ok', 'copy_sent' (this blueprint already) or 'slow_down'."""
+        day_start = _iso(datetime.combine(now.date(), datetime.min.time(), tzinfo=now.tzinfo))
+        with self._tx() as c:
+            if c.execute("select 1 from copies where hash = ?", (self._hash(signature),)).fetchone():
+                return "copy_sent"
+            n_ip = c.execute(
+                "select count(*) from ip_events where hash = ? and kind = 'copy' and ts >= ?",
+                (self._hash(ip), day_start),
+            ).fetchone()[0]
+            n_all = c.execute("select count(*) from copies where created >= ?", (day_start,)).fetchone()[0]
+        if n_ip >= self.limits.copies_per_ip_day or n_all >= self.limits.copies_per_day:
+            return "slow_down"
+        return "ok"
+
+    def record_copy(self, *, signature: str, ip: str, now: datetime) -> None:
+        with self._tx() as c:
+            c.execute("insert or ignore into copies (hash, created) values (?, ?)", (self._hash(signature), _iso(now)))
+            c.execute("insert into ip_events (hash, kind, ts) values (?, 'copy', ?)", (self._hash(ip), _iso(now)))
 
     # -- budget breaker -------------------------------------------------------
 
@@ -223,3 +248,4 @@ class Store:
             c.execute("delete from visitors where created <= ?", (_iso(now - timedelta(days=VISITOR_DAYS)),))
             c.execute("delete from ip_events where ts <= ?", (_iso(now - timedelta(days=IP_WINDOW_DAYS + 1)),))
             c.execute("delete from booked where created <= ?", (_iso(now - timedelta(days=BOOKED_DAYS)),))
+            c.execute("delete from copies where created <= ?", (_iso(now - timedelta(days=VISITOR_DAYS)),))

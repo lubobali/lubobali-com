@@ -3,8 +3,13 @@
 # on the server at run time, never baked into the image.
 FROM python:3.12-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+# Fontconfig (PDF, B7) needs a writable cache: the root is read-only, /tmp is tmpfs.
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 XDG_CACHE_HOME=/tmp/.cache
 RUN useradd --uid 10001 --system --no-create-home --shell /usr/sbin/nologin app
+# PDF (B7): WeasyPrint needs Pango + HarfBuzz; DejaVu = fallback glyphs.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0 fonts-dejavu-core \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt

@@ -27,7 +27,7 @@ run() {
     -v "$DATA":/data \
     --read-only --tmpfs /tmp:rw,size=16m \
     --cap-drop ALL --security-opt no-new-privileges \
-    --cpus 0.5 --memory 256m --pids-limit 128 \
+    --cpus 0.5 --memory 384m --pids-limit 128 \
     --log-opt max-size=10m --log-opt max-file=3 \
     --restart unless-stopped \
     "lubobali-blueprint:$tag" >/dev/null

@@ -3,6 +3,7 @@
 POST /api/blueprint/followups  story -> up to 3 questions + a signed ticket
 POST /api/blueprint/generate   ticket + answers -> the blueprint (uses their one)
 POST /api/blueprint/book       a signed blueprint -> kept 90 days + Calendly link
+POST /api/blueprint/copy       a signed blueprint + email -> PDF to them, lead to Lubo
 GET  /api/blueprint/health     {"ok": true}
 
 The logic lives in service.py, settings in config.py, signing in
@@ -24,7 +25,8 @@ from fastapi.responses import JSONResponse
 
 from blueprint import llm
 from blueprint.config import Settings
-from blueprint.requests import BookRequest, GenerateRequest, StartRequest
+from blueprint.emailer import smtp_sender
+from blueprint.requests import BookRequest, CopyRequest, GenerateRequest, StartRequest
 from blueprint.service import RefusalError, Service
 
 __all__ = ["Settings", "app_from_env", "create_app"]
@@ -41,6 +43,8 @@ MESSAGES = {
     "busy": "The blueprint tool is very busy right now. Book a free call and we'll sketch it together.",
     "already_have": "You already have your blueprint. The next step is to talk it through: book a free call.",
     "ip_week": "You already have your blueprint. The next step is to talk it through: book a free call.",
+    "bad_email": "Please check your email address.",
+    "copy_sent": "Your blueprint was already sent. Check your inbox (and the spam folder).",
 }
 
 
@@ -65,13 +69,27 @@ async def limit_body(request: Request, call_next):
     return await call_next(request)
 
 
+def _mail_and_pdf(settings: Settings, send_mail: Callable | None, render_pdf: Callable | None):
+    """The real SMTP sender and PDF maker, unless a test passes fakes."""
+    if send_mail is None:
+        send_mail = smtp_sender(
+            host=settings.smtp_host, port=settings.smtp_port, user=settings.smtp_user, password=settings.smtp_password
+        )
+    if render_pdf is None:
+        from blueprint.pdf import render_pdf
+    return send_mail, render_pdf
+
+
 def create_app(
     settings: Settings,
     *,
     ask: Callable = llm.ask,
     clock: Callable[[], datetime] = lambda: datetime.now(UTC),
+    send_mail: Callable | None = None,
+    render_pdf: Callable | None = None,
 ) -> FastAPI:
-    service = Service(settings, ask=ask, clock=clock)
+    send_mail, render_pdf = _mail_and_pdf(settings, send_mail, render_pdf)
+    service = Service(settings, ask=ask, clock=clock, send_mail=send_mail, render_pdf=render_pdf)
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
     def ip_of(request: Request) -> str:
@@ -98,6 +116,10 @@ def create_app(
     @app.post("/api/blueprint/book")
     def book(r: BookRequest):
         return service.book(r)
+
+    @app.post("/api/blueprint/copy")
+    def copy(r: CopyRequest, request: Request):
+        return service.copy(r, ip_of(request))
 
     @app.get("/api/blueprint/health")
     def health():

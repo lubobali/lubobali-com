@@ -6,7 +6,7 @@ visitor said (Lubo's "the AI writes, the code checks").
 
 import pytest
 
-from blueprint.rules import WEEKS_PER_ROUND, readiness, time_saved, timeline
+from blueprint.rules import WEEKS_PER_ROUND, readiness, readiness_label, time_saved, timeline
 
 # --- readiness -------------------------------------------------------------
 
@@ -132,3 +132,22 @@ def test_time_saved_keeps_their_number_and_marks_ours_as_an_estimate():
 def test_time_saved_never_claims_zero_minutes():
     s = time_saved(pattern="agents", before_minutes_per_week=20)
     assert s is not None and s.after_minutes >= 10
+
+
+# --- readiness label (B7, Lubo: "13/100" alone reads like a failing grade) ---
+
+
+@pytest.mark.parametrize(
+    ("score", "word"),
+    [(5, "Early"), (49, "Early"), (50, "Good start"), (74, "Good start"), (75, "Ready"), (95, "Ready")],
+)
+def test_readiness_label_is_kind_and_matches_the_score(score, word):
+    assert readiness_label(score).startswith(word)
+
+
+def test_early_label_promises_exactly_what_the_timeline_does():
+    """Below the line the label says week 1 is cleanup; the timeline must agree."""
+    for score in (13, 49, 50):
+        t = timeline(pattern="agents", readiness_score=score, sources_count=1, team_size="1-10")
+        cleanup_first = t.rounds[0].label == "Clean up and connect your data"
+        assert cleanup_first == ("week 1" in readiness_label(score))

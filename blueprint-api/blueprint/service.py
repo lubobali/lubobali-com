@@ -17,9 +17,10 @@ from urllib.parse import urlencode
 
 from blueprint import llm
 from blueprint.config import Settings
+from blueprint.emailer import is_email, lead_mail, visitor_mail
 from blueprint.patterns import LOCKED, PATTERNS
 from blueprint.prompts import blueprint_messages, followup_messages
-from blueprint.requests import BookRequest, GenerateRequest, StartRequest
+from blueprint.requests import BookRequest, CopyRequest, GenerateRequest, StartRequest
 from blueprint.rules import readiness, time_saved, timeline
 from blueprint.schema import BlueprintDraft, FollowUpQuestions, VisitorInput
 from blueprint.signing import blueprint_ok, book_code, make_ticket, sign_blueprint, story_fingerprint, ticket_ok
@@ -66,8 +67,18 @@ def build_blueprint(draft: BlueprintDraft, v: VisitorInput, now: datetime) -> di
 
 
 class Service:
-    def __init__(self, settings: Settings, *, ask: Callable, clock: Callable[[], datetime]) -> None:
+    def __init__(
+        self,
+        settings: Settings,
+        *,
+        ask: Callable,
+        clock: Callable[[], datetime],
+        send_mail: Callable | None = None,
+        render_pdf: Callable | None = None,
+    ) -> None:
         self.s = settings
+        self.send_mail = send_mail
+        self.render_pdf = render_pdf
         self.store = Store(settings.db_path, salt=settings.salt, limits=settings.limits)
         self.ask = ask
         self.clock = clock
@@ -120,6 +131,33 @@ class Service:
         self.store.count("booked", now=now)
         query = urlencode({"utm_source": "lubobali.com", "utm_medium": "blueprint", "utm_content": code})
         return {"code": code, "calendly_url": f"{self.s.calendly_url}?{query}"}
+
+    def copy(self, r: CopyRequest, ip: str) -> dict:
+        """Email the PDF to the visitor and the lead to Lubo (B7)."""
+        now = self.clock()
+        bp, email = r.blueprint, r.email.strip()
+        if not blueprint_ok(self.s.signing_key, bp):
+            raise RefusalError(400, "start_again")
+        if not is_email(email):
+            raise RefusalError(400, "bad_email")
+        verdict = self.store.can_copy(signature=bp["signature"], ip=ip, now=now)
+        if verdict != "ok":
+            raise RefusalError(409 if verdict == "copy_sent" else 429, verdict)
+        try:
+            pdf = self.render_pdf(bp, calendly_url=self.s.calendly_url)
+            self.send_mail(
+                visitor_mail(bp, to=email, pdf=pdf, sender=self.s.mail_from, calendly_url=self.s.calendly_url)
+            )
+        except Exception as e:  # PDF or mail server: the visitor can try again
+            log.warning(json.dumps({"event": "copy", "result": "failed", "error": type(e).__name__}))
+            raise RefusalError(502, "try_again") from e
+        self.store.record_copy(signature=bp["signature"], ip=ip, now=now)
+        self.store.count("copy_sent", now=now)
+        try:  # the visitor has their PDF; a failed alert must not undo that
+            self.send_mail(lead_mail(bp, visitor=email, pdf=pdf, sender=self.s.mail_from, to=self.s.leads_to))
+        except Exception as e:
+            log.error(json.dumps({"event": "lead_mail", "result": "failed", "error": type(e).__name__}))
+        return {"sent": True}
 
     # -- helpers ------------------------------------------------------------------
 

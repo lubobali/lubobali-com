@@ -5,6 +5,7 @@
 @import "../components/blueprint/blueprint-flow.css";
 @import "../components/blueprint/tool.css";
 @import "../components/blueprint/examples.css";
+@import "../components/blueprint/copy.css";
 
 /* Dark only: `dark:` styles always apply (layout.tsx sets class="dark"),
    not just when the visitor's OS is in dark mode. */

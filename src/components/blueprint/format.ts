@@ -31,3 +31,12 @@ export function initials(role: string): string {
 export function splitReason(reason: string): { good: boolean; text: string } {
   return reason.startsWith("✓") ? { good: true, text: reason.slice(1).trim() } : { good: false, text: reason };
 }
+
+/** A kind word under the readiness number. Mirror of readiness_label in
+ *  blueprint-api/blueprint/rules.py (same lines: below 50 the timeline
+ *  starts with a cleanup week). */
+export function readinessLabel(score: number): string {
+  if (score < 50) return "Early, and that's normal: week 1 cleans up your data";
+  if (score < 75) return "Good start: a few small fixes along the way";
+  return "Ready: your data is in good shape";
+}

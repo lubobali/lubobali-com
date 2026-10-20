@@ -1,4 +1,4 @@
-import { duration, splitReason } from "./format";
+import { duration, readinessLabel, splitReason } from "./format";
 import type { Blueprint } from "./types";
 
 // The 3 numbers, all computed by code (never by the AI): data readiness
@@ -20,6 +20,7 @@ export function Gauge({ bp }: { bp: Blueprint }) {
           <span>/100</span>
         </p>
       </div>
+      <p className="bp-ready-label">{readinessLabel(score)}</p>
       <ul className="bp-reasons">
         {reasons.map((r) => {
           const { good, text } = splitReason(r);

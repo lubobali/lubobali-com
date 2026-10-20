@@ -1,0 +1,178 @@
+/* The blueprint as a PDF (Phase 3b B7, Lubo: dark navy like the site).
+   WeasyPrint (print CSS): A4, the site's tokens as plain hex, Inter Tight.
+   Layout with tables/blocks only: reliable in print. */
+
+@font-face {
+  font-family: "Inter Tight";
+  src: url("InterTight.woff2") format("woff2");
+  font-weight: 400 600;
+}
+@page {
+  size: A4;
+  margin: 16mm 15mm 18mm;
+  background: #0a0e1a;
+  @bottom-left {
+    content: "lubobali.com · AI blueprint";
+    color: #94a3b8;
+    font: 8pt "Inter Tight", sans-serif;
+  }
+  @bottom-right {
+    content: "page " counter(page) " of " counter(pages);
+    color: #94a3b8;
+    font: 8pt "Inter Tight", sans-serif;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  color: #f8fafc;
+  font: 10pt/1.45 "Inter Tight", sans-serif;
+}
+h1, h2, h3, p, ol, ul { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+
+.eyebrow, .label {
+  font-size: 7.5pt;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #d6e0f5;
+}
+.pattern {
+  margin-left: 6pt;
+  border: 0.6pt solid #4a5872;
+  border-radius: 20pt;
+  padding: 1pt 6pt;
+  letter-spacing: 0.03em;
+  text-transform: none;
+  color: #cdd9ec;
+}
+h1 {
+  margin: 8pt 0 6pt;
+  font-size: 24pt;
+  font-weight: 600;
+  line-height: 1.15;
+}
+.why { font-size: 11.5pt; color: #cdd9ec; }
+.goal { margin-top: 5pt; color: #94a3b8; }
+.goal .label { margin-right: 4pt; }
+
+.block { margin-top: 16pt; page-break-inside: avoid; }
+.block > .label { display: block; margin-bottom: 6pt; }
+
+/* Today -> With your AI */
+table.flow { width: 100%; border-collapse: separate; border-spacing: 0; }
+table.flow td { vertical-align: top; }
+td.arrow { width: 22pt; padding-top: 40pt; text-align: center; color: #38bdf8; font-size: 16pt; }
+.panel { border: 0.8pt solid #1e2a45; border-radius: 10pt; padding: 9pt; background: #0f1524; }
+.panel.new { border-color: #2c6c99; background: #11203f; }
+.panel-head { margin-bottom: 7pt; }
+.panel-head .title { font-size: 8pt; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #94a3b8; }
+.panel.new .panel-head .title { color: #d6e0f5; }
+.chip {
+  float: right;
+  border-radius: 20pt;
+  padding: 1pt 6pt;
+  font-size: 7.5pt;
+  font-weight: 600;
+  background: #3b1d2a;
+  border: 0.6pt solid #7a3045;
+}
+.panel.new .chip { background: #10324a; border-color: #2c7cad; }
+.step {
+  margin-bottom: 5pt;
+  border: 0.6pt solid #1e2a45;
+  border-radius: 7pt;
+  padding: 5pt 7pt;
+  background: #131a2e;
+}
+.step.pain { border-color: #7a3045; }
+.panel.new .step { border-color: #1f5578; background: #14274d; }
+.step-label { font-weight: 500; }
+.step-meta { font-size: 8pt; color: #94a3b8; }
+.pain-tag { float: right; font-size: 6.5pt; font-weight: 600; letter-spacing: 0.06em; color: #f8a3b4; }
+.app {
+  margin-bottom: 7pt;
+  border: 0.8pt solid #38bdf8;
+  border-radius: 20pt;
+  padding: 6pt;
+  background: #173a66;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Players */
+table.players { width: 100%; border-collapse: separate; border-spacing: 0 5pt; }
+table.players td { vertical-align: top; padding: 6pt 8pt; background: #131a2e; }
+td.avatar { width: 30pt; border-radius: 8pt 0 0 8pt; }
+td.avatar span {
+  display: block;
+  width: 22pt;
+  height: 22pt;
+  border: 0.8pt solid #a7b4cc;
+  border-radius: 11pt;
+  color: #d6e0f5;
+  font-size: 7.5pt;
+  font-weight: 600;
+  line-height: 22pt;
+  text-align: center;
+}
+td.who { border-radius: 0 8pt 8pt 0; }
+.role { font-weight: 600; }
+.power { font-size: 7pt; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #d6e0f5; }
+.does { font-size: 8.5pt; color: #94a3b8; }
+
+/* The 3 numbers */
+table.stats { width: 100%; border-collapse: separate; border-spacing: 6pt 0; margin: 0 -6pt; }
+table.stats td { width: 33%; vertical-align: top; padding: 9pt; border: 0.8pt solid #1e2a45; border-radius: 10pt; background: #0f1524; }
+.big { margin: 3pt 0 6pt; font-size: 20pt; font-weight: 600; }
+.big small { font-size: 9pt; font-weight: 400; color: #94a3b8; }
+.meter { height: 5pt; border-radius: 3pt; background: #1e2a45; }
+.meter span { display: block; height: 5pt; border-radius: 3pt; background: #38bdf8; }
+.ready-label { margin-top: 5pt; font-size: 8.5pt; font-weight: 600; color: #e6edf7; }
+.reasons li, .rounds li { margin-top: 4pt; font-size: 8.5pt; color: #cdd9ec; }
+.reasons li::before { content: "• "; color: #fbbf24; }
+.reasons li.good::before { content: "✓ "; color: #34d399; }
+.rounds li { border-left: 2pt solid #38bdf8; padding: 2pt 5pt; background: #13254a; border-radius: 3pt; }
+.rounds li:last-child { border-left-color: #d6e0f5; }
+.week { font-size: 7pt; font-weight: 600; color: #94a3b8; margin-right: 4pt; }
+.bar-name { margin-top: 6pt; font-size: 8pt; color: #94a3b8; }
+.bar { height: 6pt; border-radius: 3pt; background: #e2633c; }
+.bar.after { background: #38bdf8; }
+.note { margin-top: 6pt; font-size: 7.5pt; color: #94a3b8; }
+
+/* Risks + questions */
+table.two { width: 100%; border-collapse: separate; border-spacing: 0; }
+table.two > tbody > tr > td { width: 50%; vertical-align: top; }
+table.two > tbody > tr > td:first-child { padding-right: 9pt; }
+.risk { margin-bottom: 5pt; border: 0.6pt solid #1e2a45; border-radius: 7pt; padding: 5pt 7pt; background: #131a2e; font-size: 9pt; }
+.tag { margin-right: 4pt; border-radius: 20pt; padding: 0 5pt; font-size: 6.5pt; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; background: #3a2f12; }
+.tag.fix { background: #3b1d2a; }
+.questions li { margin-bottom: 6pt; color: #cdd9ec; font-size: 9.5pt; }
+.questions .n { color: #d6e0f5; font-weight: 600; margin-right: 4pt; }
+
+/* The locked "how" + next step */
+.locked {
+  margin-top: 18pt;
+  border: 0.8pt solid #4a5872;
+  border-radius: 12pt;
+  padding: 12pt 14pt;
+  background: #11182b;
+  page-break-inside: avoid;
+}
+.locked h2 { font-size: 13pt; font-weight: 600; }
+.locked li { margin-top: 4pt; color: #cdd9ec; }
+.locked li::before { content: "▪ "; color: #94a3b8; }
+.cta {
+  display: inline-block;
+  margin-top: 10pt;
+  border-radius: 8pt;
+  padding: 7pt 14pt;
+  background: #3a6ae0;
+  color: #f8fafc;
+  font-weight: 600;
+  text-decoration: none;
+}
+.code { margin-top: 6pt; font-size: 8.5pt; color: #94a3b8; }
+.code b { color: #d6e0f5; letter-spacing: 0.08em; }

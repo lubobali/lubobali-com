@@ -1,0 +1,40 @@
+/* Styles for the Blueprint "Email me the PDF" form, bundled via globals.css.
+   Split from tool.css (no monster files). */
+
+.bpt-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+  max-width: 30rem;
+  margin-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1.25rem;
+  text-align: left;
+}
+.bpt-copy-label {
+  font-weight: 600;
+}
+.bpt-copy-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.bpt-copy-row .bpt-own {
+  flex: 1 1 14rem;
+  margin-top: 0;
+}
+.bpt-copy-row .bpt-go {
+  padding: 0.6rem 1.2rem;
+}
+.bpt-copy-error {
+  font-size: 0.85rem;
+  color: var(--foreground);
+}
+.bpt-copy-done {
+  margin-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1.25rem;
+  color: var(--card-text-soft);
+}
+

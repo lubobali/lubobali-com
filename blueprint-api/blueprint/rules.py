@@ -35,10 +35,32 @@ _ISSUES = {
 _MIN_SCORE, _MAX_SCORE = 5, 95
 
 
+# Below this, the timeline starts with a cleanup week and the label says so.
+CLEANUP_BELOW = 50
+_READY_FROM = 75
+
+
 @dataclass(frozen=True)
 class Readiness:
     score: int
     reasons: tuple[str, str, str]
+
+
+def readiness_label(score: int) -> str:
+    """A kind word next to the number (B7, Lubo: "13/100" alone reads like
+    a failing grade). Display only: same for old blueprints and examples.
+    Mirrored in src/components/blueprint/format.ts (readinessLabel).
+
+    >>> readiness_label(13)
+    "Early, and that's normal: week 1 cleans up your data"
+    >>> readiness_label(80)
+    'Ready: your data is in good shape'
+    """
+    if score < CLEANUP_BELOW:
+        return "Early, and that's normal: week 1 cleans up your data"
+    if score < _READY_FROM:
+        return "Good start: a few small fixes along the way"
+    return "Ready: your data is in good shape"
 
 
 def readiness(*, data_location: str, sources_count: int, issues: list[str]) -> Readiness:
@@ -116,7 +138,7 @@ def timeline(*, pattern: str, readiness_score: int, sources_count: int, team_siz
     if pattern not in PATTERNS:
         raise ValueError(f"unknown pattern: {pattern}")
     labels: list[str] = []
-    if readiness_score < 50:
+    if readiness_score < CLEANUP_BELOW:
         labels.append(_CLEANUP)
     labels += PATTERNS[pattern].rounds
     if sources_count >= 4:

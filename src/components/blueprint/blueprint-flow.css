@@ -1,5 +1,5 @@
-/* Blueprint card, part 2: the Before -> After diagram + who's involved
-   (Phase 3b B5). Split from blueprint.css (Lubo: no monster files). */
+/* Blueprint card, part 2: the Before -> After diagram, who's involved,
+   risks + questions (Phase 3b B5). Split from blueprint.css (Lubo: no monster files). */
 
 /* --- before -> after ---------------------------------------------------- */
 .bp-flow {
@@ -277,4 +277,73 @@
     opacity: 0;
     translate: 0 0.75rem;
   }
+}
+
+/* --- risks + questions -------------------------------------------------------- */
+.bp-two {
+  display: grid;
+  gap: 2rem;
+}
+@media (min-width: 48rem) {
+  .bp-two {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.bp-risks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.bp-risks li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 0.8rem;
+  background: color-mix(in oklch, var(--card) 55%, transparent);
+  padding: 0.7rem 0.9rem;
+  font-size: 0.9rem;
+}
+.bp-risk-tag {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  border: 1px solid color-mix(in oklch, var(--soon) 45%, transparent);
+  border-radius: 9999px;
+  background: color-mix(in oklch, var(--soon) 16%, transparent);
+  padding: 0.1rem 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.bp-risks li[data-severity="fix_first"] .bp-risk-tag {
+  border-color: color-mix(in oklch, var(--destructive) 55%, transparent);
+  background: color-mix(in oklch, var(--destructive) 22%, transparent);
+}
+.bp-questions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  counter-reset: bpq;
+}
+.bp-questions li {
+  position: relative;
+  padding-left: 2.4rem;
+  color: var(--card-text-soft);
+  counter-increment: bpq;
+}
+.bp-questions li::before {
+  content: counter(bpq);
+  position: absolute;
+  top: -0.1rem;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  border: 1.5px solid color-mix(in oklch, var(--award) 55%, transparent);
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--award);
 }

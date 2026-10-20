@@ -29,6 +29,13 @@ class Settings:
     ticket_ttl_s: int = 3600
     calendly_url: str = CALENDLY
     trusted_proxies: tuple[str, ...] = ("127.0.0.1", "::1")
+    # "Email me the PDF" (B7): sent from Lubo's mailbox, leads go to him.
+    mail_from: str = "data@lubobali.com"
+    leads_to: str = "data@lubobali.com"
+    smtp_host: str = "mail.privateemail.com"
+    smtp_port: int = 587
+    smtp_user: str = ""
+    smtp_password: str = ""
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -43,7 +50,15 @@ class Settings:
                 blueprints_per_visitor=int(e.get("BLUEPRINT_PER_VISITOR", 1)),
                 blueprints_per_ip_week=int(e.get("BLUEPRINT_PER_IP_WEEK", 1)),
                 followups_per_ip_day=int(e.get("BLUEPRINT_FOLLOWUPS_PER_IP_DAY", 6)),
+                copies_per_ip_day=int(e.get("BLUEPRINT_COPIES_PER_IP_DAY", 3)),
+                copies_per_day=int(e.get("BLUEPRINT_COPIES_PER_DAY", 30)),
             ),
             model_id=e.get("BLUEPRINT_MODEL") or None,
             trusted_proxies=tuple(x for x in e.get("BLUEPRINT_TRUSTED_PROXIES", "127.0.0.1,::1").split(",") if x),
+            mail_from=e.get("BLUEPRINT_MAIL_FROM", "data@lubobali.com"),
+            leads_to=e.get("BLUEPRINT_LEADS_TO", "data@lubobali.com"),
+            smtp_host=e.get("SMTP_HOST", "mail.privateemail.com"),
+            smtp_port=int(e.get("SMTP_PORT", 587)),
+            smtp_user=e.get("SMTP_USER", ""),
+            smtp_password=e.get("SMTP_PASSWORD", ""),
         )
