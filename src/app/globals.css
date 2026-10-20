@@ -905,6 +905,29 @@ body {
   background-position: 100% 0;
 }
 
+/* Testimonials (H10): award-card edge + face, a glowing platinum quote
+   mark and a round photo in a platinum ring (like the emblems). */
+.quote-mark {
+  fill: var(--award);
+  filter: drop-shadow(0 0 10px var(--glow-award));
+}
+.quote-photo {
+  display: block;
+  flex: none;
+  width: 4rem;
+  height: 4rem;
+  padding: 2px;
+  border-radius: 9999px;
+  background: linear-gradient(145deg, var(--award), color-mix(in oklch, var(--award) 25%, var(--card-blue)) 55%, var(--sky));
+  box-shadow: 0 0 18px -4px var(--glow-sky);
+}
+.quote-photo img {
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  object-fit: cover;
+}
+
 /* Footer (H11): a glow line on top (sky -> platinum, like the step line)
    in place of a flat border, and round profile icons like small coins. */
 .site-footer::before {

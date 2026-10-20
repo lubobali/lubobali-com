@@ -21,6 +21,10 @@ const PHOTOS = {
   "DSC05154 copy.jpg": "lubo-bali-about",
   "DSC04577.jpg": "lubo-bali-basketball",
   "DSC05154 copy 2.jpg": "lubo-bali-headshot", // contact
+  // Testimonial avatar (H10): Zach's LinkedIn photo, cropped to 240 px
+  // (shown at 64 px, so 240 covers 3x screens). Used with his OK.
+  "zach-wilson.png": "zach-wilson",
+  "matthew-hamann.png": "matthew-hamann", // same, from his LinkedIn photo
 };
 const WIDTHS = [400, 640, 960, 1280, 1920, 2560];
 const FORMATS = {

@@ -50,6 +50,9 @@ const PAGE_TEXT = {
     "Every 2 weeks: update + invoice",
     "You own 100% of what I build",
     "AI Engineer (contract) at Structured Fusion AI",
+    "LuBot is one of the best projects in the bootcamp, ready to make money.", // H10
+    "Zach Wilson",
+    "What people say",
     "Tell me your problem.", // final CTA (H11)
     "Next project from December 2026",
     "data@lubobali.com",

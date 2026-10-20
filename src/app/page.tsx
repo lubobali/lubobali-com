@@ -7,6 +7,7 @@ import { ProofStrip } from "@/components/home/proof-strip";
 import { SeeItWork } from "@/components/home/see-it-work";
 import { SelectedWork } from "@/components/home/selected-work";
 import { Services } from "@/components/home/services";
+import { Testimonials } from "@/components/home/testimonials";
 import { JsonLd } from "@/components/seo/json-ld";
 import { homeGraph } from "@/lib/schema";
 
@@ -31,6 +32,7 @@ export default function Home() {
         <DataRain className="rain-around" />
         <Services />
         <SelectedWork />
+        <Testimonials />
         <BuiltWith />
         <HowItWorks />
         <FinalCta />
