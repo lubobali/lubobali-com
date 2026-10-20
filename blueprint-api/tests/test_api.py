@@ -352,3 +352,12 @@ def test_the_blueprint_call_gets_the_visitors_own_words_for_the_amount_check(tmp
     blueprint_for(client)
     words = ai.context["visitor_words"]
     assert STORY in words and "The owner" in words
+
+
+def test_obvious_junk_never_reaches_the_paid_ai(tmp_path):
+    """B9.4: same "not a story" answer as the AI, free, and no daily try used."""
+    client, ai = make(tmp_path, limits=Limits(followups_per_ip_day=1))
+    r = followups(client, visitor(), story="asdf asdf asdf asdf asdf asdf")
+    assert r.status_code == 200 and r.json() == {"story_ok": False, "questions": [], "ticket": None}
+    assert ai.calls == []
+    assert followups(client, visitor()).json()["story_ok"] is True  # the 1 daily try is still there

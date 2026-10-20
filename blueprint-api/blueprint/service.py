@@ -18,6 +18,7 @@ from urllib.parse import urlencode
 from blueprint import llm
 from blueprint.config import Settings
 from blueprint.emailer import alert_mail, is_email, lead_mail, visitor_mail
+from blueprint.junk import is_junk
 from blueprint.patterns import LOCKED, PATTERNS
 from blueprint.prompts import blueprint_messages, followup_messages
 from blueprint.requests import BookRequest, CopyRequest, GenerateRequest, StartRequest
@@ -91,6 +92,9 @@ class Service:
     def followups(self, r: StartRequest, ip: str) -> dict:
         now = self.clock()
         self._bot_checks(r)
+        if is_junk(r.story):  # B9.4: free, and the visitor keeps their daily tries
+            self.store.count("junk", now=now)
+            return {"story_ok": False, "questions": [], "ticket": None}
         if not self.store.take_followup(ip=ip, now=now):
             raise RefusalError(429, "slow_down")
         v = VisitorInput(story=r.story, data_location=r.data_location, team_size=r.team_size)

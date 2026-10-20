@@ -29,7 +29,7 @@ VISITOR_DAYS = 365
 BOOKED_DAYS = 90
 IP_WINDOW_DAYS = 7
 FUNNEL_EVENTS = frozenset(
-    {"started", "not_a_story", "finished", "refused", "booked", "copy_sent"}
+    {"started", "not_a_story", "junk", "finished", "refused", "booked", "copy_sent"}
     | {"alert_no_credit", "alert_key_refused", "alert_budget"}  # B9.3: 1st of the day = email
 )
 _CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"  # no 0/O, 1/I
