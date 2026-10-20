@@ -1,0 +1,361 @@
+/* AI Blueprint tool: the steps before the card (Phase 3b B5.1). Own file,
+   bundled via globals.css. Text colours = foreground / muted / award /
+   card-text-soft; form borders use --input (3:1 for controls). Motion only
+   under prefers-reduced-motion: no-preference (bottom). */
+
+.bpt {
+  padding: 1.5rem;
+}
+@media (min-width: 40rem) {
+  .bpt {
+    padding: 2.5rem;
+  }
+}
+.bpt:hover,
+.bpt:focus-within {
+  transform: none; /* a form doesn't lift */
+}
+
+.bpt-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+.bpt-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+.bpt-q {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+.bpt-hint {
+  font-size: 0.9rem;
+  color: var(--muted-foreground);
+}
+.bpt-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  outline: none;
+}
+.bpt-small {
+  font-size: 0.8rem;
+  color: var(--muted-foreground);
+}
+
+.bpt-story,
+.bpt-own {
+  width: 100%;
+  border: 1px solid var(--input);
+  border-radius: 1rem;
+  background: color-mix(in oklch, var(--background) 70%, transparent);
+  padding: 0.9rem 1rem;
+  color: var(--foreground);
+  font: inherit;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.bpt-story {
+  resize: vertical;
+  min-height: 8rem;
+  line-height: 1.55;
+}
+.bpt-own {
+  margin-top: 0.6rem;
+  border-radius: 9999px;
+  padding: 0.55rem 1rem;
+  font-size: 0.9rem;
+}
+.bpt-story::placeholder,
+.bpt-own::placeholder {
+  color: var(--muted-foreground);
+}
+.bpt-story:focus,
+.bpt-own:focus {
+  border-color: var(--sky);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--sky) 25%, transparent);
+  outline: none;
+}
+.bpt-count {
+  align-self: flex-end;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tap answers: real radio inputs, drawn as pills. */
+.bpt-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.bpt-pill {
+  position: relative;
+  cursor: pointer;
+}
+.bpt-pill input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.bpt-pill span {
+  display: inline-block;
+  border: 1px solid var(--input);
+  border-radius: 9999px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.bpt-pill:hover span {
+  border-color: color-mix(in oklch, var(--sky) 70%, transparent);
+}
+.bpt-pill input:checked + span {
+  border-color: var(--sky);
+  background: color-mix(in oklch, var(--sky) 18%, var(--card-blue));
+  box-shadow: 0 0 18px -4px var(--glow-sky);
+}
+.bpt-pill input:focus-visible + span {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.bpt-trap {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.bpt-privacy {
+  font-size: 0.8rem;
+  color: var(--muted-foreground);
+}
+.bpt-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+}
+.bpt-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  background: var(--primary);
+  padding: 0.85rem 1.6rem;
+  font-weight: 600;
+  color: var(--primary-foreground);
+  box-shadow: 0 10px 30px -10px var(--glow-brand);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+.bpt-go:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 34px -10px var(--glow-sky);
+}
+.bpt-go:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+.bpt-go:focus-visible,
+.bpt-skip:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+}
+.bpt-skip {
+  font-size: 0.9rem;
+  color: var(--link);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklch, var(--link) 40%, transparent);
+  text-underline-offset: 4px;
+}
+.bpt-skip:hover {
+  text-decoration-color: var(--link);
+}
+
+.bpt-notice,
+.bpt-error > p {
+  border: 1px solid color-mix(in oklch, var(--soon) 45%, transparent);
+  border-radius: 1rem;
+  background: color-mix(in oklch, var(--soon) 10%, transparent);
+  padding: 0.9rem 1.1rem;
+}
+.bpt-notice {
+  margin-bottom: 1.5rem;
+}
+.bpt-error {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Questions, like chat bubbles from Lubo. */
+.bpt-chat {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.bpt-bubble {
+  border: 1px solid color-mix(in oklch, var(--sky) 25%, transparent);
+  border-radius: 1.25rem 1.25rem 1.25rem 0.35rem;
+  background: color-mix(in oklch, var(--card-blue) 55%, transparent);
+  padding: 1rem 1.15rem;
+}
+.bpt-bubble fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+/* The waiting moment. */
+.bpt-drawing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 2.5rem 0;
+  text-align: center;
+}
+.bpt-orb {
+  position: relative;
+  width: 5.5rem;
+  height: 5.5rem;
+}
+.bpt-orb span {
+  position: absolute;
+  inset: 0;
+  border: 1.5px solid transparent;
+  border-top-color: var(--sky);
+  border-right-color: color-mix(in oklch, var(--award) 60%, transparent);
+  border-radius: 9999px;
+  filter: drop-shadow(0 0 8px var(--glow-sky));
+}
+.bpt-orb span:nth-child(2) {
+  inset: 0.8rem;
+  border-top-color: var(--award);
+  border-right-color: transparent;
+  border-left-color: color-mix(in oklch, var(--sky) 70%, transparent);
+}
+.bpt-orb span:nth-child(3) {
+  inset: 1.8rem;
+  border-color: color-mix(in oklch, var(--sky) 70%, transparent);
+  background: radial-gradient(circle, color-mix(in oklch, var(--sky) 45%, transparent), transparent 70%);
+}
+.bpt-drawing-line {
+  min-height: 1.6em;
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+.bpt-progress {
+  width: min(22rem, 100%);
+  height: 4px;
+  overflow: hidden;
+  border-radius: 9999px;
+  background: var(--border);
+}
+.bpt-progress span {
+  display: block;
+  width: 90%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--brand-light), var(--sky), var(--award));
+  box-shadow: 0 0 10px var(--glow-sky);
+}
+
+.bpt-result {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  outline: none;
+}
+.bpt-ready {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--award);
+}
+.bpt-ready::before {
+  content: "✓ ";
+  color: var(--success);
+}
+
+/* The real example, behind "See a real example". */
+.bp-example {
+  margin-top: 1.5rem;
+}
+.bp-example summary {
+  width: fit-content;
+  cursor: pointer;
+  color: var(--link);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklch, var(--link) 40%, transparent);
+  text-underline-offset: 4px;
+}
+.bp-example[open] summary {
+  margin-bottom: 1.5rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bpt-orb span {
+    animation: bpt-spin 2.6s linear infinite;
+  }
+  .bpt-orb span:nth-child(2) {
+    animation-duration: 3.8s;
+    animation-direction: reverse;
+  }
+  .bpt-orb span:nth-child(3) {
+    animation: bpt-breathe 2.2s ease-in-out infinite alternate;
+  }
+  /* Fills toward 90% and waits there for the real answer. */
+  .bpt-progress span {
+    animation: bpt-fill 35s cubic-bezier(0.1, 0.6, 0.2, 1) both;
+  }
+  .bpt-drawing[data-mode="reading"] .bpt-progress span {
+    animation-duration: 9s;
+  }
+  .bpt-bubble {
+    animation: bpt-in 0.5s ease-out both;
+    animation-delay: calc(var(--i) * 0.15s);
+  }
+}
+
+@keyframes bpt-spin {
+  to {
+    rotate: 1turn;
+  }
+}
+@keyframes bpt-breathe {
+  from {
+    opacity: 0.5;
+    scale: 0.85;
+  }
+  to {
+    opacity: 1;
+    scale: 1.05;
+  }
+}
+@keyframes bpt-fill {
+  from {
+    width: 0;
+  }
+}
+@keyframes bpt-in {
+  from {
+    opacity: 0;
+    translate: 0 0.5rem;
+  }
+}

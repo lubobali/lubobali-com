@@ -1,0 +1,391 @@
+/* AI Project Blueprint card, part 1 (Phase 3b B5): card, head, the 3 numbers,
+   risks, questions, locked "how". Part 2 = blueprint-flow.css. Own files, not globals.css (Lubo:
+   no monster files). Site tokens only; text colours are foreground /
+   muted / award / card-text-soft (already contrast-checked on these
+   faces); red/amber/green are used for dots, borders and fills only.
+   Motion only under prefers-reduced-motion: no-preference (bottom). */
+
+.bp-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1.5rem;
+}
+@media (min-width: 40rem) {
+  .bp-card {
+    padding: 2.5rem;
+    gap: 2.5rem;
+  }
+}
+/* A big card doesn't lift on hover like the small award cards. */
+.bp-card:hover,
+.bp-card:focus-within {
+  transform: none;
+}
+
+.bp-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--award);
+}
+
+/* --- head ------------------------------------------------------------- */
+.bp-eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--award);
+}
+.bp-pattern {
+  border: 1px solid color-mix(in oklch, var(--award) 30%, transparent);
+  border-radius: 9999px;
+  padding: 0.2rem 0.65rem;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--card-text-soft);
+}
+.bp-title {
+  margin-top: 0.75rem;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+.bp-why {
+  margin-top: 0.75rem;
+  max-width: 48rem;
+  font-size: 1.125rem;
+  color: var(--card-text-soft);
+}
+.bp-goal {
+  margin-top: 0.75rem;
+  max-width: 48rem;
+  color: var(--muted-foreground);
+}
+.bp-goal .bp-label {
+  margin-right: 0.4rem;
+}
+
+/* --- the 3 numbers ---------------------------------------------------------- */
+.bp-stats {
+  display: grid;
+  gap: 1rem;
+}
+@media (min-width: 48rem) {
+  .bp-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 64rem) {
+  .bp-stats[data-cols="3"] {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.bp-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  background: color-mix(in oklch, var(--card) 55%, transparent);
+  padding: 1.25rem;
+}
+.bp-stat-big {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 1.6rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--foreground);
+}
+
+.bp-gauge {
+  position: relative;
+  width: min(13rem, 100%);
+  margin: 0 auto;
+}
+.bp-gauge svg {
+  display: block;
+  width: 100%;
+  overflow: visible;
+  fill: none;
+  stroke-linecap: round;
+  stroke-width: 9;
+}
+.bp-gauge-track {
+  stroke: var(--border);
+}
+.bp-gauge-value {
+  stroke: var(--sky);
+  stroke-dasharray: 100;
+  stroke-dashoffset: calc(100 - var(--score));
+  filter: drop-shadow(0 0 6px var(--glow-sky));
+}
+.bp-gauge-num {
+  position: absolute;
+  right: 0;
+  bottom: -0.2rem;
+  left: 0;
+  text-align: center;
+  font-size: 2.25rem;
+  font-weight: 600;
+  line-height: 1;
+}
+.bp-gauge-num span {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--muted-foreground);
+}
+.bp-reasons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--card-text-soft);
+}
+.bp-reasons li {
+  position: relative;
+  padding-left: 1.1rem;
+}
+.bp-reasons li::before {
+  content: "";
+  position: absolute;
+  top: 0.5em;
+  left: 0.15rem;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 9999px;
+  background: var(--soon);
+}
+.bp-reasons li[data-good]::before {
+  background: var(--success);
+}
+
+.bp-rounds {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.bp-rounds li {
+  display: grid;
+  grid-template-columns: 4.25rem 1fr;
+  align-items: center;
+  border-left: 3px solid var(--sky);
+  border-radius: 0.6rem;
+  background: color-mix(in oklch, var(--card-blue) 45%, transparent);
+  padding: 0.45rem 0.7rem;
+  font-size: 0.85rem;
+}
+.bp-rounds li:last-child {
+  border-left-color: var(--award);
+}
+.bp-round-week {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.bp-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+.bp-bars p {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.35rem 0.75rem;
+}
+.bp-bar-name {
+  grid-column: 1 / -1;
+  font-size: 0.8rem;
+  color: var(--muted-foreground);
+}
+.bp-bar {
+  display: block;
+  width: var(--w);
+  height: 0.7rem;
+  border-radius: 9999px;
+}
+.bp-bar--before {
+  background: color-mix(in oklch, var(--destructive) 70%, var(--soon));
+}
+.bp-bar--after {
+  background: var(--sky);
+  box-shadow: 0 0 12px var(--glow-sky);
+}
+.bp-bar-value {
+  font-weight: 600;
+}
+.bp-note {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+/* --- risks + questions -------------------------------------------------------- */
+.bp-two {
+  display: grid;
+  gap: 2rem;
+}
+@media (min-width: 48rem) {
+  .bp-two {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.bp-risks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.bp-risks li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 0.8rem;
+  background: color-mix(in oklch, var(--card) 55%, transparent);
+  padding: 0.7rem 0.9rem;
+  font-size: 0.9rem;
+}
+.bp-risk-tag {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  border: 1px solid color-mix(in oklch, var(--soon) 45%, transparent);
+  border-radius: 9999px;
+  background: color-mix(in oklch, var(--soon) 16%, transparent);
+  padding: 0.1rem 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.bp-risks li[data-severity="fix_first"] .bp-risk-tag {
+  border-color: color-mix(in oklch, var(--destructive) 55%, transparent);
+  background: color-mix(in oklch, var(--destructive) 22%, transparent);
+}
+.bp-questions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  counter-reset: bpq;
+}
+.bp-questions li {
+  position: relative;
+  padding-left: 2.4rem;
+  color: var(--card-text-soft);
+  counter-increment: bpq;
+}
+.bp-questions li::before {
+  content: counter(bpq);
+  position: absolute;
+  top: -0.1rem;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  border: 1.5px solid color-mix(in oklch, var(--award) 55%, transparent);
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--award);
+}
+
+/* --- the locked "how" ------------------------------------------------------------- */
+.bp-locked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid color-mix(in oklch, var(--award) 25%, transparent);
+  border-radius: 1.25rem;
+  background:
+    radial-gradient(ellipse 70% 80% at 50% 0%, color-mix(in oklch, var(--brand-light) 14%, transparent), transparent 70%),
+    color-mix(in oklch, var(--background) 45%, transparent);
+  padding: 1.75rem 1.25rem;
+  text-align: center;
+}
+.bp-locked-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--award);
+  filter: drop-shadow(0 0 8px var(--glow-award));
+}
+.bp-locked-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+.bp-locked-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 30rem;
+}
+.bp-locked-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border);
+  padding: 0.6rem 0.25rem;
+  text-align: left;
+  font-size: 0.9rem;
+}
+.bp-blur {
+  flex-shrink: 0;
+  width: 6rem;
+  height: 0.6rem;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, color-mix(in oklch, var(--award) 30%, transparent), transparent);
+  filter: blur(3px);
+}
+.bp-locked-text {
+  color: var(--card-text-soft);
+}
+
+/* --- motion (never with "reduce motion") ------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  /* Entrance as the card scrolls in (CSS only; browsers without scroll
+     timelines simply show the final state). */
+  @supports (animation-timeline: view()) {
+    .bp-rounds li,
+    .bp-risks li {
+      animation: bp-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+    .bp-gauge-value {
+      animation: bp-gauge linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 45%;
+    }
+    .bp-bar {
+      animation: bp-grow linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 40%;
+    }
+  }
+}
+
+@keyframes bp-gauge {
+  from {
+    stroke-dashoffset: 100;
+  }
+}
+@keyframes bp-grow {
+  from {
+    width: 0;
+  }
+}

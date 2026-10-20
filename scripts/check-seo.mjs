@@ -36,6 +36,8 @@ const PAGE_TEXT = {
     "Inside LuBot's database-per-tenant architecture",
     "12,000+",
     "What I do", // service cards (Phase 3 H6)
+    "Get your free AI blueprint", // Blueprint tool + example (Phase 3b B5)
+    "3 questions I'd ask you on our call",
     "AI agents that do the work", // H12: 4 cards
     "Data that's ready for AI",
     "Answers you can trust",

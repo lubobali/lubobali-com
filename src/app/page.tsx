@@ -1,4 +1,5 @@
 import { DataRain } from "@/components/ambient/data-rain";
+import { BlueprintSection } from "@/components/home/blueprint-section";
 import { BuiltWith } from "@/components/home/built-with";
 import { FinalCta } from "@/components/home/final-cta";
 import { Hero } from "@/components/home/hero";
@@ -31,6 +32,7 @@ export default function Home() {
       <div className="relative isolate flex flex-col">
         <DataRain className="rain-around" />
         <Services />
+        <BlueprintSection />
         <SelectedWork />
         <Testimonials />
         <BuiltWith />

@@ -1,4 +1,9 @@
 @import "tailwindcss";
+/* Component styles kept in their own files (no monster globals), bundled
+   into this one stylesheet: one render-blocking CSS file, not two (H12). */
+@import "../components/blueprint/blueprint.css";
+@import "../components/blueprint/blueprint-flow.css";
+@import "../components/blueprint/tool.css";
 
 /* Dark only: `dark:` styles always apply (layout.tsx sets class="dark"),
    not just when the visitor's OS is in dark mode. */
