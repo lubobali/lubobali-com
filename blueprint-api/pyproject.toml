@@ -5,10 +5,22 @@ line-length = 120
 target-version = "py312"
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "I", "N", "UP", "B", "SIM"]
+# C90/PLR09: function-size caps at ruff's strict defaults (LuBot's
+# no-monsters rule, stricter because this code is new). Files: see
+# tests/test_size.py (400 lines max per module).
+select = ["E", "F", "W", "I", "N", "UP", "B", "SIM", "C90", "PLR0911", "PLR0912", "PLR0913", "PLR0915"]
 # The formatter owns line length (ruff docs: E501 is redundant with it);
 # long plain-text strings stay on one line.
 ignore = ["E501"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.pylint]
+max-branches = 12
+max-statements = 50
+max-returns = 6
+max-args = 6
 
 [tool.pytest.ini_options]
 addopts = "-q -p no:cacheprovider --doctest-modules"
