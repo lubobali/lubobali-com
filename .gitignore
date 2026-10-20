@@ -159,3 +159,10 @@ yarn-error.log*
 /public/img/
 /public/video/
 /src/generated/
+
+# Blueprint API (Python, Phase 3b)
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/

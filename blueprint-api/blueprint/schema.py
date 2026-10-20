@@ -1,0 +1,162 @@
+"""The shape of a blueprint (Phase 3b B1).
+
+Two shapes:
+- ``VisitorInput``: what the visitor sends (story + 2 taps + follow-ups).
+- ``BlueprintDraft``: what the AI must return, in Lubo's way: why -> old
+  flow -> players (money + power) -> users -> new flow, plus named risks
+  and 3 questions for the call. Strict: unknown fields are rejected, so
+  the "how" (tools, architecture, fixes, cost) has nowhere to go; text
+  is plain (no HTML, no links, no markdown) and never cut, only rejected.
+Numbers the visitor reads (score, timeline, time saved) are NOT here:
+code computes them (rules.py).
+"""
+
+from __future__ import annotations
+
+import re
+from typing import Annotated, Literal
+
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field, StringConstraints, model_validator
+
+DataLocation = Literal["spreadsheets", "database", "crm_or_saas", "documents", "not_sure"]
+TeamSize = Literal["1-10", "11-50", "51-200", "200+"]
+Power = Literal["decides", "approves", "does", "uses", "informed"]
+Severity = Literal["watch", "fix_first"]
+Per = Literal["day", "week", "month"]
+Issue = Literal[
+    "multiple_sources",
+    "manual_copying",
+    "no_shared_ids",
+    "unstructured_docs",
+    "unknown_quality",
+    "sensitive_data",
+]
+PATTERN_IDS = ("agents", "data_platform", "trusted_answers", "cost_control")
+PatternId = Literal["agents", "data_platform", "trusted_answers", "cost_control"]
+
+# Markup, links or code in the AI's text = rejected (the page renders text
+# only, but a strange answer is a sign the model was tricked).
+_NOT_PLAIN = re.compile(r"[<>`]|\]\(|https?://|www\.", re.IGNORECASE)
+
+
+def _plain(text: str) -> str:
+    """Reject markup and links.
+
+    >>> _plain("One fleet dashboard")
+    'One fleet dashboard'
+    >>> _plain("<b>x</b>")
+    Traceback (most recent call last):
+    ...
+    ValueError: plain text only (no HTML, links or markdown)
+    """
+    if _NOT_PLAIN.search(text):
+        raise ValueError("plain text only (no HTML, links or markdown)")
+    return text
+
+
+def Text(min_len: int, max_len: int):  # noqa: N802 (reads like a type)
+    """Plain text with a length range; too long is an error, never cut."""
+    return Annotated[
+        str,
+        StringConstraints(strip_whitespace=True, min_length=min_len, max_length=max_len),
+        AfterValidator(_plain),
+    ]
+
+
+class _Strict(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+
+# --- what the visitor sends -------------------------------------------------
+
+
+class FollowUp(_Strict):
+    question: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
+    answer: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=300)]
+
+
+class VisitorInput(_Strict):
+    # The visitor's own words: any text, only the length is checked. It is
+    # sent to the model as data, never as instructions.
+    story: Annotated[str, StringConstraints(strip_whitespace=True, min_length=20, max_length=1200)]
+    data_location: DataLocation
+    team_size: TeamSize
+    followups: list[FollowUp] = Field(default_factory=list, max_length=3)
+
+
+# --- what the AI must return -------------------------------------------------
+
+
+class Why(_Strict):
+    problem: Text(10, 220)
+    goal: Text(5, 160)
+
+
+class OldStep(_Strict):
+    label: Text(2, 40)
+    tool: Text(2, 30)
+    # Only when the visitor said how long it takes; both or neither.
+    minutes: int | None = Field(default=None, ge=1, le=10_000)
+    per: Per | None = None
+    pain: bool = False
+
+    @model_validator(mode="after")
+    def _time_needs_both(self) -> OldStep:
+        if (self.minutes is None) != (self.per is None):
+            raise ValueError("minutes and per go together")
+        return self
+
+
+# "40%", "40% of fees", "12.5% split": a share, nothing else.
+_SHARE = r"^\d{1,3}(\.\d+)?\s?%(\s?[A-Za-z][A-Za-z ,]{0,20})?$"
+
+
+class Player(_Strict):
+    role: Text(2, 30)
+    does: Text(2, 60)
+    power: Power
+    money_share: Annotated[str, StringConstraints(strip_whitespace=True, max_length=30, pattern=_SHARE)] | None = None
+
+
+class Users(_Strict):
+    who: Text(3, 80)
+    why: Text(3, 140)
+
+
+class NewStep(_Strict):
+    label: Text(2, 40)
+
+
+class Risk(_Strict):
+    title: Text(5, 70)
+    severity: Severity
+
+
+# Weekly minutes from a step's time: 5 work days a week, 4.33 weeks a month.
+_PER_WEEK = {"day": 5.0, "week": 1.0, "month": 1 / 4.33}
+
+
+class BlueprintDraft(_Strict):
+    why: Why
+    old_flow: list[OldStep] = Field(min_length=2, max_length=6)
+    players: list[Player] = Field(min_length=1, max_length=6)
+    users: Users
+    new_flow: list[NewStep] = Field(min_length=2, max_length=5)
+    app_name: Text(3, 40)
+    pattern: PatternId
+    data_issues: list[Issue] = Field(default_factory=list, max_length=6)
+    risks: list[Risk] = Field(min_length=1, max_length=3)
+    questions_for_call: list[Text(10, 160)] = Field(min_length=3, max_length=3)
+
+    @property
+    def sources_count(self) -> int:
+        """How many different apps/places the old flow uses."""
+        return max(1, len({s.tool.casefold() for s in self.old_flow}))
+
+    @property
+    def minutes_per_week(self) -> int | None:
+        """The old flow's time per week, only from times the visitor gave."""
+        timed = [s for s in self.old_flow if s.minutes is not None and s.per is not None]
+        if not timed:
+            return None
+        return sum(round(s.minutes * _PER_WEEK[s.per]) for s in timed)

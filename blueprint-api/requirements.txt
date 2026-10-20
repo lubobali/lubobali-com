@@ -1,0 +1,4 @@
+# One file for tests, CI and the container (same rule as LuBot).
+pydantic==2.14.1
+pytest==9.1.1
+ruff==0.17.1

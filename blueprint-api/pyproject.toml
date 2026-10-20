@@ -1,0 +1,15 @@
+# Tool settings only. Dependencies live in requirements.txt (one file for
+# tests, CI and the container, like LuBot).
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "SIM"]
+# The formatter owns line length (ruff docs: E501 is redundant with it);
+# long plain-text strings stay on one line.
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+addopts = "-q -p no:cacheprovider --doctest-modules"
+testpaths = ["blueprint", "tests"]
