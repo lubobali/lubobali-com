@@ -165,3 +165,30 @@ def test_visitor_follow_up_answers_are_limited():
         VisitorInput(
             story="We have 40 trucks and copy data.", data_location="database", team_size="1-10", followups=answers
         )
+
+
+# --- harmless overruns from real model runs (B2 eval) ----------------------
+
+
+def test_a_fourth_risk_is_dropped_keeping_the_first_three():
+    four = [{"title": f"Risk number {i}", "severity": "watch"} for i in range(4)]
+    b = BlueprintDraft.model_validate(draft(risks=four))
+    assert [r.title for r in b.risks] == ["Risk number 0", "Risk number 1", "Risk number 2"]
+
+
+def test_extra_questions_for_the_call_keep_the_first_three():
+    four = [f"Question number {i} for the call?" for i in range(4)]
+    b = BlueprintDraft.model_validate(draft(questions_for_call=four))
+    assert len(b.questions_for_call) == 3
+
+
+def test_a_half_given_time_is_dropped_not_guessed():
+    steps = [dict(GOOD["old_flow"][0], minutes=None, per="month"), dict(GOOD["old_flow"][1])]
+    b = BlueprintDraft.model_validate(draft(old_flow=steps))
+    assert b.old_flow[0].minutes is None and b.old_flow[0].per is None
+
+
+def test_too_long_text_is_still_rejected_after_the_tolerance():
+    long_risk = [{"title": "x" * 80, "severity": "watch"}]
+    with pytest.raises(ValidationError):
+        BlueprintDraft.model_validate(draft(risks=long_risk))

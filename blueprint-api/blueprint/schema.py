@@ -86,6 +86,31 @@ class VisitorInput(_Strict):
 
 # --- what the AI must return -------------------------------------------------
 
+Step = Literal["why", "old_flow", "players", "users", "time", "new_flow"]
+
+
+class FollowUpQuestion(_Strict):
+    # Which of Lubo's 6 steps the story is missing.
+    step: Step
+    question: Text(8, 140)
+    # Tap answers (the visitor can also type their own).
+    options: list[Text(1, 30)] = Field(default_factory=list, max_length=4)
+
+
+class FollowUpQuestions(_Strict):
+    # False = not a real business problem (gibberish, a test, a trick): the
+    # page asks them to describe it again; it does NOT use their blueprint.
+    story_ok: bool = True
+    # 0-3: none when the story already covers all 6 steps.
+    questions: list[FollowUpQuestion] = Field(default_factory=list, max_length=3)
+
+    @model_validator(mode="before")
+    @classmethod
+    def _keep_the_first_three(cls, data: object) -> object:
+        if isinstance(data, dict) and isinstance(data.get("questions"), list) and len(data["questions"]) > 3:
+            return {**data, "questions": data["questions"][:3]}
+        return data
+
 
 class Why(_Strict):
     problem: Text(10, 220)
@@ -100,11 +125,14 @@ class OldStep(_Strict):
     per: Per | None = None
     pain: bool = False
 
-    @model_validator(mode="after")
-    def _time_needs_both(self) -> OldStep:
-        if (self.minutes is None) != (self.per is None):
-            raise ValueError("minutes and per go together")
-        return self
+    @model_validator(mode="before")
+    @classmethod
+    def _half_time_is_dropped(cls, data: object) -> object:
+        # "per month" without minutes (or the other way) = no time at all:
+        # we drop it, never guess the missing half (seen in B2 evals).
+        if isinstance(data, dict) and (data.get("minutes") is None) != (data.get("per") is None):
+            return {**data, "minutes": None, "per": None}
+        return data
 
 
 # "40%", "40% of fees", "12.5% split": a share, nothing else.
@@ -147,6 +175,19 @@ class BlueprintDraft(_Strict):
     data_issues: list[Issue] = Field(default_factory=list, max_length=6)
     risks: list[Risk] = Field(min_length=1, max_length=3)
     questions_for_call: list[Text(10, 160)] = Field(min_length=3, max_length=3)
+
+    @model_validator(mode="before")
+    @classmethod
+    def _keep_the_first_three(cls, data: object) -> object:
+        # Models sometimes give a 4th risk or question (B2 evals). The
+        # prompt asks for the most important first, so keep the first 3.
+        # Only whole items are dropped; text is never cut.
+        if isinstance(data, dict):
+            data = dict(data)
+            for key in ("risks", "questions_for_call"):
+                if isinstance(data.get(key), list) and len(data[key]) > 3:
+                    data[key] = data[key][:3]
+        return data
 
     @property
     def sources_count(self) -> int:
