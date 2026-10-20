@@ -12,15 +12,18 @@ Spends real money (a few cents per story); run by hand, not in CI.
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 import time
+from datetime import UTC, datetime
 from pathlib import Path
 
 from blueprint.llm import LLMError, ask
 from blueprint.prompts import blueprint_messages, followup_messages
-from blueprint.rules import readiness, time_saved, timeline
 from blueprint.schema import BlueprintDraft, FollowUpQuestions, VisitorInput
+from blueprint.service import build_blueprint
+from blueprint.show import render
 
 # Words that would give away the "how" (checked outside old_flow.tool,
 # where naming the visitor's own apps is fine).
@@ -51,8 +54,12 @@ def check(story: dict, v: VisitorInput, b: BlueprintDraft) -> list[str]:
     leaks = [w for w in leaks if w not in own]
     if leaks:
         problems.append(f"HOW LEAK: {leaks}")
+    # "6 hours", "2 full days", "an hour a day": a number (or "a/an"), up to
+    # one word, then a time unit.
     said_time = re.search(
-        r"\b\d+\s*(minutes?|min|hours?|h|days?)\b", v.story + " ".join(f.answer for f in v.followups), re.I
+        r"\b(\d+|an?)\s+(\w+\s+)?(minutes?|min|hours?|h|days?)\b",
+        v.story + " " + " ".join(f.answer for f in v.followups),
+        re.I,
     )
     if not said_time and b.minutes_per_week is not None:
         problems.append("INVENTED TIME (visitor gave none)")
@@ -65,6 +72,8 @@ def check(story: dict, v: VisitorInput, b: BlueprintDraft) -> list[str]:
 def main() -> None:
     model_id = sys.argv[1] if len(sys.argv) > 1 else None
     stories = json.loads((Path(__file__).parent / "stories.json").read_text())
+    only = {x for x in os.environ.get("ONLY", "").split(",") if x}  # ONLY=payments,shop
+    stories = [s for s in stories if not only or s["id"] in only]
     total_cost = 0.0
     failures = 0
     for s in stories:
@@ -97,33 +106,9 @@ def main() -> None:
             continue
         total_cost += r.cost_usd
         b = r.value
-        rd = readiness(data_location=v.data_location, sources_count=b.sources_count, issues=list(b.data_issues))
-        tl = timeline(pattern=b.pattern, readiness_score=rd.score, sources_count=b.sources_count, team_size=v.team_size)
-        ts = time_saved(pattern=b.pattern, before_minutes_per_week=b.minutes_per_week)
-        print(f"  BLUEPRINT ({time.time() - t0:.1f}s, ${r.cost_usd:.4f}, tries {r.tries}) pattern={b.pattern}")
-        print(f"  Why: {b.why.problem}\n       Goal: {b.why.goal}")
-        print(
-            "  Old:  "
-            + " -> ".join(
-                f"{x.label} [{x.tool}{', ' + str(x.minutes) + '/' + x.per if x.minutes else ''}{', PAIN' if x.pain else ''}]"
-                for x in b.old_flow
-            )
-        )
-        print(
-            "  Players: "
-            + " | ".join(
-                f"{p.role} ({p.power}{', ' + p.money_share if p.money_share else ''}): {p.does}" for p in b.players
-            )
-        )
-        print(f"  Users: {b.users.who} - {b.users.why}")
-        print(f"  New ({b.app_name}): " + " -> ".join(x.label for x in b.new_flow))
-        print("  Risks: " + " | ".join(f"{x.title} ({x.severity})" for x in b.risks))
-        for q in b.questions_for_call:
-            print(f"  Call Q: {q}")
-        print(
-            f"  = Readiness {rd.score}/100 ({'; '.join(rd.reasons)}) · {tl.label} · "
-            + (f"{ts.before_minutes} -> ~{ts.after_minutes} min/week" if ts else "no time shown")
-        )
+        print(f"  BLUEPRINT ({time.time() - t0:.1f}s, ${r.cost_usd:.4f}, tries {r.tries})")
+        bp = build_blueprint(b, v, datetime.now(UTC))
+        print("    " + render(bp).replace("\n", "\n    "))
         problems = check(s, v, b)
         print("  CHECKS: " + ("OK" if not problems else " ; ".join(problems)))
         failures += bool(problems)

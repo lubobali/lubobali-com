@@ -28,6 +28,7 @@ export function BlueprintTool() {
   const [state, setState] = useState<State>({ kind: "start" });
   const [draft, setDraft] = useState<Draft>({ story: "", data_location: null, team_size: null });
   const [answers, setAnswers] = useState<Record<number, string>>({});
+  const [showSaved, setShowSaved] = useState(false);
   const opened = useRef(0);
   const trap = useRef<HTMLInputElement>(null);
   const questionsHeading = useRef<HTMLHeadingElement>(null);
@@ -99,6 +100,19 @@ export function BlueprintTool() {
     } catch (e) {
       fail(e);
     }
+  }
+
+  if (state.kind === "done" && state.returning && !showSaved) {
+    // Returning visitor: a small line, not the whole card (Lubo 2026-10-20).
+    return (
+      <div className="award-card bpt bpt-saved rounded-3xl">
+        <p className="bpt-ready">You already have your blueprint</p>
+        <p className="bpt-saved-name">{state.bp.draft.app_name}</p>
+        <button type="button" className="bpt-go" onClick={() => setShowSaved(true)}>
+          Show my blueprint <span aria-hidden="true">→</span>
+        </button>
+      </div>
+    );
   }
 
   if (state.kind === "done") {

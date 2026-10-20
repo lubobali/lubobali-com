@@ -1,0 +1,142 @@
+/* Example blueprints behind industry tabs (Phase 3b B6), CSS only:
+   the checked radio shows its card and lights its tab. One rule per
+   industry key (examples/index.ts); add a key here when adding an example.
+   Bundled via globals.css. */
+
+.bpx {
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+.bpx-radio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.bpx-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.bpx-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  border: 1px solid var(--input);
+  border-radius: 9999px;
+  padding: 0.55rem 1.05rem;
+  font-size: 0.95rem;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.bpx-tab:hover {
+  border-color: color-mix(in oklch, var(--sky) 70%, transparent);
+}
+.bpx-radio[data-key="trucking"]:checked ~ .bpx-tabs [data-key="trucking"],
+.bpx-radio[data-key="payments"]:checked ~ .bpx-tabs [data-key="payments"],
+.bpx-radio[data-key="clinic"]:checked ~ .bpx-tabs [data-key="clinic"],
+.bpx-radio[data-key="accounting"]:checked ~ .bpx-tabs [data-key="accounting"],
+.bpx-radio[data-key="construction"]:checked ~ .bpx-tabs [data-key="construction"],
+.bpx-radio[data-key="law"]:checked ~ .bpx-tabs [data-key="law"] {
+  border-color: var(--sky);
+  background: color-mix(in oklch, var(--sky) 18%, var(--card-blue));
+  box-shadow: 0 0 18px -4px var(--glow-sky);
+}
+.bpx-radio[data-key="trucking"]:focus-visible ~ .bpx-tabs [data-key="trucking"],
+.bpx-radio[data-key="payments"]:focus-visible ~ .bpx-tabs [data-key="payments"],
+.bpx-radio[data-key="clinic"]:focus-visible ~ .bpx-tabs [data-key="clinic"],
+.bpx-radio[data-key="accounting"]:focus-visible ~ .bpx-tabs [data-key="accounting"],
+.bpx-radio[data-key="construction"]:focus-visible ~ .bpx-tabs [data-key="construction"],
+.bpx-radio[data-key="law"]:focus-visible ~ .bpx-tabs [data-key="law"] {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}
+.bpx-panel {
+  display: none;
+}
+.bpx-radio[data-key="trucking"]:checked ~ .bpx-panels [data-key="trucking"],
+.bpx-radio[data-key="payments"]:checked ~ .bpx-panels [data-key="payments"],
+.bpx-radio[data-key="clinic"]:checked ~ .bpx-panels [data-key="clinic"],
+.bpx-radio[data-key="accounting"]:checked ~ .bpx-panels [data-key="accounting"],
+.bpx-radio[data-key="construction"]:checked ~ .bpx-panels [data-key="construction"],
+.bpx-radio[data-key="law"]:checked ~ .bpx-panels [data-key="law"] {
+  display: block;
+}
+.bp-more {
+  display: inline-block;
+  margin-top: 1.25rem;
+  color: var(--link);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklch, var(--link) 40%, transparent);
+  text-underline-offset: 4px;
+}
+.bp-more:hover {
+  text-decoration-color: var(--link);
+}
+
+/* Home page chip row + the opened example (with-examples.tsx). Chips reuse
+   .bpx-tab; the active one is [data-on]. */
+.bpx-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+.bpx-row-label {
+  margin-right: 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--award);
+}
+.bpx-tab[data-on] {
+  border-color: var(--sky);
+  background: color-mix(in oklch, var(--sky) 18%, var(--card-blue));
+  box-shadow: 0 0 18px -4px var(--glow-sky);
+}
+.bpx-tab:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}
+.bpx-open {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.bpx-open-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+}
+.bpx-open-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  outline: none;
+}
+.bpx-open-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+}
+.bpt-saved {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+.bpt-saved-name {
+  font-size: 1.5rem;
+  font-weight: 600;
+}

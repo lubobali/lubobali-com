@@ -64,7 +64,7 @@ def test_gives_up_after_the_retry():
 
 
 def test_http_errors_become_llm_error():
-    c = client_with(httpx.Response(429, json={"error": "rate"}))
+    c = client_with(httpx.Response(400, json={"error": "bad request"}))
     with pytest.raises(LLMError):
         ask(MSGS, FollowUpQuestions, max_tokens=300, key="k", client=c)
 
@@ -82,3 +82,26 @@ def test_request_has_hard_limits_and_strict_schema():
     assert body["max_tokens"] == 300
     assert body["response_format"]["json_schema"]["strict"] is True
     assert body["provider"]["data_collection"] == "deny"
+
+
+# --- temporary provider errors (seen in the B6 eval run) -----------------------
+
+
+def test_a_temporary_provider_error_is_retried_once(monkeypatch):
+    monkeypatch.setattr("blueprint.llm.time.sleep", lambda s: None)
+    c = client_with(httpx.Response(503, json={"error": "busy"}), reply(json.dumps(OK)))
+    r = ask(MSGS, FollowUpQuestions, max_tokens=300, key="k", client=c)
+    assert r.value.story_ok is True
+
+
+def test_two_temporary_errors_in_a_row_give_up_with_the_status_code(monkeypatch):
+    monkeypatch.setattr("blueprint.llm.time.sleep", lambda s: None)
+    c = client_with(httpx.Response(429, json={}), httpx.Response(429, json={}))
+    with pytest.raises(LLMError, match="429"):
+        ask(MSGS, FollowUpQuestions, max_tokens=300, key="k", client=c)
+
+
+def test_a_permanent_error_is_not_retried():
+    c = client_with(httpx.Response(401, json={"error": "bad key"}))  # a 2nd call would fail: queue empty
+    with pytest.raises(LLMError, match="401"):
+        ask(MSGS, FollowUpQuestions, max_tokens=300, key="k", client=c)

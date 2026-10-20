@@ -47,6 +47,12 @@ ${list(terms)}
 
 Now: ${now}
 
+## Free AI blueprint
+
+[Get your free AI blueprint](${site.url}/blueprint): describe a business problem and get a first plan in
+about a minute (how it works today, with AI, who is involved, risks, timeline), plus 6 example
+blueprints (trucking, payments, clinic, accounting, construction, law firm).
+
 ## Intro video
 
 [${intro.name}](${site.url}/) (${intro.durationLabel}, transcript on the page): ${intro.description}

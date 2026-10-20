@@ -26,6 +26,14 @@ const fail = (where, list) => list.forEach((p) => problems.push(`${where}: ${p}`
 // extra phrases per page. Keep in sync with src/lib/site.ts.
 const NAME = "Lubo Bali";
 const PAGE_TEXT = {
+  "/blueprint": [
+    "Get your free AI blueprint", // Phase 3b B6
+    "See what you'd get",
+    "3 questions I'd ask you on our call",
+    "One residual payout desk", // payments example (all 6 cards are in the HTML)
+    "One job billing app", // construction example
+    "One client desk for the firm", // law firm example
+  ],
   "/": [
     "Senior AI & Data Platform Engineer",
     "I build AI that works on your real data, in production.", // hero headline (Phase 3 H1)
@@ -36,8 +44,7 @@ const PAGE_TEXT = {
     "Inside LuBot's database-per-tenant architecture",
     "12,000+",
     "What I do", // service cards (Phase 3 H6)
-    "Get your free AI blueprint", // Blueprint tool + example (Phase 3b B5)
-    "3 questions I'd ask you on our call",
+    "Get your free AI blueprint", // Blueprint tool (Phase 3b B5); examples load on click, all 6 are on /blueprint
     "AI agents that do the work", // H12: 4 cards
     "Data that's ready for AI",
     "Answers you can trust",

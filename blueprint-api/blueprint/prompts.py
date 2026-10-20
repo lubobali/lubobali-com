@@ -98,7 +98,9 @@ Hard limits (answers that break them are rejected):
 - Plain text only: no HTML, links, markdown or code.
 
 Numbers: do not invent any. Fill "minutes" AND "per" together, only when the
-visitor said how long a step takes; "money_share" only when they said it; otherwise
+visitor said how long a step takes, converted to minutes (1 hour = 60,
+1 working day = 480; e.g. "2 full days a month" = 960 per month, "an hour
+a day" = 60 per day). Put the time on the step that takes it; "money_share" only when they said it; otherwise
 null. Do not write a readiness score, a timeline, weeks, prices or savings:
 code computes those from what the visitor said.
 

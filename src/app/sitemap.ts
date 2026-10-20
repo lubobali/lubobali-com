@@ -7,7 +7,7 @@ import { absoluteUrl } from "@/lib/site";
 // ignores lastmod it can't trust.
 export const dynamic = "force-static";
 
-const pages = ["/"];
+const pages = ["/", "/blueprint"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return pages.map((path) => ({ url: absoluteUrl(path) }));

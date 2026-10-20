@@ -1,10 +1,11 @@
-import type { Blueprint } from "./types";
+import type { Blueprint } from "../types";
 
 // A real blueprint made by the live tool (Claude Opus 5.5 + our rules,
 // 2026-10-20) from a trucking company's story. Shown as the example
 // before a visitor makes their own, and on the /blueprint page (B6).
+// Story: typical small fleet (public research), not a client.
 // Not signed: it can't be booked; it only shows what a blueprint looks like.
-export const EXAMPLE: Blueprint = {
+export const TRUCKING: Blueprint = {
   "version": 1,
   "created": "2026-10-20T15:39:32+00:00",
   "pattern": {

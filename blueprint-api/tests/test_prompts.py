@@ -97,3 +97,9 @@ def test_prompts_state_the_hard_limits_as_numbers():
     for limit in ("1-3 risks", "60 characters", "exactly 3"):
         assert limit in SYSTEM_BLUEPRINT
     assert "25 characters" in SYSTEM_FOLLOWUPS
+
+
+def test_prompt_teaches_turning_hours_and_days_into_minutes():
+    # "2 full days a month" must become a number, not be dropped (B6 examples).
+    p = SYSTEM_BLUEPRINT
+    assert "1 hour = 60" in p and "1 working day = 480" in p

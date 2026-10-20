@@ -1,12 +1,10 @@
-import { BlueprintCard } from "@/components/blueprint/card";
-import { EXAMPLE } from "@/components/blueprint/example";
-import { BlueprintTool } from "@/components/blueprint/tool";
+import { BlueprintWithExamples } from "@/components/blueprint/with-examples";
 
 // Get your free AI blueprint (Phase 3b, the WOW moment), right after "What
 // I do": first what Lubo does, then the visitor tries it on their own
-// problem. The tool (client island) comes first; a real example sits
-// behind "See a real example" as plain HTML (no JavaScript, bots read
-// it). Words = draft, final copy with Lubo.
+// problem. Lubo's layout: a row of 6 example chips above the form; a chip
+// opens that example in place of the form. All 6 examples are also on
+// /blueprint as plain HTML (search + AI assistants).
 export function BlueprintSection() {
   return (
     <section
@@ -24,12 +22,8 @@ export function BlueprintSection() {
         </p>
       </div>
       <div className="mt-10">
-        <BlueprintTool />
+        <BlueprintWithExamples />
       </div>
-      <details className="bp-example">
-        <summary>See a real example: a trucking company</summary>
-        <BlueprintCard bp={EXAMPLE} example />
-      </details>
     </section>
   );
 }
