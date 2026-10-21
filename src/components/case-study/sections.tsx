@@ -5,7 +5,7 @@ import type { CaseStudy } from "@/lib/case-studies/types";
 // The middle of a case study (Phase 4 C2). Each part draws only when its
 // data is filled in, so a draft or a mystery page simply has fewer parts.
 
-function Part({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
+export function Part({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
     <section aria-labelledby={id} className="flex flex-col gap-6">
       <h2 id={id} className="text-3xl font-semibold text-balance sm:text-4xl">
@@ -102,24 +102,6 @@ export function UseCases({ cs }: { cs: CaseStudy }) {
   );
 }
 
-export function HardProblems({ cs }: { cs: CaseStudy }) {
-  if (!cs.problems?.length) return null;
-  return (
-    <Part id="hard-problems" title="3 hard problems I solved">
-      <ol className="grid gap-6 md:grid-cols-3">
-        {cs.problems.map((p, i) => (
-          <li key={p.problem} className="cs-card flex flex-col gap-3 rounded-2xl p-6">
-            <span className="text-sm font-semibold text-award">Problem {i + 1}</span>
-            <p className="font-semibold text-foreground">{p.problem}</p>
-            <p className="text-muted-foreground">{p.decision}</p>
-            <p className="text-sm font-medium text-foreground">{p.result}</p>
-          </li>
-        ))}
-      </ol>
-    </Part>
-  );
-}
-
 // Mystery pages (client work): ideas only, and the secrecy is the hook.
 export function Ideas({ cs }: { cs: CaseStudy }) {
   if (!cs.ideas?.length) return null;
@@ -155,23 +137,5 @@ export function Facts({ cs }: { cs: CaseStudy }) {
         <dd className="font-medium">{cs.stack.join(" · ")}</dd>
       </div>
     </dl>
-  );
-}
-
-// Closed by default: non-tech readers never see it, engineers open it.
-export function ForEngineers({ cs }: { cs: CaseStudy }) {
-  if (!cs.engineers) return null;
-  return (
-    <details className="cs-card group rounded-2xl p-6">
-      <summary className="cursor-pointer text-lg font-semibold">For engineers: how it is built</summary>
-      <div className="mt-4 flex flex-col gap-4 text-muted-foreground">
-        <p>{cs.engineers.intro}</p>
-        <ul className="flex list-disc flex-col gap-2 pl-5">
-          {cs.engineers.decisions.map((d) => (
-            <li key={d}>{d}</li>
-          ))}
-        </ul>
-      </div>
-    </details>
   );
 }

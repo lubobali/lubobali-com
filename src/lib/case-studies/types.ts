@@ -38,5 +38,6 @@ export type CaseStudy = {
   when: string;
   stack: readonly string[];
   links?: readonly { label: string; url: string }[];
-  engineers?: { intro: string; decisions: readonly string[] };
+  // layers = the architecture drawn top (the user) to bottom (the data).
+  engineers?: { intro: string; layers?: readonly { name: string; parts: readonly string[] }[]; decisions: readonly string[] };
 };

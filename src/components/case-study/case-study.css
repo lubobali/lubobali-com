@@ -62,3 +62,56 @@
 .cs-secret strong {
   color: var(--foreground);
 }
+/* 3 hard problems: a big quiet number, the result set off by a hairline. */
+.cs-num {
+  color: color-mix(in oklch, var(--link) 70%, var(--foreground));
+  opacity: 0.85;
+}
+.cs-problem {
+  transition: border-color 0.3s;
+}
+.cs-problem:hover {
+  border-color: color-mix(in oklch, var(--link) 45%, var(--border));
+}
+.cs-result {
+  border-top: 1px solid var(--border);
+  color: var(--link);
+}
+/* For engineers: the layers, joined by a thin glowing line down the left. */
+.cs-engineers summary::marker {
+  color: var(--link);
+}
+.cs-layers {
+  position: relative;
+}
+.cs-layers::before {
+  content: "";
+  position: absolute;
+  inset: 1.25rem auto 1.25rem 0.5rem;
+  width: 1px;
+  background: linear-gradient(transparent, color-mix(in oklch, var(--link) 70%, transparent), transparent);
+}
+.cs-layer {
+  margin-left: 1.25rem;
+  border: 1px solid color-mix(in oklch, var(--link) 22%, var(--border));
+  background: color-mix(in oklch, var(--link) 5%, transparent);
+}
+.cs-part {
+  border: 1px solid var(--border);
+  background: var(--background);
+  color: var(--foreground);
+}
+.cs-decision {
+  position: relative;
+}
+.cs-decision::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.65em;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--link);
+  box-shadow: 0 0 10px var(--link);
+}

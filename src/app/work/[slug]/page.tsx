@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ForEngineers, HardProblems } from "@/components/case-study/build";
 import { Hook } from "@/components/case-study/hook";
-import { BeforeAfter, Day, Facts, ForEngineers, HardProblems, Ideas, Stats, UseCases } from "@/components/case-study/sections";
+import { BeforeAfter, Day, Facts, Ideas, Stats, UseCases } from "@/components/case-study/sections";
 import { FinalCta } from "@/components/home/final-cta";
 import { caseStudies, findCaseStudy } from "@/lib/case-studies";
 import { site } from "@/lib/site";

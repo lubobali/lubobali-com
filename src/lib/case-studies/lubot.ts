@@ -1,10 +1,10 @@
 import { site } from "@/lib/site";
 import type { CaseStudy } from "./types";
 
-// LuBot (Phase 4). DRAFT: hook + before/after only (C2 test); the full
-// text comes in C3 and needs Lubo's OK. Facts checked in LuBot's prod code
-// 2026-10-20 (C1): 260,000+ source lines, 12,000+ tests, 9 MCP tools,
-// 3 MCP directories, OpenRouter + DeepInfra + NIM fallback, Neon per customer.
+// LuBot (Phase 4 C3). Every text part OK'd by Lubo. Facts checked in
+// LuBot's prod code 2026-10-20/21 (C1): 260,000+ source lines, 12,000+
+// tests, 9 MCP tools, 3 MCP directories, OpenRouter first with a backup
+// provider per call, DeepInfra embeddings, Neon per customer.
 export const lubot: CaseStudy = {
   slug: "lubot",
   kind: "story",
@@ -111,6 +111,43 @@ export const lubot: CaseStudy = {
         // LuBot's real suggestion questions (Website mode, lubot.ai 2026-10-20).
         chips: ["Predict next week's traffic", "What pages are losing traffic?", "Compare this week to last week"],
       },
+    ],
+  },
+  // Lubo OK'd the 3 problems 2026-10-21. Checked in prod code: per-call
+  // backups (Groq / OpenAI / NIM, services/openrouter_client.py), numbers
+  // as labeled fields (stock/stock_prompts.py _format_named_fields).
+  problems: [
+    {
+      problem: "Every customer's data stays apart",
+      decision: "Each customer gets their own database, so nobody can ever see someone else's numbers, even by mistake.",
+      result: "Neon (Databricks) wrote a case study about this design.",
+    },
+    {
+      problem: "The right AI for each job, and it never goes down",
+      decision: "Each question goes to the model that does that job best: Claude, GPT or NVIDIA. If a provider is down, LuBot switches to a backup by itself.",
+      result: "One company's outage doesn't stop the answers.",
+    },
+    {
+      problem: "The AI never does the math",
+      decision: "Python calculates every number first. The AI only explains it in plain words.",
+      result: "The numbers in the chat always match the numbers on the screen.",
+    },
+  ],
+  engineers: {
+    intro: "One FastAPI backend, a React app and an MCP server for Claude. The decisions that matter:",
+    layers: [
+      { name: "You ask", parts: ["Web app (React)", "Inside Claude (MCP)"] },
+      { name: "Backend", parts: ["FastAPI · 169 endpoints", "36 background workers"] },
+      { name: "AI", parts: ["OpenRouter: Claude · GPT · Nemotron", "Backups: Groq · OpenAI · NVIDIA NIM", "Embeddings: DeepInfra (text + images)"] },
+      { name: "Data", parts: ["Clerk (sign-in)", "Supabase (admin)", "Neon: 1 database per customer", "AWS S3 + Parquet + DuckDB (files)"] },
+    ],
+    decisions: [
+      "Database per tenant: one Neon Postgres per customer. Plain Postgres SQL only, and all Neon-specific code lives in one file, so the data can move to any Postgres host.",
+      "Best model per task, chosen by benchmark (the SQL planner was tested on 25 real cases before picking). OpenRouter first, with a backup provider when it fails.",
+      "Multimodal embeddings (NVIDIA Nemotron, served by DeepInfra), so pictures inside a PDF can be found too.",
+      "Files live in S3 as Parquet and are queried with DuckDB, with a local disk cache for speed.",
+      "Numbers are computed in Python and handed to the model as labeled fields. The model only writes the words around them.",
+      "12,000+ automated tests run on every push. CI mirrors production.",
     ],
   },
   role: "Founder and only engineer",
