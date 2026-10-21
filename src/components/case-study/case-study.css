@@ -162,3 +162,20 @@
     display: none;
   }
 }
+/* "How it's solved" (Day moments without a screen, mystery pages). */
+.cs-fix {
+  border: 1px solid color-mix(in oklch, var(--link) 45%, var(--border));
+  background:
+    radial-gradient(ellipse at 0% 0%, color-mix(in oklch, var(--link) 16%, transparent), transparent 70%),
+    color-mix(in oklch, var(--card) 70%, transparent);
+  box-shadow: 0 30px 80px -40px color-mix(in oklch, var(--link) 60%, transparent);
+}
+.cs-fix-label {
+  color: var(--link);
+}
+.cs-fix-label::before {
+  content: "✦ ";
+}
+.cs-challenge {
+  border-top: 2px solid color-mix(in oklch, var(--destructive) 55%, transparent);
+}

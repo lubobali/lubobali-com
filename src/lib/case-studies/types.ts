@@ -21,6 +21,7 @@ export type CaseStudy = {
   description: string; // meta description
   badge?: { label: string; url: string }; // the strongest trust signal, top of the hook
   hero?: Shot; // the picture in the first screen
+  art?: "payouts"; // a drawn picture for the first screen (no screens to show)
   // No product screen yet: draw one real example from the data instead
   // (GraphGuard: a laundering ring, each hop = from -> to + amount).
   ring?: { caption: string; hops: readonly { from: string; amount: string }[] };
@@ -30,11 +31,23 @@ export type CaseStudy = {
   useCases?: readonly { title: string; text: string; learns?: string }[];
   // "A day with ..." (Lubo: numbers mean nothing alone, tell stories): one
   // example person, each moment = a real feature + the build behind it.
+  // fix = how the pain is solved, shown as a card where a screen would go
+  // (mystery pages: the idea of the fix, never the build).
   day?: {
     person: string;
+    title?: string; // default "A day with <name>"
     intro: string;
-    moments: readonly { when: string; title: string; text: string; behind: string; shot?: Shot; chips?: readonly string[] }[];
+    moments: readonly {
+      when: string;
+      title: string;
+      text: string;
+      behind?: string;
+      fix?: string;
+      shot?: Shot;
+      chips?: readonly string[];
+    }[];
   };
+  challenges?: readonly { title: string; text: string }[]; // "Why this is hard"
   // The queue story (GraphGuard, Lubo 2026-10-21): one person, a day's
   // alert capacity, and how many of those alerts are real, random order
   // vs the model's order, drawn as two grids of dots.
@@ -64,7 +77,8 @@ export type CaseStudy = {
   // Where the project is going: done / now / later, honest about each.
   roadmap?: readonly { name: string; text: string; status: "done" | "now" | "later" }[];
   problems?: readonly { problem: string; decision: string; result: string }[];
-  ideas?: readonly string[]; // mystery pages only
+  ideas?: readonly { title: string; text: string }[]; // mystery pages only
+  quote?: string; // a testimonial, by name (src/lib/testimonials.ts, one source)
   role: string;
   when: string;
   next?: string; // what is being built now, shown with the facts

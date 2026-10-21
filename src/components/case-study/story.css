@@ -109,3 +109,43 @@
 .cs-road-step--later {
   border-style: dashed;
 }
+/* payouts.tsx: reports -> engine -> payouts (mystery pages). */
+.cs-pay-line {
+  stroke: color-mix(in oklch, var(--link) 55%, transparent);
+  stroke-width: 1.4;
+}
+.cs-pay-sheet {
+  fill: var(--background);
+  stroke: color-mix(in oklch, var(--link) 50%, var(--border));
+  stroke-width: 1.4;
+}
+.cs-pay-row {
+  stroke: color-mix(in oklch, var(--muted-foreground) 45%, transparent);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.cs-pay-engine {
+  fill: color-mix(in oklch, var(--link) 14%, var(--background));
+  stroke: var(--link);
+  stroke-width: 1.6;
+  filter: drop-shadow(0 0 14px color-mix(in oklch, var(--link) 55%, transparent));
+}
+.cs-pay-core {
+  fill: color-mix(in oklch, var(--link) 45%, white);
+  filter: drop-shadow(0 0 10px var(--link));
+}
+.cs-pay-coin {
+  fill: var(--foreground);
+  font-size: 14px;
+  font-weight: 600;
+}
+.cs-pay-label {
+  fill: var(--foreground);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.cs-pay-caption {
+  fill: var(--muted-foreground);
+  font-size: 13px;
+}

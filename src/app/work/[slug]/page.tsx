@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ForEngineers, HardProblems } from "@/components/case-study/build";
 import { Hook } from "@/components/case-study/hook";
 import { Contest, Roadmap } from "@/components/case-study/results";
-import { BeforeAfter, Day, Facts, Ideas, Stats, UseCases } from "@/components/case-study/sections";
+import { BeforeAfter, Challenges, Day, Facts, Ideas, Quote, Stats, UseCases } from "@/components/case-study/sections";
 import { Queue, Shapes } from "@/components/case-study/story";
 import { FinalCta } from "@/components/home/final-cta";
 import { caseStudies, findCaseStudy } from "@/lib/case-studies";
@@ -59,7 +59,9 @@ export default async function CaseStudyPage({ params }: Props) {
         <Stats cs={cs} />
         <HardProblems cs={cs} />
         <Roadmap cs={cs} />
+        <Challenges cs={cs} />
         <Ideas cs={cs} />
+        <Quote cs={cs} />
         <Facts cs={cs} />
         <ForEngineers cs={cs} />
         <p className="text-center text-lg text-muted-foreground">

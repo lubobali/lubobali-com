@@ -1,4 +1,5 @@
 import type { CaseStudy } from "@/lib/case-studies/types";
+import { PayoutsArt } from "./payouts";
 import { Ring } from "./ring";
 import { Screen } from "./screen";
 
@@ -48,6 +49,7 @@ export function Hook({ cs }: { cs: CaseStudy }) {
       </div>
       {cs.hero && <Screen shot={cs.hero} priority sizes="(min-width: 1024px) 50vw, 100vw" />}
       {!cs.hero && cs.ring && <Ring ring={cs.ring} />}
+      {!cs.hero && cs.art === "payouts" && <PayoutsArt />}
     </header>
   );
 }
