@@ -25,6 +25,11 @@ const PHOTOS = {
   // (shown at 64 px, so 240 covers 3x screens). Used with his OK.
   "zach-wilson.png": "zach-wilson",
   "matthew-hamann.png": "matthew-hamann", // same, from his LinkedIn photo
+  // LuBot case study (Phase 4): real lubot.ai screens, demo data, taken
+  // 2026-10-20 at 2x as a visitor (no browser bar, no trial badge).
+  "lubot-stock-chart.png": "lubot-stock-chart",
+  "lubot-ai-noticed.png": "lubot-ai-noticed",
+  "lubot-portfolio.png": "lubot-portfolio",
 };
 const WIDTHS = [400, 640, 960, 1280, 1920, 2560];
 const FORMATS = {

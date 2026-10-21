@@ -1,0 +1,64 @@
+/* Case study pages (Phase 4 C2, src/app/work/[slug]). Same blues as the
+   home cards; one quiet accent per part, nothing that competes with the
+   before/after diagram (blueprint.css .bp-flow). */
+.cs-card {
+  border: 1px solid var(--border);
+  background: color-mix(in oklch, var(--card) 70%, transparent);
+}
+.cs-badge {
+  border: 1px solid color-mix(in oklch, var(--award) 55%, transparent);
+  color: var(--foreground);
+  background: color-mix(in oklch, var(--award) 12%, transparent);
+}
+.cs-badge:hover {
+  border-color: var(--award);
+}
+.cs-when {
+  color: var(--award);
+}
+.cs-moment {
+  border-left: 2px solid color-mix(in oklch, var(--link) 45%, transparent);
+  padding-left: 1.25rem;
+}
+.cs-behind {
+  color: var(--link);
+}
+.cs-screen-frame {
+  position: relative;
+  border: 1px solid color-mix(in oklch, var(--link) 35%, var(--border));
+  background: var(--background);
+  box-shadow:
+    0 0 0 1px color-mix(in oklch, var(--background) 60%, transparent),
+    0 30px 80px -30px color-mix(in oklch, var(--link) 55%, transparent),
+    0 0 120px -40px color-mix(in oklch, var(--link) 45%, transparent);
+}
+/* The thin light line along the top edge, like light on glass. */
+.cs-screen-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0 12% auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in oklch, var(--link) 90%, white), transparent);
+  pointer-events: none;
+}
+.cs-screen-caption {
+  color: var(--muted-foreground);
+}
+.cs-chip {
+  border: 1px solid color-mix(in oklch, var(--link) 45%, var(--border));
+  background: color-mix(in oklch, var(--link) 10%, transparent);
+  color: var(--foreground);
+  box-shadow: 0 0 30px -12px color-mix(in oklch, var(--link) 70%, transparent);
+}
+.cs-learns {
+  color: var(--link);
+}
+.cs-learns::before {
+  content: "✦ ";
+}
+.cs-secret {
+  color: var(--muted-foreground);
+}
+.cs-secret strong {
+  color: var(--foreground);
+}
