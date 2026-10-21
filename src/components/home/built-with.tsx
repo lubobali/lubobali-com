@@ -1,9 +1,10 @@
+import { storyPath } from "@/lib/case-studies";
 import { projectName, tech } from "@/lib/tech";
 import { LOGOS } from "./tech-logos";
 
 // Built with (Phase 3 H8, Lubo): the real tool logos on a slowly turning
-// dial, LB logo in the middle. Each logo links to the project card it was
-// used in; hover/focus shows "name → project" in the middle. No JavaScript:
+// dial, LB logo in the middle. Each logo links to the story of the project
+// it was used in (the home card while a story is unpublished); hover/focus shows "name → project" in the middle. No JavaScript:
 // the middle is a checkbox label (click = stop/start), hover or keyboard
 // focus also stops it, reduced motion = still. Every name is real text in
 // the link (bots + screen readers read all 13). overflow-x-clip: the turning
@@ -33,7 +34,7 @@ export function BuiltWith() {
             const logo = LOGOS[t.logo];
             return (
               <li key={t.name} className="tech-wheel-slot" style={{ ["--i" as string]: i }}>
-                <a href={`#${t.project}`} className="tech-coin" data-logo={t.logo}>
+                <a href={storyPath(t.project) ?? `#${t.project}`} className="tech-coin" data-logo={t.logo}>
                   <svg
                     aria-hidden="true"
                     viewBox={logo.viewBox}
