@@ -8,6 +8,7 @@
 @import "../components/blueprint/copy.css";
 @import "../components/case-study/case-study.css";
 @import "../components/case-study/story.css";
+@import "../components/explore/explore.css";
 
 /* Dark only: `dark:` styles always apply (layout.tsx sets class="dark"),
    not just when the visitor's OS is in dark mode. */

@@ -18,6 +18,7 @@ export const hellopayments: CaseStudy = {
     "The big goal was automation: take the manual work out of every month-end. I was the lead engineer. Here is the idea of what I built, not the build itself.",
   description:
     "Client work by Lubo Bali for HelloPayments: an automated residual and commission engine that replaces manual Excel. The ideas, not the private details.",
+  tags: ["payments", "fintech", "commissions", "residuals", "automation", "Excel", "spreadsheets", "AI", "LLM gateway", "Python", "FastAPI", "PostgreSQL", "client work"],
   art: "payouts",
   // Both already public: Lubo's LinkedIn ("approved as the base for 6
   // future products") and the home card ("80% of queries at $0 LLM cost").

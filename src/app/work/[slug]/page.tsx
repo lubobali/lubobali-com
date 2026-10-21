@@ -64,7 +64,8 @@ export default async function CaseStudyPage({ params }: Props) {
         <Quote cs={cs} />
         <Facts cs={cs} />
         <ForEngineers cs={cs} />
-        <p className="text-center text-lg text-muted-foreground">
+        {/* id="blueprint": the header's "Free AI blueprint" button jumps here. */}
+        <p id="blueprint" className="scroll-mt-24 text-center text-lg text-muted-foreground">
           Want a plan like this for your business?{" "}
           <Link href="/blueprint" className="font-medium text-link underline underline-offset-4">
             Get your free AI blueprint

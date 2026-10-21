@@ -1,0 +1,192 @@
+/* Explore (explore-button.tsx, explore-panel.tsx), Phase 4 C6. */
+.explore-trigger {
+  border: 1px solid transparent;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+}
+.explore-trigger:hover,
+.explore-trigger:focus-visible {
+  color: var(--foreground);
+  border-color: color-mix(in oklch, var(--link) 40%, var(--border));
+}
+html.explore-open {
+  overflow: hidden;
+}
+.explore-dialog {
+  width: min(100% - 2rem, 62rem);
+  max-height: min(100dvh - 2rem, 52rem);
+  margin: max(1rem, 4vh) auto auto;
+  padding: 0;
+  border-radius: 1.5rem;
+  border: 1px solid color-mix(in oklch, var(--link) 35%, var(--border));
+  background: color-mix(in oklch, var(--card) 92%, transparent);
+  color: var(--foreground);
+  box-shadow:
+    0 40px 120px -30px color-mix(in oklch, var(--link) 55%, transparent),
+    0 0 0 1px color-mix(in oklch, var(--background) 60%, transparent);
+}
+.explore-dialog::backdrop {
+  background: color-mix(in oklch, var(--background) 70%, transparent);
+  backdrop-filter: blur(8px);
+}
+@media (max-width: 639px) {
+  .explore-dialog {
+    width: 100%;
+    max-width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    border-radius: 0;
+  }
+}
+.explore-panel {
+  max-height: inherit;
+  height: 100%;
+}
+/* The light line along the top, like the case-study screens. */
+.explore-dialog::before {
+  content: "";
+  position: absolute;
+  inset: 0 15% auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in oklch, var(--link) 90%, white), transparent);
+}
+.explore-search {
+  border: 1px solid color-mix(in oklch, var(--link) 30%, var(--border));
+  background: var(--background);
+  color: var(--muted-foreground);
+}
+.explore-search:focus-within {
+  border-color: var(--link);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--link) 25%, transparent);
+}
+.explore-search input {
+  color: var(--foreground);
+}
+/* The box itself glows on focus (above), so no second ring inside it. */
+.explore-search input:focus-visible {
+  outline: none;
+}
+.explore-search input::-webkit-search-cancel-button {
+  display: none;
+}
+.explore-kbd {
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
+}
+.explore-close {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
+  transition:
+    color 0.2s,
+    border-color 0.2s,
+    transform 0.2s;
+}
+.explore-close:hover,
+.explore-close:focus-visible {
+  color: var(--foreground);
+  border-color: color-mix(in oklch, var(--link) 50%, var(--border));
+  transform: rotate(90deg);
+}
+.explore-query {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--muted-foreground);
+}
+.explore-fn {
+  color: var(--link);
+}
+/* Each section has its own tone (brand family), bright enough to tell
+   apart at a glance (Lubo): the section and its tiles both carry it. */
+.explore-section {
+  --g: var(--link);
+  border: 1px solid color-mix(in oklch, var(--g) 40%, transparent);
+  background:
+    radial-gradient(ellipse at 0% 0%, color-mix(in oklch, var(--g) 26%, transparent), transparent 60%),
+    color-mix(in oklch, var(--g) 9%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in oklch, var(--g) 35%, transparent);
+}
+.explore-section[data-group="start"] {
+  --g: var(--tone-violet);
+}
+.explore-section[data-group="pages"] {
+  --g: var(--tone-ice);
+}
+.explore-group {
+  color: color-mix(in oklch, var(--g) 80%, white);
+}
+.explore-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--g);
+  box-shadow: 0 0 12px var(--g);
+}
+.explore-section .explore-hit {
+  border-color: color-mix(in oklch, var(--g) 35%, var(--border));
+  background: linear-gradient(160deg, color-mix(in oklch, var(--g) 16%, var(--card)), color-mix(in oklch, var(--g) 6%, var(--background)));
+}
+.explore-section .explore-hit .text-muted-foreground {
+  color: color-mix(in oklch, var(--g) 25%, var(--muted-foreground));
+}
+.explore-section a.explore-hit:hover,
+.explore-section a.explore-hit:focus-visible {
+  border-color: var(--g);
+  background: linear-gradient(160deg, color-mix(in oklch, var(--g) 26%, var(--card)), color-mix(in oklch, var(--g) 10%, var(--background)));
+  box-shadow: 0 10px 30px -14px var(--g);
+}
+.explore-section a.explore-hit:hover .explore-arrow,
+.explore-section a.explore-hit:focus-visible .explore-arrow {
+  color: var(--g);
+}
+.explore-hit {
+  border: 1px solid color-mix(in oklch, var(--border) 70%, transparent);
+  background: color-mix(in oklch, var(--background) 35%, transparent);
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+.explore-hit:hover,
+.explore-hit:focus-visible {
+  outline: none;
+  border-color: color-mix(in oklch, var(--link) 45%, var(--border));
+  background: color-mix(in oklch, var(--link) 10%, transparent);
+}
+.explore-matched {
+  color: var(--link);
+}
+.explore-actions {
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+}
+.explore-arrow {
+  color: var(--muted-foreground);
+  transition:
+    transform 0.2s,
+    color 0.2s;
+}
+.explore-hit:hover .explore-arrow,
+.explore-hit:focus-visible .explore-arrow {
+  color: var(--link);
+  transform: translateX(3px);
+}
+/* Desktop: each group is one row, so the whole site fits on one screen. */
+@media (min-width: 640px) {
+  .explore-grid--stories,
+  .explore-grid--start {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .explore-grid--pages {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 900px) {
+  .explore-grid--pages {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

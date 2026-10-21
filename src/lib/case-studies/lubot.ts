@@ -17,6 +17,7 @@ export const lubot: CaseStudy = {
     "LuBot answers questions about your website, your files and your stock portfolio in plain English, with charts and the reasons behind them. The more you use it, the better it knows what you care about.",
   description:
     "How Lubo Bali built LuBot.ai alone: an AI analyst for your website, files and stock portfolio, one database per customer, featured by Neon (Databricks).",
+  tags: ["AI analyst", "stock", "portfolio", "investing", "website analytics", "files", "spreadsheets", "PDF", "RAG", "embeddings", "LLM", "SaaS", "multi-tenant", "Neon", "Postgres", "MCP", "Claude", "OpenRouter", "AWS", "personalization"],
   badge: { label: "Featured by Neon (Databricks)", url: site.featuredIn.url },
   hero: {
     name: "lubot-stock-chart",

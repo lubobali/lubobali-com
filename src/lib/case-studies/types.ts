@@ -19,6 +19,7 @@ export type CaseStudy = {
   problem: string; // one sentence, the reader's language
   promise: string; // what it does, one or two sentences
   description: string; // meta description
+  tags: readonly string[]; // search words for Explore (src/lib/explore.ts)
   badge?: { label: string; url: string }; // the strongest trust signal, top of the hook
   hero?: Shot; // the picture in the first screen
   art?: "payouts"; // a drawn picture for the first screen (no screens to show)
