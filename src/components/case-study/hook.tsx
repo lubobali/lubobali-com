@@ -1,4 +1,5 @@
 import type { CaseStudy } from "@/lib/case-studies/types";
+import { Ring } from "./ring";
 import { Screen } from "./screen";
 
 // The first screen (Phase 4 C2): enough even if they stop here. Research:
@@ -46,6 +47,7 @@ export function Hook({ cs }: { cs: CaseStudy }) {
       )}
       </div>
       {cs.hero && <Screen shot={cs.hero} priority sizes="(min-width: 1024px) 50vw, 100vw" />}
+      {!cs.hero && cs.ring && <Ring ring={cs.ring} />}
     </header>
   );
 }

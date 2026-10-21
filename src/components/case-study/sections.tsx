@@ -123,7 +123,7 @@ export function Ideas({ cs }: { cs: CaseStudy }) {
 
 export function Facts({ cs }: { cs: CaseStudy }) {
   return (
-    <dl className="grid gap-6 border-y border-border py-8 sm:grid-cols-3">
+    <dl className={`grid gap-6 border-y border-border py-8 sm:grid-cols-3 ${cs.next ? "lg:grid-cols-4" : ""}`}>
       <div className="flex flex-col gap-1">
         <dt className="text-sm text-muted-foreground">My role</dt>
         <dd className="font-medium">{cs.role}</dd>
@@ -136,6 +136,12 @@ export function Facts({ cs }: { cs: CaseStudy }) {
         <dt className="text-sm text-muted-foreground">Built with</dt>
         <dd className="font-medium">{cs.stack.join(" · ")}</dd>
       </div>
+      {cs.next && (
+        <div className="flex flex-col gap-1">
+          <dt className="text-sm text-muted-foreground">Next</dt>
+          <dd className="font-medium">{cs.next}</dd>
+        </div>
+      )}
     </dl>
   );
 }

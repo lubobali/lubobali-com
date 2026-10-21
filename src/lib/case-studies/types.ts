@@ -21,6 +21,9 @@ export type CaseStudy = {
   description: string; // meta description
   badge?: { label: string; url: string }; // the strongest trust signal, top of the hook
   hero?: Shot; // the picture in the first screen
+  // No product screen yet: draw one real example from the data instead
+  // (GraphGuard: a laundering ring, each hop = from -> to + amount).
+  ring?: { caption: string; hops: readonly { from: string; amount: string }[] };
   numbers?: readonly { value: string; label: string }[]; // 3 for the first screen
   stats?: readonly { value: string; label: string }[]; // the full build, by the numbers
   flow?: { app: string; before: FlowSide; after: FlowSide };
@@ -32,10 +35,39 @@ export type CaseStudy = {
     intro: string;
     moments: readonly { when: string; title: string; text: string; behind: string; shot?: Shot; chips?: readonly string[] }[];
   };
+  // The queue story (GraphGuard, Lubo 2026-10-21): one person, a day's
+  // alert capacity, and how many of those alerts are real, random order
+  // vs the model's order, drawn as two grids of dots.
+  queue?: {
+    person: string;
+    title: string;
+    intro: string;
+    capacity: number;
+    random: number;
+    model: number;
+    moments: readonly { when: string; title: string; text: string }[];
+  };
+  // Small drawings of the patterns the model learns to see.
+  shapes?: {
+    intro: string;
+    items: readonly { kind: "cycle" | "fan-out" | "scatter-gather"; name: string; text: string; count: string }[];
+  };
+  // A fair contest, drawn as bars (value out of total, same test for all).
+  contest?: {
+    title: string;
+    intro: string;
+    total: number;
+    unit: string; // e.g. "rings caught"
+    rows: readonly { name: string; value: number; winner?: boolean }[];
+    note: string;
+  };
+  // Where the project is going: done / now / later, honest about each.
+  roadmap?: readonly { name: string; text: string; status: "done" | "now" | "later" }[];
   problems?: readonly { problem: string; decision: string; result: string }[];
   ideas?: readonly string[]; // mystery pages only
   role: string;
   when: string;
+  next?: string; // what is being built now, shown with the facts
   stack: readonly string[];
   links?: readonly { label: string; url: string }[];
   // layers = the architecture drawn top (the user) to bottom (the data).

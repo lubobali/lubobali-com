@@ -1,0 +1,111 @@
+/* story.tsx (Phase 4 C4): Bruce's alert queue and the ring shapes. */
+.cs-queue {
+  border: 1px solid var(--border);
+  background: color-mix(in oklch, var(--card) 60%, transparent);
+}
+.cs-queue--strong {
+  border-color: color-mix(in oklch, var(--link) 45%, var(--border));
+  background:
+    radial-gradient(ellipse at 50% 0%, color-mix(in oklch, var(--link) 14%, transparent), transparent 70%),
+    color-mix(in oklch, var(--card) 70%, transparent);
+  box-shadow: 0 30px 80px -40px color-mix(in oklch, var(--link) 60%, transparent);
+}
+.cs-queue-num {
+  color: var(--foreground);
+}
+.cs-queue--strong .cs-queue-num {
+  color: var(--link);
+}
+.cs-dot {
+  fill: color-mix(in oklch, var(--muted-foreground) 32%, transparent);
+}
+.cs-dots-lit {
+  fill: color-mix(in oklch, var(--link) 55%, white);
+  filter: drop-shadow(0 0 2.5px var(--link));
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .cs-dots-lit {
+      animation: cs-light-up linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 45%;
+    }
+  }
+}
+@keyframes cs-light-up {
+  from {
+    opacity: 0;
+  }
+}
+.cs-shape-box {
+  color: var(--link);
+  background: radial-gradient(circle, color-mix(in oklch, var(--link) 10%, transparent), transparent 70%), var(--background);
+  border: 1px solid color-mix(in oklch, var(--link) 20%, var(--border));
+}
+.cs-shape-edge {
+  stroke: var(--link);
+  stroke-width: 1.6;
+  filter: drop-shadow(0 0 3px color-mix(in oklch, var(--link) 60%, transparent));
+}
+/* results.tsx: the contest bars and the roadmap. */
+.cs-bar-track {
+  background: color-mix(in oklch, var(--muted-foreground) 14%, transparent);
+}
+.cs-bar {
+  width: max(var(--w), 0.35rem); /* a 0 still shows a stub */
+  background: color-mix(in oklch, var(--muted-foreground) 55%, transparent);
+  transform-origin: left;
+}
+.cs-bar-value {
+  color: var(--muted-foreground);
+}
+.cs-bar-value strong {
+  color: var(--foreground);
+}
+.cs-bar-row--win .cs-bar {
+  background: linear-gradient(90deg, color-mix(in oklch, var(--link) 60%, transparent), var(--link));
+  box-shadow: 0 0 18px color-mix(in oklch, var(--link) 70%, transparent);
+}
+.cs-bar-row--win .cs-bar-value strong {
+  color: var(--link);
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .cs-bar {
+      animation: cs-grow linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 40%;
+    }
+  }
+}
+@keyframes cs-grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+.cs-road-step {
+  border: 1px solid var(--border);
+  background: color-mix(in oklch, var(--card) 50%, transparent);
+}
+.cs-road-status {
+  color: var(--muted-foreground);
+}
+.cs-road-step--done .cs-road-status::before {
+  content: "✓ ";
+}
+.cs-road-step--done .cs-road-status {
+  color: var(--foreground);
+}
+.cs-road-step--now {
+  border-color: color-mix(in oklch, var(--link) 50%, var(--border));
+  background:
+    radial-gradient(ellipse at 50% 0%, color-mix(in oklch, var(--link) 16%, transparent), transparent 70%),
+    color-mix(in oklch, var(--card) 70%, transparent);
+  box-shadow: 0 20px 60px -30px color-mix(in oklch, var(--link) 70%, transparent);
+}
+.cs-road-step--now .cs-road-status {
+  color: var(--link);
+}
+.cs-road-step--later {
+  border-style: dashed;
+}

@@ -115,3 +115,50 @@
   background: var(--link);
   box-shadow: 0 0 10px var(--link);
 }
+/* GraphGuard's ring (ring.tsx): quiet circle, glowing arrows, one light. */
+.cs-ring {
+  color: var(--link);
+  background: radial-gradient(circle at 50% 50%, color-mix(in oklch, var(--link) 12%, transparent), transparent 65%), var(--background);
+}
+.cs-ring-halo {
+  stroke: color-mix(in oklch, var(--link) 14%, transparent);
+  stroke-width: 22;
+}
+.cs-ring-arc {
+  stroke: var(--link);
+  stroke-width: 1.6;
+  filter: drop-shadow(0 0 4px color-mix(in oklch, var(--link) 70%, transparent));
+}
+.cs-ring-node {
+  fill: var(--background);
+  stroke: var(--link);
+  stroke-width: 2;
+}
+.cs-ring-id {
+  fill: var(--muted-foreground);
+  font: 500 11px ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.cs-ring-amount {
+  fill: var(--foreground);
+  font-size: 17px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.cs-ring-centre {
+  fill: var(--muted-foreground);
+  font-size: 15px;
+}
+.cs-ring-centre--strong {
+  fill: var(--award);
+  font-size: 19px;
+  font-weight: 600;
+}
+.cs-ring-light {
+  fill: color-mix(in oklch, var(--link) 40%, white);
+  filter: drop-shadow(0 0 6px var(--link));
+}
+@media (prefers-reduced-motion: reduce) {
+  .cs-ring-light {
+    display: none;
+  }
+}

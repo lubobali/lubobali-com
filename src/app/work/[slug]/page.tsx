@@ -3,7 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ForEngineers, HardProblems } from "@/components/case-study/build";
 import { Hook } from "@/components/case-study/hook";
+import { Contest, Roadmap } from "@/components/case-study/results";
 import { BeforeAfter, Day, Facts, Ideas, Stats, UseCases } from "@/components/case-study/sections";
+import { Queue, Shapes } from "@/components/case-study/story";
 import { FinalCta } from "@/components/home/final-cta";
 import { caseStudies, findCaseStudy } from "@/lib/case-studies";
 import { site } from "@/lib/site";
@@ -49,10 +51,14 @@ export default async function CaseStudyPage({ params }: Props) {
       <article className="mx-auto flex w-full max-w-6xl flex-col gap-20 px-4 py-12 sm:px-6 lg:py-16">
         <Hook cs={cs} />
         <BeforeAfter cs={cs} />
+        <Queue cs={cs} />
+        <Shapes cs={cs} />
+        <Contest cs={cs} />
         <Day cs={cs} />
         <UseCases cs={cs} />
         <Stats cs={cs} />
         <HardProblems cs={cs} />
+        <Roadmap cs={cs} />
         <Ideas cs={cs} />
         <Facts cs={cs} />
         <ForEngineers cs={cs} />
