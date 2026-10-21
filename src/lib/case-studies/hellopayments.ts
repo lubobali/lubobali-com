@@ -9,7 +9,7 @@ import type { CaseStudy } from "./types";
 export const hellopayments: CaseStudy = {
   slug: "hellopayments",
   kind: "mystery",
-  published: false,
+  published: true, // Lubo 2026-10-21 (C6b); staging stays noindex + Disallow
   name: "HelloPayments",
   eyebrow: "Client work · the details stay private",
   title: "Paying a sales team without the spreadsheet",

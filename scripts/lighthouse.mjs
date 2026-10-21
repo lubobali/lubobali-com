@@ -14,7 +14,7 @@ import { mkdtemp, readdir, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
-import { gatePage, medianSummary, summarize } from "./lib/lighthouse.mjs";
+import { gatePage, isFlake, medianSummary, summarize } from "./lib/lighthouse.mjs";
 
 const [url, build, env = "staging", runsArg = "3"] = process.argv.slice(2);
 if (!url || !build) {
@@ -53,8 +53,17 @@ async function lighthouse(path, i) {
     `--chrome-flags=${CHROME_FLAGS}`,
   ];
   if (env === "staging") args.push("--skip-audits=is-crawlable");
-  await run("node_modules/.bin/lighthouse", args, { maxBuffer: 1 << 24 });
-  return summarize(JSON.parse(await readFile(out, "utf8")));
+  // A Lighthouse flake (it failed to measure) gets up to 2 more tries; a
+  // slow or broken page still fails, because its scores come back bad.
+  for (let attempt = 1; ; attempt++) {
+    try {
+      await run("node_modules/.bin/lighthouse", args, { maxBuffer: 1 << 24 });
+      return summarize(JSON.parse(await readFile(out, "utf8")));
+    } catch (err) {
+      if (!isFlake(err) || attempt === 3) throw err;
+      console.log(`  retry ${path} run ${i}: ${err.stderr.trim().split("\n")[0].slice(0, 120)}`);
+    }
+  }
 }
 
 let failed = false;

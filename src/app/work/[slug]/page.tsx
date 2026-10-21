@@ -7,7 +7,9 @@ import { Contest, Roadmap } from "@/components/case-study/results";
 import { BeforeAfter, Challenges, Day, Facts, Ideas, Quote, Stats, UseCases } from "@/components/case-study/sections";
 import { Queue, Shapes } from "@/components/case-study/story";
 import { FinalCta } from "@/components/home/final-cta";
+import { JsonLd } from "@/components/seo/json-ld";
 import { caseStudies, findCaseStudy } from "@/lib/case-studies";
+import { caseStudyGraph } from "@/lib/schema";
 import { site } from "@/lib/site";
 
 // /work/<slug> (Phase 4 C2): one engine for every case study, in Lubo's
@@ -48,6 +50,7 @@ export default async function CaseStudyPage({ params }: Props) {
   if (!cs) notFound();
   return (
     <main className="flex flex-1 flex-col">
+      {cs.published && <JsonLd data={caseStudyGraph(cs)} />}
       <article className="mx-auto flex w-full max-w-6xl flex-col gap-20 px-4 py-12 sm:px-6 lg:py-16">
         <Hook cs={cs} />
         <BeforeAfter cs={cs} />

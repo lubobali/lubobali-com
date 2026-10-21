@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { publishedCaseStudies } from "@/lib/case-studies";
 import { absoluteUrl } from "@/lib/site";
 
 // Every indexable page, no trailing slash. scripts/check-seo.mjs fails the
@@ -7,7 +8,7 @@ import { absoluteUrl } from "@/lib/site";
 // ignores lastmod it can't trust.
 export const dynamic = "force-static";
 
-const pages = ["/", "/blueprint"];
+const pages = ["/", "/blueprint", ...publishedCaseStudies().map((c) => `/work/${c.slug}`)];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return pages.map((path) => ({ url: absoluteUrl(path) }));

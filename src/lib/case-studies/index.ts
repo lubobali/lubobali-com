@@ -8,3 +8,7 @@ export const caseStudies: readonly CaseStudy[] = [lubot, hellopayments, graphgua
 
 export const findCaseStudy = (slug: string) => caseStudies.find((c) => c.slug === slug);
 export const publishedCaseStudies = () => caseStudies.filter((c) => c.published);
+
+// The story page of a project (by its work.ts id), only once published:
+// home cards, footer, Explore, sitemap and llms.txt all ask here (C6b).
+export const storyPath = (slug: string) => (findCaseStudy(slug)?.published ? `/work/${slug}` : undefined);

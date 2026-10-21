@@ -1,3 +1,4 @@
+import { storyPath } from "@/lib/case-studies";
 import { intro } from "@/lib/intro";
 import { now, steps, terms } from "@/lib/process";
 import { services } from "@/lib/services";
@@ -11,6 +12,11 @@ import { work } from "@/lib/work";
 export const dynamic = "force-static";
 
 const list = (items: readonly string[]) => items.map((i) => `- ${i}`).join("\n");
+// A project's links, its story first once published (Phase 4 C6b).
+const links = (w: (typeof work)[number]) => {
+  const story = storyPath(w.id);
+  return [...(story ? [{ label: "Read the story", url: site.url + story }] : []), ...w.links];
+};
 // Plain text: drop the invisible "keep on one line" characters used on the page.
 const plain = (t: string) => t.replace(/\u2060/g, "").replace(/\u00a0/g, " ");
 
@@ -35,7 +41,7 @@ ${services.map((s) => `- **${s.name}**: ${s.description} Proof: ${s.proof}`).joi
 
 ## Selected work
 
-${work.map((w) => `### ${w.name}\n\n${plain(w.role)}. ${w.summary}\n\n${list(w.highlights)}${w.links.length ? "\n\n" + w.links.map((l) => `- [${l.label}](${l.url})`).join("\n") : ""}`).join("\n\n")}
+${work.map((w) => `### ${w.name}\n\n${plain(w.role)}. ${w.summary}\n\n${list(w.highlights)}${links(w).length ? "\n\n" + links(w).map((l) => `- [${l.label}](${l.url})`).join("\n") : ""}`).join("\n\n")}
 
 ## How it works
 

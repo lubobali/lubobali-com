@@ -1,4 +1,5 @@
 import type { Graph } from "schema-dts";
+import type { CaseStudy } from "@/lib/case-studies/types";
 import { imageUrl } from "@/lib/images";
 import { intro } from "@/lib/intro";
 import { services } from "@/lib/services";
@@ -96,6 +97,31 @@ export function homeGraph(): Graph {
         transcript: intro.transcript.join(" "),
         creator: { "@id": id("person") },
         isPartOf: { "@id": id("profile") },
+      },
+    ],
+  };
+}
+
+// A case study (Phase 4 C6b): an Article by Lubo, tied to the same Person
+// and WebSite ids as the home page, so search and AI assistants know who
+// built it. Client work (mystery) says "about" the client only by name.
+export function caseStudyGraph(cs: CaseStudy): Graph {
+  const url = `${site.url}/work/${cs.slug}`;
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        "@id": `${url}#article`,
+        headline: `${cs.name}: ${cs.title}`,
+        description: cs.description,
+        url,
+        inLanguage: "en",
+        keywords: cs.tags.join(", "),
+        author: { "@id": id("person") },
+        publisher: { "@id": id("person") },
+        isPartOf: { "@id": id("website") },
+        about: { "@type": "Thing", name: cs.name },
       },
     ],
   };

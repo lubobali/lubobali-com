@@ -7,7 +7,7 @@ import type { CaseStudy } from "./types";
 export const graphguard: CaseStudy = {
   slug: "graphguard-ai",
   kind: "story",
-  published: false,
+  published: true, // Lubo 2026-10-21 (C6b); staging stays noindex + Disallow
   name: "GraphGuard-AI",
   eyebrow: "Case study · open source, built solo",
   title: "Catching money laundering by its shape",
@@ -15,7 +15,7 @@ export const graphguard: CaseStudy = {
   promise:
     "GraphGuard ranks which accounts a bank's team should check first, with a reason for each one. A person decides; the model only sets the order.",
   description:
-    "How Lubo Bali built GraphGuard-AI: money-laundering detection by the shape money moves in, tested on 5 million simulated bank transfers. 332 of the top 1,000 alerts are real.",
+    "How Lubo Bali built GraphGuard-AI: catching money laundering by its shape. On 5M simulated transfers, 332 of the top 1,000 alerts are real.",
   tags: ["fraud", "money laundering", "AML", "banking", "finance", "graph", "GNN", "XGBoost", "machine learning", "ML", "PyTorch", "Polars", "Optuna", "MLflow", "data leakage", "open source"],
   ring: {
     caption: "A real ring from the data (simulated by IBM AMLworld). Every hop looks normal; the shape is the crime.",

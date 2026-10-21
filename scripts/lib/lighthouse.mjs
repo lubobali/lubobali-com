@@ -77,3 +77,11 @@ export function gatePage(summary, { indexable }) {
   if (indexable) return { fails, warns };
   return { fails: [], warns: [...fails, ...warns].map((w) => `${w} (noindex page, not gated)`) };
 }
+
+// Lighthouse itself sometimes fails to record a page load ("Runtime error
+// encountered ... (NO_NAVSTART)", CI 2026-10-21). That is a broken
+// measurement, not a slow page: the caller retries the run. Any other error
+// (missing file, crash of our script) stays a real failure.
+export function isFlake(err) {
+  return typeof err?.stderr === "string" && err.stderr.includes("Runtime error encountered");
+}

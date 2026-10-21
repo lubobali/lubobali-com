@@ -8,7 +8,7 @@ import type { CaseStudy } from "./types";
 export const lubot: CaseStudy = {
   slug: "lubot",
   kind: "story",
-  published: false,
+  published: true, // Lubo 2026-10-21 (C6b); staging stays noindex + Disallow
   name: "LuBot.ai",
   eyebrow: "Case study · my own product, built solo",
   title: "An AI analyst that learns you",

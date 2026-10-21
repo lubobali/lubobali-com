@@ -1,4 +1,4 @@
-import { caseStudies } from "@/lib/case-studies";
+import { caseStudies, storyPath } from "@/lib/case-studies";
 import { site } from "@/lib/site";
 import { work } from "@/lib/work";
 
@@ -28,12 +28,11 @@ export type ExploreItem = {
 
 const projects: ExploreItem[] = work.map((w) => {
   const cs = caseStudies.find((c) => c.slug === w.id);
-  const story = cs?.published;
   return {
     group: "stories",
     title: w.name,
     subtitle: cs ? cs.title : w.summary,
-    href: story ? `/work/${w.id}` : `/#${w.id}`,
+    href: storyPath(w.id) ?? `/#${w.id}`,
     keywords: [...(cs?.tags ?? []), ...w.stack],
     text: [w.summary, ...w.highlights, cs?.problem ?? ""].join(" "),
   };

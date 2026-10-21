@@ -1,4 +1,5 @@
 import { StatusDot } from "@/components/status-dot";
+import { publishedCaseStudies } from "@/lib/case-studies";
 import { site } from "@/lib/site";
 
 // Footer (Phase 3 H11, Lubo: "premium"): a glow line instead of a flat
@@ -39,7 +40,7 @@ const heading = "text-xs font-semibold tracking-wide text-award uppercase";
 export function SiteFooter() {
   return (
     <footer className="site-footer relative mt-auto">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 pt-14 pb-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.6fr_1fr_auto]">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 pt-14 pb-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.6fr_1fr_1fr_auto]">
         <div className="flex flex-col gap-4 sm:col-span-2 lg:col-span-1">
           <p className="flex items-center gap-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -61,6 +62,18 @@ export function SiteFooter() {
               <li key={l.href}>
                 <a href={l.href} className="text-muted-foreground transition-colors hover:text-foreground">
                   {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <nav aria-label="Stories" className="flex flex-col gap-3">
+          <p className={heading}>Stories</p>
+          <ul className="flex flex-col gap-2 text-sm">
+            {publishedCaseStudies().map((c) => (
+              <li key={c.slug}>
+                <a href={`/work/${c.slug}`} className="text-muted-foreground transition-colors hover:text-foreground">
+                  {c.name}
                 </a>
               </li>
             ))}

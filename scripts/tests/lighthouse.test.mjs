@@ -1,7 +1,7 @@
 // node --test scripts/tests/lighthouse.test.mjs
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { BUDGETS, checkBudgets, gatePage, median, medianSummary, summarize } from "../lib/lighthouse.mjs";
+import { BUDGETS, checkBudgets, gatePage, isFlake, median, medianSummary, summarize } from "../lib/lighthouse.mjs";
 
 // Smallest Lighthouse JSON shape that summarize() reads.
 const report = ({ perf = 0.95, a11y = 1, bp = 1, seo = 1, lcp = 1800, cls = 0, tbt = 200, requests = 12 } = {}) => ({
@@ -85,4 +85,18 @@ test("gatePage: noindex pages only warn (internal, e.g. /styleguide)", () => {
   assert.deepEqual(fails, []);
   assert.equal(warns.length, 2);
   assert.ok(warns.every((w) => /noindex/.test(w)), warns.join("\n"));
+});
+
+// Lighthouse sometimes fails to record its own trace (NO_NAVSTART, seen in CI
+// 2026-10-21): retry that run. Anything else is a real failure.
+test("isFlake: Lighthouse runtime errors are retryable", () => {
+  const err = (stderr) => Object.assign(new Error("Command failed"), { stderr });
+  assert.equal(isFlake(err("Runtime error encountered: Something went wrong with recording the trace over your page load. Please run Lighthouse again. (NO_NAVSTART)\n")), true);
+  assert.equal(isFlake(err("Runtime error encountered: Chrome prevented page load (PROTOCOL_TIMEOUT)\n")), true);
+});
+
+test("isFlake: other errors are real failures", () => {
+  assert.equal(isFlake(Object.assign(new Error("Command failed"), { stderr: "ENOENT: no such file" })), false);
+  assert.equal(isFlake(new Error("boom")), false);
+  assert.equal(isFlake(undefined), false);
 });
