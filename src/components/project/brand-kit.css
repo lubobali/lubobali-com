@@ -1,0 +1,310 @@
+/* The brand-card picture kit (brand-charts*.tsx, P5.6): one unique
+   picture per project, drawn in its chapter's world (--a, --a-dk, --up,
+   --warn, --down from brand-card.css). Complete at rest; motion only when
+   the visitor allows it. */
+/* Gates. */
+.bc-track {
+  stroke: color-mix(in srgb, var(--a) 40%, transparent);
+  stroke-width: 1.5;
+  stroke-dasharray: 2 4;
+}
+.bc-gate {
+  stroke: var(--a);
+  stroke-width: 3;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 4px var(--a));
+}
+.bc-drop {
+  fill: var(--text);
+}
+.bc-reject {
+  fill: none;
+  stroke: var(--a);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+  opacity: 0.5;
+}
+
+/* Race: before vs after, made of the same stages. */
+.bc-race-track {
+  background: rgb(255 255 255 / 0.06);
+}
+/* 7 shades of the world colour, light and dark taking turns, so every
+   stage has its own colour and neighbours stay apart. */
+.bc-seg[data-i="0"] {
+  background: var(--a);
+}
+.bc-seg[data-i="1"] {
+  background: color-mix(in srgb, var(--a) 35%, #dfe6ef);
+}
+.bc-seg[data-i="2"] {
+  background: var(--a-dk);
+}
+.bc-seg[data-i="3"] {
+  background: color-mix(in srgb, var(--a) 70%, #dfe6ef);
+}
+.bc-seg[data-i="4"] {
+  background: color-mix(in srgb, var(--a) 50%, #04060a);
+}
+.bc-seg[data-i="5"] {
+  background: #dfe6ef;
+}
+.bc-seg[data-i="6"] {
+  background: color-mix(in srgb, var(--a-dk) 55%, #04060a);
+}
+.bc-race-bar .bc-seg + .bc-seg {
+  box-shadow: inset 2px 0 0 #04060a;
+}
+.bc-race-bar[data-run="after"] {
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--a) 70%, transparent));
+  transform-origin: left;
+}
+.bc-swatch {
+  flex: none;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 3px;
+}
+
+/* Rings. */
+.bc-ring {
+  overflow: visible; /* the lit ring's glow must not be cut square */
+}
+.bc-ring-track,
+.bc-ring-value {
+  fill: none;
+  stroke-width: 7;
+}
+.bc-ring-track {
+  stroke: rgb(255 255 255 / 0.08);
+}
+.bc-ring-value {
+  stroke: color-mix(in srgb, var(--a) 55%, transparent);
+  stroke-linecap: round;
+}
+[data-top] .bc-ring-value {
+  stroke: var(--a);
+  filter: drop-shadow(0 0 6px var(--a));
+}
+.bc-ring-n {
+  font-size: 1.15rem;
+}
+
+/* Shared pieces of the kit. */
+.bc-big {
+  font-family: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  line-height: 1.05;
+  color: var(--text);
+}
+.bc-num {
+  display: grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  font-family: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: #04060a;
+  background: var(--a);
+  box-shadow: 0 0 14px -2px var(--a);
+}
+.bc-arrow {
+  font-size: 1.5rem;
+  color: var(--a);
+}
+.bc-arrow-sm {
+  color: var(--a);
+}
+
+/* Loop: agents on a ring, a light running round. */
+.bc-loop-ring {
+  fill: none;
+  stroke: color-mix(in srgb, var(--a) 35%, transparent);
+  stroke-width: 2;
+}
+.bc-loop-run {
+  fill: none;
+  stroke: var(--a);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 40 425;
+  filter: drop-shadow(0 0 6px var(--a));
+}
+.bc-loop-node {
+  fill: #04060a;
+  stroke: var(--a);
+  stroke-width: 2;
+}
+.bc-loop-n {
+  fill: var(--text);
+  font-family: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+}
+.bc-back {
+  padding-left: 2.25rem;
+  color: var(--a);
+}
+
+/* Funnel: bands narrowing; the last one glows. */
+.bc-band {
+  display: block;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.6rem;
+  text-align: center;
+  font-family: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text);
+  border: 1px solid color-mix(in srgb, var(--a) 40%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--a) 22%, transparent), color-mix(in srgb, var(--a) 8%, transparent));
+}
+.bc-band[data-last] {
+  color: #04060a;
+  background: var(--a);
+  box-shadow: 0 0 24px -4px var(--a);
+}
+
+/* Stream: tickets with clocks, flowing into a history. */
+.bc-row {
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.6rem;
+  border: 1px solid rgb(255 255 255 / 0.07);
+  background: rgb(255 255 255 / 0.03);
+}
+.bc-age {
+  font-family: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.bc-age[data-state="fresh"] {
+  color: var(--up);
+}
+.bc-age[data-state="ageing"] {
+  color: var(--warn);
+}
+.bc-age[data-state="late"] {
+  color: var(--down);
+}
+.bc-history {
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--a) 40%, transparent);
+  background: color-mix(in srgb, var(--a) 8%, transparent);
+}
+.bc-history-row {
+  height: 0.5rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--a) 55%, transparent);
+}
+
+/* Reconcile: the same rows in two systems; missing ones are ghosts. */
+.bc-cell {
+  display: block;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--a) 60%, transparent);
+}
+.bc-cell[data-missing] {
+  background: transparent;
+  outline: 1px dashed var(--down);
+  outline-offset: -1px;
+  box-shadow: 0 0 10px -4px var(--down);
+}
+
+/* KPI tiles + small bars. */
+/* Tile numbers stay on one line and inside their tile, even 3 across on
+   a phone. */
+.bc-tile .bc-big {
+  font-size: clamp(1rem, 4vw, 1.75rem);
+  white-space: nowrap;
+}
+.bc-tile {
+  padding: 0.85rem 0.9rem;
+  border-radius: 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--a) 28%, transparent);
+  background: rgb(255 255 255 / 0.03);
+}
+.bc-mini-bar {
+  background: color-mix(in srgb, var(--a) 55%, transparent);
+}
+[data-top] .bc-mini-bar {
+  background: var(--a);
+  box-shadow: 0 0 10px -2px var(--a);
+}
+
+/* Dots: one per group of items; lit groups glow. */
+.bc-dot-cell {
+  display: inline-block;
+  flex: none;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+}
+.bc-dot-cell[data-group="0"] {
+  background: rgb(255 255 255 / 0.18);
+}
+.bc-dot-cell[data-group="1"] {
+  background: color-mix(in srgb, var(--a) 70%, transparent);
+}
+.bc-dot-cell[data-group="2"] {
+  background: color-mix(in srgb, var(--a) 40%, #dfe6ef);
+}
+.bc-dot-cell[data-lit] {
+  background: var(--down);
+  box-shadow: 0 0 8px var(--down);
+}
+
+/* Ladder: rising columns, the top one lit. */
+.bc-col {
+  min-height: 0.5rem;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--a) 60%, transparent), color-mix(in srgb, var(--a) 15%, transparent));
+}
+[data-top] .bc-col {
+  background: linear-gradient(180deg, var(--a), color-mix(in srgb, var(--a) 30%, transparent));
+  box-shadow: 0 0 22px -6px var(--a);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bc-drop {
+    transform-box: fill-box;
+    animation: bc-fall 2.4s ease-in infinite;
+  }
+  .bc-loop-run {
+    animation: bc-orbit 4s linear infinite;
+  }
+  @supports (animation-timeline: view()) {
+    .bc-race-bar[data-run="after"] {
+      animation: bc-grow linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 35%;
+    }
+  }
+}
+@keyframes bc-fall {
+  0% {
+    translate: 0 -14px;
+    opacity: 0;
+  }
+  30%,
+  70% {
+    opacity: 1;
+  }
+  100% {
+    translate: 0 40px;
+    opacity: 0;
+  }
+}
+@keyframes bc-orbit {
+  to {
+    stroke-dashoffset: -465;
+  }
+}
+@keyframes bc-grow {
+  from {
+    transform: scaleX(0);
+  }
+}

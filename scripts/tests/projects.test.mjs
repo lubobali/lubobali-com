@@ -3,7 +3,7 @@
 // what it catches. model.ts has no imports, so Node runs it directly.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { CHAPTERS, checkProject, INDUSTRIES, proofItems } from "../../src/lib/projects/model.ts";
+import { CHAPTERS, checkProject, INDUSTRIES, kindClashes, proofItems } from "../../src/lib/projects/model.ts";
 
 const good = {
   slug: "diabetes-readmissions",
@@ -116,8 +116,11 @@ test("proof line is built from real links, never typed by hand", () => {
       source: { label: "UCI", url: "https://archive.ics.uci.edu" },
       honesty: "Generated test data",
     }),
-    ["Live demo", "Code on GitHub", "Public data", "Generated test data, said so"],
+    ["Live demo", "Code on GitHub", "Public data", "Limits said openly"],
   );
+  // The note can be about the data or the project ("No longer running"):
+  // the proof line must be true for both (seen on PortfolioScope 2026-10-22).
+  assert.ok(!proofItems({ ...good, honesty: "No longer running" }).some((x) => /data/i.test(x)));
 });
 
 test("an extra real screen ('See the real app') needs alt text and must not repeat the main screen", () => {
@@ -128,4 +131,72 @@ test("an extra real screen ('See the real app') needs alt text and must not repe
     broken({ picture: { kind: "screen", image: "x", alt: "a", caption: "c" }, screen: shot }).join(),
     /screen/,
   );
+});
+
+// Brand-card picture kit (P5.6, Lubo 2026-10-22: "unique chart for every
+// project"). Each kind draws real numbers, so the data must add up.
+const withPicture = (picture) => checkProject({ ...good, picture });
+
+test("gates: 3+ gates and 2+ outcomes", () => {
+  const gates = [1, 2, 3].map((i) => ({ label: `Gate ${i}`, detail: "what it stops" }));
+  const ok = { kind: "gates", title: "4 safety layers", gates, outcomes: ["Meeting", "Action"], caption: "c" };
+  assert.deepEqual(withPicture(ok), []);
+  assert.match(withPicture({ ...ok, gates: gates.slice(0, 2) }).join(), /gates/);
+  assert.match(withPicture({ ...ok, outcomes: ["Meeting"] }).join(), /outcome/);
+});
+
+test("race: stage times must add up to each total (within 1%)", () => {
+  const ok = {
+    kind: "race",
+    title: "Same pipeline, before and after",
+    unit: "s",
+    stages: [
+      { label: "Load", before: 30, after: 2 },
+      { label: "Write", before: 70, after: 8 },
+    ],
+    caption: "c",
+  };
+  assert.deepEqual(withPicture(ok), []);
+  assert.match(withPicture({ ...ok, stages: [ok.stages[0]] }).join(), /2\+ stages/);
+  assert.match(withPicture({ ...ok, stages: [{ label: "Load", before: 1, after: 2 }, ok.stages[1]] }).join(), /slower/);
+});
+
+test("rings: 2+ rings, each a share between 0 and 100", () => {
+  const ok = { kind: "rings", title: "Late deliveries", rings: [{ label: "First", value: 37 }, { label: "Standard", value: 15 }], caption: "c" };
+  assert.deepEqual(withPicture(ok), []);
+  assert.match(withPicture({ ...ok, rings: [{ label: "First", value: 137 }, ok.rings[1]] }).join(), /0 and 100/);
+  assert.match(withPicture({ ...ok, rings: [ok.rings[0]] }).join(), /2\+ rings/);
+});
+
+test("loop, funnel, stream: enough parts to draw", () => {
+  const two = [{ label: "A", detail: "a" }, { label: "B", detail: "b" }];
+  const three = [...two, { label: "C", detail: "c" }];
+  const loop = { kind: "loop", title: "t", agents: three, back: "retry", center: { value: "~8 s", label: "to an answer" }, caption: "c" };
+  assert.deepEqual(withPicture(loop), []);
+  assert.match(withPicture({ ...loop, agents: two }).join(), /loop needs 3\+/);
+  const funnel = { kind: "funnel", title: "t", stages: three, caption: "c" };
+  assert.deepEqual(withPicture(funnel), []);
+  assert.match(withPicture({ ...funnel, stages: two }).join(), /funnel needs 3\+/);
+  const stream = { kind: "stream", title: "t", items: [{ label: "x", age: "5m", state: "fresh" }], into: { label: "Delta", detail: "d" }, caption: "c" };
+  assert.match(withPicture(stream).join(), /stream needs 2\+/);
+});
+
+test("kpis, dots, reconcile: real-looking limits", () => {
+  const kpis = { kind: "kpis", title: "t", tiles: [{ value: "18%", label: "late" }, { value: "$1,340", label: "per order" }], caption: "c" };
+  assert.deepEqual(withPicture(kpis), []);
+  assert.match(withPicture({ ...kpis, tiles: [kpis.tiles[0]] }).join(), /2 to 4 tiles/);
+  assert.match(withPicture({ ...kpis, ring: { value: 140, label: "x" } }).join(), /0 and 100/);
+  const dots = { kind: "dots", title: "t", per: 10, groups: [{ label: "Neutral", count: 1056 }, { label: "Negative", count: 164, lit: true }], caption: "c" };
+  assert.deepEqual(withPicture(dots), []);
+  // A dot per email would be thousands of shapes: the page must stay light.
+  assert.match(withPicture({ ...dots, per: 1 }).join(), /too many dots/);
+  const rec = { kind: "reconcile", title: "t", left: { label: "SQL Server", note: "n" }, right: { label: "PostgreSQL", note: "n" }, missingShare: 2 / 3, caption: "c" };
+  assert.deepEqual(withPicture(rec), []);
+  assert.match(withPicture({ ...rec, missingShare: 1.5 }).join(), /between 0 and 1/);
+});
+
+test("two neighbours in a chapter never share a picture kind (each one easy to remember)", () => {
+  const p = (slug, chapter, kind) => ({ slug, chapter, picture: { kind } });
+  assert.deepEqual(kindClashes([p("a", "ai", "loop"), p("b", "pipelines", "loop"), p("c", "ai", "gates")]), []);
+  assert.match(kindClashes([p("a", "ai", "loop"), p("b", "ai", "loop")]).join(), /a and b/);
 });

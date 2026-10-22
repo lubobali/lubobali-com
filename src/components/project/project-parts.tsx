@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { projects } from "@/lib/projects";
 import { CHAPTERS, type Project, type ProjectLink } from "@/lib/projects/model";
 import { ProjectArt } from "./project-art";
 import { ProofLine } from "./project-trust";
@@ -23,7 +24,9 @@ export function ProjectHero({ p }: { p: Project }) {
   return (
     <header className="grid items-center gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-14">
       <div className="flex flex-col gap-5">
-        <Link href="/projects" className="self-start text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
+        {/* No prefetch: it would download the whole shelf on every project
+            page (+6 requests, over the 20 budget). */}
+        <Link href="/projects" prefetch={false} className="self-start text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
           <span aria-hidden="true">←</span> All projects
         </Link>
         <p className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
@@ -61,7 +64,7 @@ export function ProjectHero({ p }: { p: Project }) {
         )}
         <ProofLine p={p} />
       </div>
-      <ProjectArt picture={p.picture} priority />
+      <ProjectArt picture={p.picture} priority chapter={p.chapter} folio={projects.indexOf(p) + 1} />
     </header>
   );
 }

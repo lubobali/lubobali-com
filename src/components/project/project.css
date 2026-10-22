@@ -1,15 +1,16 @@
-/* Project pages (Phase 5 P5.3, src/app/projects/[slug]). One tone per
-   chapter, inside the brand blues (same tones as Explore): a card says its
-   chapter at a glance. Motion = progressive: complete at rest, and only
+/* Project pages (Phase 5 P5.3, src/app/projects/[slug]). One colour per
+   chapter, the brand-card worlds (Lubo 2026-10-22): amber AI agents,
+   violet Data pipelines, teal Analytics (--chapter-* in globals.css): a
+   chip or number says its chapter at a glance, everywhere on the site. Motion = progressive: complete at rest, and only
    when the visitor allows motion. */
 [data-chapter="analytics"] {
-  --pj: var(--tone-ice);
+  --pj: var(--chapter-analytics);
 }
 [data-chapter="pipelines"] {
-  --pj: var(--tone-violet);
+  --pj: var(--chapter-pipelines);
 }
 [data-chapter="ai"] {
-  --pj: var(--link);
+  --pj: var(--chapter-ai);
 }
 
 .pj-chip {
@@ -35,61 +36,6 @@
 }
 .pj-cta:hover {
   box-shadow: 0 10px 50px -8px color-mix(in oklch, var(--pj) 95%, transparent);
-}
-
-/* Glass panel for the drawn picture: thin light line on top + tone glow,
-   like the case-study screens (.cs-screen-frame). */
-.pj-art {
-  position: relative;
-  border: 1px solid color-mix(in oklch, var(--pj) 30%, var(--border));
-  background:
-    radial-gradient(120% 80% at 100% 0%, color-mix(in oklch, var(--pj) 12%, transparent), transparent 60%),
-    color-mix(in oklch, var(--card) 80%, transparent);
-  box-shadow: 0 30px 80px -40px color-mix(in oklch, var(--pj) 60%, transparent);
-}
-.pj-art::before {
-  content: "";
-  position: absolute;
-  inset: 0 14% auto;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, color-mix(in oklch, var(--pj) 90%, white), transparent);
-}
-
-/* Chart bars: honest scale from zero; the top bar carries the tone. */
-.pj-track {
-  background: color-mix(in oklch, var(--foreground) 8%, transparent);
-}
-.pj-bar {
-  background: color-mix(in oklch, var(--pj) 45%, var(--border));
-  transform-origin: left;
-}
-.pj-bar[data-top] {
-  background: linear-gradient(90deg, color-mix(in oklch, var(--pj) 55%, transparent), var(--pj));
-  box-shadow: 0 0 18px -2px color-mix(in oklch, var(--pj) 70%, transparent);
-}
-
-/* Flow: steps on a line; a soft light travels down it. */
-.pj-flow {
-  position: relative;
-}
-.pj-flow::before {
-  content: "";
-  position: absolute;
-  top: 1.5rem;
-  bottom: 1.5rem;
-  left: calc(1rem + 1rem - 0.5px); /* step padding + half the number */
-  width: 1px;
-  background: linear-gradient(transparent, color-mix(in oklch, var(--pj) 55%, transparent), transparent);
-}
-.pj-step {
-  position: relative;
-  border: 1px solid color-mix(in oklch, var(--pj) 20%, var(--border));
-  background: color-mix(in oklch, var(--background) 55%, transparent);
-}
-.pj-step-n {
-  color: var(--background);
-  background: var(--pj);
-  box-shadow: 0 0 20px -4px var(--pj);
 }
 
 /* The story as a journey (Lubo 2026-10-22: "lighter to darker along the
@@ -126,49 +72,6 @@
 .pj-similar:hover,
 .pj-similar:focus-visible {
   transform: translateY(-2px);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  /* Bars grow as they scroll into view (browsers without scroll timelines
-     simply show them full). */
-  @supports (animation-timeline: view()) {
-    .pj-bar {
-      animation: pj-grow linear both;
-      animation-timeline: view();
-      animation-range: entry 10% cover 35%;
-    }
-  }
-  .pj-flow::after {
-    content: "";
-    position: absolute;
-    left: calc(2rem - 3px);
-    top: 1.5rem;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--pj);
-    box-shadow: 0 0 12px 2px var(--pj);
-    animation: pj-run 3.6s ease-in-out infinite;
-  }
-}
-@keyframes pj-grow {
-  from {
-    transform: scaleX(0);
-  }
-}
-@keyframes pj-run {
-  0% {
-    top: 1.5rem;
-    opacity: 0;
-  }
-  15%,
-  85% {
-    opacity: 1;
-  }
-  100% {
-    top: calc(100% - 1.5rem);
-    opacity: 0;
-  }
 }
 
 /* Proof, Safe by design, agent anatomy (project-trust.tsx). */

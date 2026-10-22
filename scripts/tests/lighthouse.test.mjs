@@ -120,8 +120,10 @@ test("samplePages: template pages keep the heaviest of each picture kind, others
 });
 
 test("pictureKind reads the picture type from a built page", () => {
-  assert.equal(pictureKind('<figure class="pj-art"><ol><li><span class="pj-track">'), "chart");
-  assert.equal(pictureKind('<ol class="pj-flow flex">'), "flow");
+  // Brand cards (P5.6) cost the same whatever chart is inside (fonts +
+  // drawn art); a big real screen below adds an image.
+  assert.equal(pictureKind('<figure data-world="ai" class="bc">'), "brand");
+  assert.equal(pictureKind('<figure data-world="ai" class="bc"></figure><figure class="cs-screen flex">'), "brand+screen");
   assert.equal(pictureKind('<figure class="cs-screen flex">'), "screen");
   assert.equal(pictureKind("<main>"), undefined);
 });

@@ -36,6 +36,13 @@ const PAIRS = [
   ["input", "background", UI],
   ["success", "background", UI], // "available" status dot
   ["award", "card", TEXT], // service cards: "Proof" label + emblem
+  // Chapter colours (P5.6): chip text + big numbers on the page, the shelf
+  // cards (journey-1 = their lightest face) and Explore.
+  ...["chapter-ai", "chapter-pipelines", "chapter-analytics"].flatMap((t) => [
+    [t, "background", TEXT],
+    [t, "card", TEXT],
+    [t, "journey-1", TEXT],
+  ]),
   ["tone-violet", "card", UI], // work cards: check marks + pictures
   ["tone-ice", "card", UI],
   ["foreground", "card-blue", MAIN], // blue card faces (services + work)

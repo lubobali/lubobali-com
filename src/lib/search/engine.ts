@@ -30,7 +30,7 @@ const MAX_QUERY = 100; // characters; longer input is cut, never slow
 const FILLER = new Set(
   ("a an and any are as at be by can do does for from have help how i in is it me my need of on " +
     "or our some something that the their there this to us want we what which who with you your " +
-    "about build built find example examples like looking project projects similar show")
+    "about build built find example examples like looking make project projects similar show")
     .split(" "),
 );
 

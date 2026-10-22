@@ -19,18 +19,19 @@ export const mergeAI: Project = {
   result:
     "Any CSV becomes something you can ask questions in plain English, with a chart, a table and a short summary in about 8 seconds. It's live: try it with your own files.",
   tech: ["Next.js", "TypeScript", "PostgreSQL", "NVIDIA Nemotron", "Vercel"],
-  // The agent loop drawn big (Lubo: the app's own pie labels were too
-  // small to read); the real screen is shown large below ("See the real app").
+  // Brand card (P5.6): the 3 agents on a loop, the checker sending work
+  // back; the real screen is shown large below ("See the real app").
   picture: {
-    kind: "flow",
-    steps: [
-      { label: "You ask", detail: "\"Compare training cost by department\"" },
-      { label: "Schema agent", detail: "finds how the files connect: EmpID is Employee ID" },
-      { label: "SQL agent", detail: "writes a real PostgreSQL join" },
-      { label: "Validator", detail: "runs it; zero rows or a wrong column? back to the agents, up to 3 rounds" },
-      { label: "Your answer", detail: "chart, table and a short summary in about 8 seconds" },
+    kind: "loop",
+    title: "Ask in plain English, a checked answer in ~8 s",
+    agents: [
+      { label: "Schema agent", detail: "finds how your files connect: EmpID is Employee ID" },
+      { label: "SQL agent", detail: "writes a real PostgreSQL query to join them" },
+      { label: "Validator", detail: "runs it and checks the result, with no AI in it" },
     ],
-    caption: "One question, three agents that check each other.",
+    back: "Zero rows or a wrong column? Back to the agents, up to 3 rounds.",
+    center: { value: "~8 s", label: "question to checked answer" },
+    caption: "3 agents that check each other",
   },
   screen: {
     image: "mergeai-dashboard",

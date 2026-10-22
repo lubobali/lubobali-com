@@ -20,9 +20,11 @@ export const diabetesReadmissions: Project = {
   result:
     "More medications, more returns: 12.48% came back at 16+ medications vs 7.48% at 5 or fewer. Patients sent home without an A1C or glucose test came back more often (11.42% vs as low as 8.87%).",
   tech: ["SQL", "MySQL"],
+  // Brand card (P5.6, CEO hook): 12.48% / 7.48% = 1.67 → "67% more often".
+  // Bars = my SQL results, back within 30 days by number of medications.
   picture: {
     kind: "chart",
-    title: "Back in the hospital within 30 days, by number of medications",
+    title: "Patients on 16+ medications come back 67% more often",
     unit: "%",
     bars: [
       { label: "5 or fewer", value: 7.48, note: "5,066 visits" },
@@ -30,7 +32,7 @@ export const diabetesReadmissions: Project = {
       { label: "11 to 15", value: 10.91, note: "29,384 visits" },
       { label: "16 or more", value: 12.48, note: "46,521 visits" },
     ],
-    caption: "Share of visits followed by a readmission within 30 days (my SQL query results).",
+    caption: "Back within 30 days · 130 US hospitals",
   },
   links: [],
   source: {

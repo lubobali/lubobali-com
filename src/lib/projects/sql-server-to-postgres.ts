@@ -19,16 +19,15 @@ export const sqlServerToPostgres: Project = {
   result:
     "Every row arrived and all 15 checks passed, yet a status filter returned a third of the rows: SQL Server ignores upper and lower case, PostgreSQL doesn't. Found before any report went wrong.",
   tech: ["SQL Server", "PostgreSQL", "AWS RDS", "AWS DMS", "Terraform", "Python", "Snowflake"],
+  // Brand card (P5.6, CEO hook): the same rows in both systems; two thirds
+  // silently missing from the filter (README: "returned a third of the rows").
   picture: {
-    kind: "flow",
-    steps: [
-      { label: "SQL Server 2022", detail: "old system, still taking payments" },
-      { label: "AWS DMS", detail: "live copy, 3.0 s behind" },
-      { label: "RDS PostgreSQL", detail: "private, encrypted" },
-      { label: "15 checks", detail: "fail on any difference" },
-      { label: "Reports + Parquet", detail: "ready for Snowflake" },
-    ],
-    caption: "The migration, end to end. Every AWS resource is Terraform.",
+    kind: "reconcile",
+    title: "Every row arrived. 83,892 still came out wrong.",
+    left: { label: "SQL Server", note: "ignores upper and lower case: the status filter finds every row" },
+    right: { label: "PostgreSQL", note: "case matters: the same filter finds only a third" },
+    missingShare: 2 / 3,
+    caption: "Found before any report went wrong",
   },
   links: [{ kind: "github", url: "https://github.com/lubobali/mssql-to-postgres-migration-kit" }],
   honesty: "Generated test data: no real customers or cards.",

@@ -106,10 +106,12 @@ export function samplePages(pages) {
   return out.sort((a, b) => (a.path < b.path ? -1 : 1));
 }
 
-// The picture kind of a built project page (project-art.tsx class names).
+// The picture kind of a built project page (P5.6): every drawn picture is
+// a brand card (same cost whatever chart is inside); a big real screen adds
+// an image. So at most 2-3 sampled project pages, however many projects.
 export function pictureKind(html) {
-  if (html.includes("pj-track")) return "chart";
-  if (html.includes("pj-flow")) return "flow";
-  if (html.includes("cs-screen")) return "screen";
-  return undefined;
+  const brand = html.includes('data-world="');
+  const screen = html.includes("cs-screen");
+  if (brand) return screen ? "brand+screen" : "brand";
+  return screen ? "screen" : undefined;
 }

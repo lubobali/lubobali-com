@@ -11,6 +11,8 @@
 @import "../components/explore/explore.css";
 @import "../components/ui/edge-card.css";
 @import "../components/project/project.css";
+@import "../components/project/brand-card.css";
+@import "../components/project/brand-kit.css";
 @import "../components/shelf/shelf.css";
 
 /* Dark only: `dark:` styles always apply (layout.tsx sets class="dark"),
@@ -112,6 +114,12 @@
   --card-text-soft: oklch(0.88 0.035 255); /* #cdd9ec-ish */
   --tone-violet: oklch(0.72 0.14 292); /* #9f8ef4-ish */
   --tone-ice: oklch(0.8 0.1 228); /* #8ccaf0-ish */
+  /* The 3 chapter colours (Phase 5, Lubo 2026-10-22, from colour research):
+     the same worlds as the brand cards (brand-card.css), a little lighter
+     here so chips and numbers stay readable on the site's blues. */
+  --chapter-ai: oklch(0.85 0.12 72); /* amber */
+  --chapter-pipelines: oklch(0.84 0.085 292); /* violet */
+  --chapter-analytics: oklch(0.84 0.11 183); /* teal */
   --glow-violet: oklch(0.72 0.14 292 / 0.22);
   --glow-ice: oklch(0.8 0.1 228 / 0.16); /* lighter tone, so less (links stay 4.5:1) */
   /* Final call to action (H11): a little lighter + more sky at the top

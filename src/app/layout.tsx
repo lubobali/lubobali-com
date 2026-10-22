@@ -29,6 +29,19 @@ const jetbrainsMono = localFont({
   preload: false,
 });
 
+// Fraunces = the brand-card serif (Phase 5, Lubo's Publisher look; see
+// src/components/project/brand-card.tsx). Declared here so its CSS joins
+// the main stylesheet (as its own chunk it cost a slow phone one more
+// render-blocking round trip, measured 2026-10-22). Not preloaded: the
+// browser downloads it only on pages that show a brand card.
+const fraunces = localFont({
+  src: "./fonts/Fraunces-latin-400.woff2",
+  weight: "400",
+  variable: "--font-fraunces",
+  display: "swap",
+  preload: false,
+});
+
 // Site-wide defaults; pages override title/description. Relative URLs
 // resolve against the production origin (staging is noindex + Disallow).
 // "./" = the page's own path, so every page gets its own canonical.
@@ -59,7 +72,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`dark ${interTight.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`dark ${interTight.variable} ${jetbrainsMono.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         {/* Without JavaScript, Reveal content would stay invisible. */}

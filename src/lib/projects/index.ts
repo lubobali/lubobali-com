@@ -1,20 +1,46 @@
 import { createSearch } from "@/lib/search/engine";
 import { synonyms } from "@/lib/search/synonyms";
+import { awsJobStreamer } from "./aws-job-streamer";
+import { cvsContractors } from "./cvs-contractor-performance";
 import { diabetesReadmissions } from "./diabetes-readmissions";
+import { employeeSentiment } from "./employee-sentiment";
 import { mergeAI } from "./mergeai";
-import { CHAPTERS, type Chapter, checkProject, type Project } from "./model";
+import { CHAPTERS, type Chapter, checkProject, kindClashes, type Project } from "./model";
+import { portfolioScope } from "./portfolioscope";
+import { sentinelAI } from "./sentinel-ai";
+import { sparkTuning } from "./spark-pipeline-tuning";
 import { sqlServerToPostgres } from "./sql-server-to-postgres";
+import { supplyChain } from "./supply-chain-delays";
+import { ticketDesk } from "./ticketdesk-ai";
 
-// Every project, by chapter, each chapter in the order CEOs like most
-// (plans docs/phase-5-project-list.md). New project = one file + a line here.
-export const projects: readonly Project[] = [diabetesReadmissions, sqlServerToPostgres, mergeAI];
+// Every project; inside each chapter, in the order CEOs like most (plans
+// docs/phase-5-project-list.md). The shelf shows the first 6 per chapter
+// first. New project = one file + a line here.
+export const projects: readonly Project[] = [
+  // AI agents
+  mergeAI,
+  sentinelAI,
+  // Data pipelines
+  sqlServerToPostgres,
+  awsJobStreamer,
+  ticketDesk,
+  sparkTuning,
+  portfolioScope,
+  // Analytics & dashboards
+  diabetesReadmissions,
+  supplyChain,
+  cvsContractors,
+  employeeSentiment,
+];
 
 // What search reads for a project (also used by Explore in P5.5).
 export const projectSearchDoc = (p: Project) => ({
   id: p.slug,
   title: p.name,
   keywords: [...p.industries, ...p.tech, CHAPTERS[p.chapter]],
-  text: [p.oneLine, p.problem, p.built, p.why, p.result, ...Object.values(p.anatomy ?? {}), p.safe ?? ""].join(" "),
+  // The big number's label too ("hospital visits analyzed"): it is the
+  // first thing on every card.
+  text: [p.oneLine, p.number.label, p.problem, p.built, p.why, p.result, ...Object.values(p.anatomy ?? {}), p.safe ?? ""].join(" "),
 });
 
 // Runs once, when the site builds: any broken project, duplicate slug or a
@@ -27,6 +53,7 @@ function verify(list: readonly Project[]) {
     slugs.add(p.slug);
     problems.push(...checkProject(p).map((m) => `${p.slug}: ${m}`));
   }
+  problems.push(...kindClashes(list));
   const search = createSearch(list.map(projectSearchDoc), synonyms);
   for (const p of list) {
     for (const q of p.searches) {

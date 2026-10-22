@@ -38,6 +38,9 @@ const PHOTOS = {
   // Project pages (Phase 5): screens from Lubo's own public repos only
   // (Framer's stock photos are never reused).
   "mergeai-dashboard.png": "mergeai-dashboard", // github.com/lubobali/mergeAI screenshots/
+  "ticketdesk-app.png": "ticketdesk-app", // github.com/lubobali/TicketDesk-AI screenshots/01-app.png (example data)
+  // Lubo's public Tableau dashboard (made-up data), static image from Tableau Public.
+  "cvs-contractor-dashboard.png": "cvs-contractor-dashboard",
 };
 const WIDTHS = [400, 640, 960, 1280, 1920, 2560];
 const FORMATS = {

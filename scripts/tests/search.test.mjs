@@ -106,6 +106,29 @@ test("filler words are ignored", () => {
   assert.equal(r.close, false); // a real match, not the "closest" fallback
 });
 
+// Found in P5.6 (2026-10-22): once one page said "analysis", the word was
+// "on the site", so typo matching stopped and the page that says "analyzed"
+// fell out of "healthcare sql analysis". Word forms live in the
+// same-meaning list, so they match no matter what else is on the site.
+test("word forms match each other even when both are on the site (analysis = analyzed)", () => {
+  const s = createSearch(
+    [
+      { id: "a", title: "A", keywords: [], text: "SQL over 100K visits, analyzed by month" },
+      { id: "b", title: "B", keywords: [], text: "simple language analysis of emails" },
+    ],
+    realSynonyms,
+  );
+  assert.deepEqual(s("analysis").hits.map((h) => h.id).sort(), ["a", "b"]);
+  assert.deepEqual(s("analyze").hits.map((h) => h.id).sort(), ["a", "b"]);
+});
+
+test("CEO verbs are filler: make my pipeline faster", () => {
+  const s = createSearch([{ id: "spark", title: "Spark tuning", keywords: [], text: "a slow pipeline made 4x faster" }], realSynonyms);
+  const r = s("make my pipeline faster");
+  assert.deepEqual(r.hits.map((h) => h.id), ["spark"]);
+  assert.equal(r.close, false);
+});
+
 test("title beats keyword beats text", () => {
   const s = createSearch(
     [
