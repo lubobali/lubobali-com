@@ -1,7 +1,7 @@
 // node --test scripts/tests/lighthouse.test.mjs
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { BUDGETS, checkBudgets, gatePage, isFlake, median, medianSummary, summarize } from "../lib/lighthouse.mjs";
+import { BUDGETS, checkBudgets, gatePage, isFlake, median, medianSummary, samplePages, summarize } from "../lib/lighthouse.mjs";
 
 // Smallest Lighthouse JSON shape that summarize() reads.
 const report = ({ perf = 0.95, a11y = 1, bp = 1, seo = 1, lcp = 1800, cls = 0, tbt = 200, requests = 12 } = {}) => ({
@@ -99,4 +99,21 @@ test("isFlake: other errors are real failures", () => {
   assert.equal(isFlake(Object.assign(new Error("Command failed"), { stderr: "ENOENT: no such file" })), false);
   assert.equal(isFlake(new Error("boom")), false);
   assert.equal(isFlake(undefined), false);
+});
+
+test("samplePages: pages that share one template are sampled (2 heaviest), others all kept", () => {
+  const pages = [
+    { path: "/", bytes: 90 },
+    { path: "/projects", bytes: 70 },
+    { path: "/projects/a", bytes: 10 },
+    { path: "/projects/b", bytes: 40 },
+    { path: "/projects/c", bytes: 30 },
+    { path: "/projects/d", bytes: 20 },
+    { path: "/work/lubot", bytes: 50 },
+  ];
+  assert.deepEqual(
+    samplePages(pages).map((p) => p.path),
+    ["/", "/projects", "/projects/b", "/projects/c", "/work/lubot"],
+  );
+  assert.deepEqual(samplePages(pages.slice(0, 2)), pages.slice(0, 2)); // nothing to sample
 });

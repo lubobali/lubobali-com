@@ -45,6 +45,11 @@ jobs:
       - name: Vulnerability audit (high + critical fail the build)
         run: pnpm audit --prod --audit-level high
 
+      # Every unit test file, before the build: a broken test fails in
+      # seconds, and a new test file can never be left out (Phase 5 P5.2b).
+      - name: Unit tests (scripts/tests/*.test.mjs)
+        run: node --test scripts/tests/*.test.mjs
+
       - name: Lint
         run: pnpm lint
 
@@ -54,16 +59,17 @@ jobs:
           pnpm exec tsc --noEmit
 
       - name: Contrast check (colour tokens, WCAG)
-        run: |
-          node --test scripts/tests/contrast.test.mjs
-          node scripts/check-contrast.mjs
+        run: node scripts/check-contrast.mjs
 
       - name: Build (static export)
         run: pnpm build
+        env:
+          # Reuse pictures already made for the live release (same name =
+          # same bytes); only new ones are encoded. Saves ~30 s per run.
+          IMAGE_CACHE: /srv/lubobali-www/staging/current/img
 
       - name: SEO, AI-bot + CSP check (raw HTML, robots, sitemap, llms.txt, JSON-LD, script hashes)
         run: |
-          node --test scripts/tests/seo.test.mjs scripts/tests/lighthouse.test.mjs scripts/tests/csp.test.mjs scripts/tests/rain.test.mjs
           node scripts/check-seo.mjs out
           node scripts/csp.mjs check out
 

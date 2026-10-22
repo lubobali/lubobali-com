@@ -4,7 +4,8 @@
 //
 //   node scripts/lighthouse.mjs <site_url> <build_dir> [staging|prod] [runs]
 //
-// Pages = every built page (same list as check-seo.mjs); budgets are hard
+// Pages = every built page (same list as check-seo.mjs), project pages
+// sampled (samplePages, Phase 5 P5.2b); budgets are hard
 // only for indexable pages, noindex ones (e.g. /styleguide) just warn. Chrome:
 // CHROME_PATH is set in the CI image (ci/Dockerfile).
 // Staging is noindex + Disallow on purpose, so the one SEO audit that checks
@@ -14,7 +15,7 @@ import { mkdtemp, readdir, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
-import { gatePage, isFlake, medianSummary, summarize } from "./lib/lighthouse.mjs";
+import { gatePage, isFlake, medianSummary, samplePages, summarize } from "./lib/lighthouse.mjs";
 
 const [url, build, env = "staging", runsArg = "3"] = process.argv.slice(2);
 if (!url || !build) {
@@ -28,14 +29,18 @@ const SKIP = new Set(["404.html", "_not-found.html"]);
 const files = (await readdir(build, { recursive: true }))
   .filter((f) => f.endsWith(".html") && !SKIP.has(f) && !f.startsWith("_next"))
   .sort();
-const pages = [];
+const all = [];
 for (const f of files) {
   const html = await readFile(join(build, f), "utf8");
-  pages.push({
+  all.push({
     path: f === "index.html" ? "/" : "/" + f.replace(/\.html$/, ""),
     indexable: !/<meta name="robots" content="[^"]*noindex/.test(html),
+    bytes: html.length,
   });
 }
+// One-template pages are sampled (see samplePages); the rest all run.
+const pages = samplePages(all);
+if (pages.length < all.length) console.log(`lighthouse: ${pages.length} of ${all.length} pages (template pages sampled)`);
 
 // Chrome runs as root in a locked-down container (no user namespaces):
 // --no-sandbox is required. It only ever loads our own site.

@@ -85,3 +85,17 @@ export function gatePage(summary, { indexable }) {
 export function isFlake(err) {
   return typeof err?.stderr === "string" && err.stderr.includes("Runtime error encountered");
 }
+
+// Pages built from one template (Phase 5: /projects/<slug>, 35 -> 100+)
+// would push the gate past the 15-min CI limit at 3 runs each. Keep every
+// other page; from each template keep the 2 heaviest (largest HTML = most
+// likely to be slow). SEO/CSP/bot checks still cover every page.
+export const SAMPLED = ["/projects/"];
+export function samplePages(pages, keep = 2) {
+  const out = pages.filter((p) => !SAMPLED.some((pre) => p.path.startsWith(pre)));
+  for (const pre of SAMPLED) {
+    const family = pages.filter((p) => p.path.startsWith(pre));
+    out.push(...family.sort((a, b) => b.bytes - a.bytes).slice(0, keep));
+  }
+  return out.sort((a, b) => (a.path < b.path ? -1 : 1));
+}
