@@ -41,5 +41,6 @@ export const terms = [
   "Either side can stop with 14 days' notice. You keep all the work done so far.",
 ] as const;
 
-// Client named with Lubo's OK (2026-10-18); never project details (D6).
-export const now = "AI Engineer (contract) at Structured Fusion AI, and building LuBot.";
+// What Lubo is doing now. No client here (Lubo 2026-10-22: Structured
+// Fusion AI removed, the contract did not go ahead).
+export const now = "Building LuBot.ai.";

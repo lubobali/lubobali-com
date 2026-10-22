@@ -60,7 +60,7 @@ const PAGE_TEXT = {
     "How it works", // H9
     "Every 2 weeks: update + invoice",
     "You own 100% of what I build",
-    "AI Engineer (contract) at Structured Fusion AI",
+    "Building LuBot.ai.",
     "LuBot is one of the best projects in the bootcamp, ready to make money.", // H10
     "Zach Wilson",
     "What people say",
