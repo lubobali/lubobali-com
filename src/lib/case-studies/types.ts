@@ -1,4 +1,5 @@
 import type { FlowSide } from "@/components/blueprint/diagram";
+import type { Industry } from "@/lib/projects/model";
 
 // One case study = one data file (Phase 4 C2). The page engine
 // (src/app/work/[slug]) draws every part that is filled in. Two kinds
@@ -84,6 +85,10 @@ export type CaseStudy = {
   when: string;
   next?: string; // what is being built now, shown with the facts
   stack: readonly string[];
+  // /projects filters (Lubo 2026-10-22: the stories are the best work, so
+  // filters must never hide them). At least one of each, in the same words
+  // the projects use (Industry list; "Amazon S3", not "AWS S3").
+  shelf: { industries: readonly [Industry, ...Industry[]]; tech: readonly [string, ...string[]] };
   links?: readonly { label: string; url: string }[];
   // layers = the architecture drawn top (the user) to bottom (the data).
   engineers?: { intro: string; layers?: readonly { name: string; parts: readonly string[] }[]; decisions: readonly string[] };

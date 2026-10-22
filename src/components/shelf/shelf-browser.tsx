@@ -77,12 +77,14 @@ export function ShelfBrowser(props: {
     chapter,
     list: projects.filter((e) => e.chapter === chapter && matchesFilters(e, state.filters)).map((e) => ({ id: e.id })),
   }));
+  // The 3 stories are the best work: a filter shows the ones that fit, first.
+  const storyHits: Card[] = entries.filter((e) => !e.chapter && matchesFilters(e, state.filters)).map((e) => ({ id: e.id }));
   const inChapters = groups.reduce((n, g) => n + g.list.length, 0);
   const status = searching
     ? `${shown.length} ${shown.length === 1 ? "match" : "matches"}`
     : filtersOn
-      ? `${inChapters} of ${projects.length} projects`
-      : `${projects.length} projects`;
+      ? `${storyHits.length + inChapters} of ${entries.length} projects`
+      : `${entries.length} projects`;
 
   return (
     <div className="flex flex-col gap-16" data-active={q !== "" || filtersOn || undefined}>
@@ -158,6 +160,12 @@ export function ShelfBrowser(props: {
       ) : (
         <>
           {!filtersOn && props.stories}
+          {filtersOn && storyHits.length > 0 && (
+            <section aria-label="The full stories" className="flex flex-col gap-5">
+              <h2 className="text-2xl font-semibold tracking-tight">The full stories</h2>
+              <CardGrid list={storyHits} cards={cards} />
+            </section>
+          )}
           <Chapters
             groups={groups}
             cards={cards}

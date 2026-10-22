@@ -105,4 +105,5 @@ export const hellopayments: CaseStudy = {
   role: "Senior Data & AI Platform Engineer (lead engineer)",
   when: "Mar–Aug 2026",
   stack: ["Python", "FastAPI", "PostgreSQL", "Next.js"],
+  shelf: { industries: ["Payments", "Finance"], tech: ["Python", "FastAPI", "PostgreSQL", "Next.js"] },
 };

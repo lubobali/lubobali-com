@@ -171,5 +171,6 @@ export const graphguard: CaseStudy = {
   role: "Solo, open source",
   when: "Built solo, 2026",
   stack: ["Python", "Polars", "XGBoost", "PyTorch Geometric", "Optuna", "MLflow"],
+  shelf: { industries: ["Finance"], tech: ["Python", "Polars", "XGBoost", "PyTorch Geometric", "Optuna", "MLflow"] },
   links: [{ label: "See the code on GitHub", url: "https://github.com/lubobali/GraphGuard-AI" }],
 };

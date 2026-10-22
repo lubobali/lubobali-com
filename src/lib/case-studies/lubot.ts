@@ -154,6 +154,10 @@ export const lubot: CaseStudy = {
   role: "Founder and only engineer",
   when: "Built solo, 2026", // Lubo 2026-10-20
   stack: ["Python", "FastAPI", "PostgreSQL (Neon)", "React", "OpenRouter", "DeepInfra", "MCP", "AWS S3"],
+  shelf: {
+    industries: ["Any business", "Finance"],
+    tech: ["Python", "FastAPI", "PostgreSQL", "React", "OpenRouter", "DeepInfra", "MCP", "Amazon S3"],
+  },
   links: [
     { label: "Visit LuBot.ai", url: site.product.url },
     { label: "Read the Neon article", url: site.featuredIn.url },

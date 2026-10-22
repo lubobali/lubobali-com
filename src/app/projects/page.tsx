@@ -36,7 +36,7 @@ export const metadata: Metadata = {
 export default function ProjectsPage() {
   const stories = publishedCaseStudies();
   const entries: ShelfEntry[] = [
-    ...stories.map((c) => ({ id: `work/${c.slug}`, industries: [], tech: [] })),
+    ...stories.map((c) => ({ id: `work/${c.slug}`, industries: c.shelf.industries, tech: c.shelf.tech })),
     ...projects.map((p) => ({ id: `projects/${p.slug}`, chapter: p.chapter, industries: p.industries, tech: p.tech })),
   ];
   const cards = Object.fromEntries([
