@@ -39,7 +39,7 @@ const PAGE_TEXT = {
   "/": [
     "Senior AI & Data Platform Engineer",
     "I build AI that works on your real data, in production.", // hero headline (Phase 3 H1)
-    "Available for new AI projects from December 2026.",
+    "Available for new AI projects now.",
     "Read the transcript", // intro video + transcript (Phase 3 H9b)
     "And that's exactly what I fix.",
     "Featured by Neon (Databricks)", // proof strip (Phase 3 H5)
@@ -65,7 +65,7 @@ const PAGE_TEXT = {
     "Zach Wilson",
     "What people say",
     "Tell me your problem.", // final CTA (H11)
-    "Next project from December 2026",
+    "Available for new AI projects now",
     "data@lubobali.com",
   ],
 };

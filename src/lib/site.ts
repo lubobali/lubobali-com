@@ -17,8 +17,8 @@ export const site = {
   availableFrom: "December 2026",
   // true = green "available now" dots; false = amber "next project" dots
   // (components/status-dot.tsx). Change the texts here at the same time.
-  availableNow: false,
-  availability: "Available for new AI projects from December 2026.",
+  availableNow: true, // Lubo 2026-10-22: "open to new project now"
+  availability: "Available for new AI projects now.",
   // The one call-to-action: free 30-min intro call (Phase 3 D3).
   email: "data@lubobali.com",
   bookCall: {

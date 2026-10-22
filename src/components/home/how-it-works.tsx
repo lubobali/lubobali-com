@@ -1,3 +1,4 @@
+import { StatusDot } from "@/components/status-dot";
 import { now, steps, terms } from "@/lib/process";
 import { site } from "@/lib/site";
 
@@ -116,10 +117,10 @@ export function HowItWorks() {
             </span>
           </p>
           <p className="flex items-start gap-3 border-t border-award/20 pt-5">
-            <span aria-hidden="true" className="soon-dot mt-2" />
+            <StatusDot className="mt-2" />
             <span>
-              <span className="text-sm font-semibold tracking-wide text-award uppercase">Next project </span>
-              {`from ${site.availableFrom}`}
+              <span className="text-sm font-semibold tracking-wide text-award uppercase">{site.availableNow ? "Available " : "Next project "}</span>
+              {site.availableNow ? "for new AI projects now" : `from ${site.availableFrom}`}
             </span>
           </p>
         </div>
