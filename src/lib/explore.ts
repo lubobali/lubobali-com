@@ -1,4 +1,6 @@
 import { caseStudies, storyPath } from "@/lib/case-studies";
+import { createSearch } from "@/lib/search/engine";
+import { synonyms } from "@/lib/search/synonyms";
 import { site } from "@/lib/site";
 import { work } from "@/lib/work";
 
@@ -102,33 +104,21 @@ export const exploreTry = ["stock", "fraud", "payments", "Python", "MCP", "autom
 
 export type ExploreHit = { item: ExploreItem; matched: string[] };
 
-// Every typed word must hit (AND). A word in the title or a keyword counts
-// more than one only in the text. Pure and tiny: 30+ items search in well
-// under a millisecond, so no library and no server.
-export function searchExplore(query: string, items: readonly ExploreItem[] = exploreItems): ExploreHit[] {
-  const words = query.toLowerCase().split(/\s+/).filter(Boolean);
-  if (words.length === 0) return items.map((item) => ({ item, matched: [] }));
-  const hits: (ExploreHit & { score: number })[] = [];
-  for (const item of items) {
-    let score = 0;
-    const matched: string[] = [];
-    const ok = words.every((w) => {
-      const key = item.keywords.find((k) => k.toLowerCase().includes(w));
-      if (item.title.toLowerCase().includes(w)) score += 5;
-      if (key) {
-        score += 3;
-        if (!matched.includes(key)) matched.push(key);
-        return true;
-      }
-      if (item.title.toLowerCase().includes(w)) return true;
-      if (`${item.subtitle} ${item.text}`.toLowerCase().includes(w)) {
-        score += 1;
-        if (!matched.includes(w)) matched.push(w);
-        return true;
-      }
-      return false;
-    });
-    if (ok) hits.push({ item, matched, score });
-  }
-  return hits.sort((a, b) => b.score - a.score).map(({ item, matched }) => ({ item, matched }));
+// The site search engine (src/lib/search/engine.ts): CEO words, typos,
+// filler words. Only full matches for now; the "closest projects" and
+// "not built yet" screens come with Phase 5 P5.5.
+const engine = createSearch(
+  exploreItems.map((item, i) => ({
+    id: String(i),
+    title: item.title,
+    keywords: item.keywords,
+    text: `${item.subtitle} ${item.text}`,
+  })),
+  synonyms,
+);
+
+export function searchExplore(query: string): ExploreHit[] {
+  const { hits, close } = engine(query);
+  if (close) return [];
+  return hits.map((h) => ({ item: exploreItems[Number(h.id)], matched: h.matched }));
 }
