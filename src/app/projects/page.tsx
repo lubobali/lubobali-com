@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BlueprintSpot } from "@/components/blueprint-spot";
 import { FinalCta } from "@/components/home/final-cta";
 import { JsonLd } from "@/components/seo/json-ld";
 import { type ShelfEntry, ShelfBrowser } from "@/components/shelf/shelf-browser";
@@ -68,6 +69,7 @@ export default function ProjectsPage() {
           options={options}
           tryWords={shelfTry}
         />
+        <BlueprintSpot lead="Don't see your problem here?" />
       </div>
       <FinalCta />
     </main>

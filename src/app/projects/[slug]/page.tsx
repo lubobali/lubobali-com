@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BlueprintSpot } from "@/components/blueprint-spot";
 import { FinalCta } from "@/components/home/final-cta";
 import { ProjectAnswers, ProjectHero, ProjectSource, SimilarProjects } from "@/components/project/project-parts";
 import { RealScreen } from "@/components/project/project-art";
@@ -68,14 +68,7 @@ export default async function ProjectPage({ params }: Props) {
         <SafeMark p={p} />
         <ProjectSource p={p} />
         <SimilarProjects list={similarProjects(p)} />
-        {/* id="blueprint": the header's "Free AI blueprint" button jumps here. */}
-        <p id="blueprint" className="scroll-mt-24 text-center text-lg text-muted-foreground">
-          Have a problem like this?{" "}
-          <Link href="/blueprint" className="font-medium text-link underline underline-offset-4">
-            Get your free AI blueprint
-          </Link>{" "}
-          in about a minute.
-        </p>
+        <BlueprintSpot lead="Have a problem like this?" />
       </article>
       <FinalCta />
     </main>

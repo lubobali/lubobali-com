@@ -3,6 +3,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   assetPath,
+  checkBlueprintTarget,
   checkBotText,
   checkJsonLd,
   checkLlmsTxt,
@@ -182,4 +183,11 @@ test("assetPath maps a share image URL on our origin to its file in the build", 
   assert.equal(assetPath("https://lubobali.com/share/mergeai.jpg"), "share/mergeai.jpg");
   assert.equal(assetPath("https://lubobali.com/og.png?v=2"), "og.png");
   assert.equal(assetPath("https://example.com/x.png"), null);
+});
+
+test("checkBlueprintTarget: every page needs the spot the header's Blueprint button jumps to", () => {
+  assert.deepEqual(checkBlueprintTarget('<p id="blueprint">Get your free AI blueprint</p>'), []);
+  assert.deepEqual(checkBlueprintTarget("<p>no spot</p>"), [
+    'no id="blueprint": the header\'s "Free AI blueprint" button does nothing here',
+  ]);
 });

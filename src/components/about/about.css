@@ -11,6 +11,11 @@
   --from: var(--journey-2);
   --to: var(--journey-4);
 }
+/* Stat words ("Hours → minutes") may wrap; proof numbers never do. */
+.about-stat .about-figure {
+  font-size: clamp(1.9rem, 1.3rem + 1.6vw, 2.6rem);
+  white-space: normal;
+}
 .about-figure {
   font-family: var(--font-fraunces), Georgia, serif;
   /* Phones: 2 columns of ~155px must fit "260,000+". */

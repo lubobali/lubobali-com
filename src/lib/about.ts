@@ -43,7 +43,9 @@ export const about = {
       // Lubo 2026-10-22: "12 years" alone read as all his experience, and
       // "80%" meant nothing to people. Intro video: "over 15 years".
       { value: "15+ years", label: "working with data: 12 in finance, then 3+ building AI" },
-      { value: "3 h → 15 min", label: "a day of manual work, automated (RE/MAX)" },
+      // Lubo: "RE/MAX is not attractive, say it in general". The example is
+      // real: langchain-ai-agents README ($12, 8 min -> $0.001, 15 s).
+      { value: "Hours → minutes", label: "manual work, automated. One of my AI agents: 8 min → 15 s per question, $12 → $0.001" },
     ],
   },
 
