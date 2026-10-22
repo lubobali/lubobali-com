@@ -29,6 +29,7 @@ const PROFILES = [
 
 // Home sections (ids in src/components/home/*). "/#id" works from any page.
 const LINKS = [
+  { label: "All projects", href: "/projects" },
   { label: "Work", href: "/#work" },
   { label: "Built with", href: "/#stack" },
   { label: "How it works", href: "/#how-it-works" },

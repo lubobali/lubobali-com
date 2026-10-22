@@ -162,3 +162,40 @@ export function projectGraph(p: Project): Graph {
     ],
   };
 }
+
+// /projects, the shelf (Phase 5 P5.4): breadcrumbs + one ItemList of every
+// story and project, in the order the page shows them.
+export function shelfGraph(projects: readonly Project[], stories: readonly CaseStudy[]): Graph {
+  const url = `${site.url}/projects`;
+  const items = [
+    ...stories.map((c) => ({ name: c.name, url: `${site.url}/work/${c.slug}` })),
+    ...projects.map((p) => ({ name: p.name, url: `${site.url}/projects/${p.slug}` })),
+  ];
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${url}#breadcrumbs`,
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${site.url}/` },
+          { "@type": "ListItem", position: 2, name: "Projects", item: url },
+        ],
+      },
+      {
+        "@type": "CollectionPage",
+        "@id": `${url}#page`,
+        url,
+        name: "Projects",
+        inLanguage: "en",
+        author: { "@id": id("person") },
+        isPartOf: { "@id": id("website") },
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: items.length,
+          itemListElement: items.map((it, i) => ({ "@type": "ListItem", position: i + 1, name: it.name, url: it.url })),
+        },
+      },
+    ],
+  };
+}

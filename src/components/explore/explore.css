@@ -177,9 +177,11 @@ html.explore-open {
 }
 /* Desktop: each group is one row, so the whole site fits on one screen. */
 @media (min-width: 640px) {
-  .explore-grid--stories,
-  .explore-grid--start {
+  .explore-grid--stories {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .explore-grid--start {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .explore-grid--pages {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -189,4 +191,57 @@ html.explore-open {
   .explore-grid--pages {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
+}
+
+/* "All projects" (Lubo 2026-10-22: first, and easy to spot): one big card
+   in the finish-line style (.edge-card), above every group. */
+.explore-featured {
+  --from: var(--journey-1);
+  --to: var(--journey-3);
+  color: var(--foreground);
+  transition: transform 0.2s;
+}
+.explore-featured:hover,
+.explore-featured:focus-visible {
+  transform: translateY(-2px);
+}
+.explore-featured:focus-visible {
+  outline: 2px solid var(--sky);
+  outline-offset: 3px;
+}
+.explore-featured-arrow {
+  border: 1px solid color-mix(in oklch, var(--sky) 55%, transparent);
+  background: color-mix(in oklch, var(--sky) 14%, transparent);
+  transition:
+    background 0.2s,
+    color 0.2s,
+    transform 0.2s;
+}
+.explore-featured:hover .explore-featured-arrow,
+.explore-featured:focus-visible .explore-featured-arrow {
+  background: var(--sky);
+  color: var(--background);
+  transform: translateX(3px);
+}
+/* Stories carry their headline number. */
+.explore-number {
+  background: linear-gradient(100deg, var(--foreground) 35%, var(--sky));
+  background-clip: text;
+  color: transparent;
+}
+/* About me + On this site: quiet rows, so the eye lands on the projects
+   and the stories first. */
+.explore-section[data-group="start"],
+.explore-section[data-group="pages"] {
+  border: 0;
+  border-top: 1px solid color-mix(in oklch, var(--g) 25%, var(--border));
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  padding-inline: 0;
+}
+.explore-section[data-group="start"] .explore-hit,
+.explore-section[data-group="pages"] .explore-hit {
+  padding-block: 0.6rem;
+  background: color-mix(in oklch, var(--card) 50%, transparent);
 }

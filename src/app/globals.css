@@ -9,7 +9,9 @@
 @import "../components/case-study/case-study.css";
 @import "../components/case-study/story.css";
 @import "../components/explore/explore.css";
+@import "../components/ui/edge-card.css";
 @import "../components/project/project.css";
+@import "../components/shelf/shelf.css";
 
 /* Dark only: `dark:` styles always apply (layout.tsx sets class="dark"),
    not just when the visitor's OS is in dark mode. */
@@ -379,6 +381,22 @@ body {
 /* Selected work cards (H7). Same light-beam edge as the award cards, but
    each card has its own tone (data-tone) and beam: sapphire = one beam,
    violet = two beams turning the other way, ice = a fast thin beam. */
+/* "See all projects" under Selected work (Phase 5 P5.4): a calm pill with
+   the sky edge, so the way to /projects is easy to spot. */
+.work-all {
+  border: 1px solid color-mix(in oklch, var(--sky) 55%, var(--border));
+  background: color-mix(in oklch, var(--sky) 10%, transparent);
+  color: var(--foreground);
+  box-shadow: inset 0 1px 0 color-mix(in oklch, var(--sky) 45%, transparent);
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+.work-all:hover,
+.work-all:focus-visible {
+  background: color-mix(in oklch, var(--sky) 20%, transparent);
+  transform: translateY(-1px);
+}
 .work-card {
   --tone: var(--brand-light);
   --tone-glow: var(--glow-award);

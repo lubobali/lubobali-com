@@ -25,7 +25,7 @@ export function ProofLine({ p }: { p: Project }) {
 export function SafeMark({ p }: { p: Project }) {
   if (!p.safe) return null;
   return (
-    <section aria-labelledby="safe" className="pj-safe flex flex-col gap-3 rounded-3xl p-6 sm:flex-row sm:items-center sm:gap-6 sm:p-8">
+    <section aria-labelledby="safe" className="pj-safe edge-card flex flex-col gap-3 rounded-3xl p-6 sm:flex-row sm:items-center sm:gap-6 sm:p-8">
       <svg viewBox="0 0 24 24" aria-hidden="true" className="pj-shield size-10 shrink-0">
         <path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3Z" fill="none" stroke="currentColor" strokeWidth="1.5" />
         <path d="m8.5 12 2.5 2.5 4.5-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
@@ -59,7 +59,7 @@ export function AgentAnatomy({ p }: { p: Project }) {
       </div>
       <ol className="pj-anatomy grid gap-3 lg:grid-cols-5">
         {parts.map(([key, label], i) => (
-          <li key={key} className="pj-part flex flex-col gap-2 rounded-2xl p-5">
+          <li key={key} className="pj-part edge-card flex flex-col gap-2 rounded-2xl p-5">
             <span className="flex items-center gap-2 text-sm font-semibold tracking-wide uppercase">
               <span className="pj-part-n grid size-6 place-items-center rounded-full text-xs tabular-nums" aria-hidden="true">
                 {i + 1}

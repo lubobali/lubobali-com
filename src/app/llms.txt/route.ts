@@ -46,6 +46,9 @@ ${services.map((s) => `- **${s.name}**: ${s.description} Proof: ${s.proof}`).joi
 ${work.map((w) => `### ${w.name}\n\n${plain(w.role)}. ${w.summary}\n\n${list(w.highlights)}${links(w).length ? "\n\n" + links(w).map((l) => `- [${l.label}](${l.url})`).join("\n") : ""}`).join("\n\n")}
 
 ## More projects
+
+All of them in one place, searchable: [${site.url}/projects](${site.url}/projects)
+
 ${(Object.keys(CHAPTERS) as (keyof typeof CHAPTERS)[])
   .map((c) => {
     const inChapter = projectsIn(c);

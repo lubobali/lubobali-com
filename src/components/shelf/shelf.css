@@ -1,0 +1,224 @@
+/* /projects, the shelf (Phase 5 P5.4; shelf-*.tsx, stack.tsx). Calm and
+   clean (Lubo: "very easy to stop on"): cards are .edge-card (the
+   finish-line style, edge-card.css), lighter -> darker chapter by chapter
+   down the page; the chapter tone (--pj, project.css) only on the chip and
+   the number. Motion = progressive: complete at rest. */
+.shelf-h1-soft {
+  color: var(--muted-foreground);
+}
+
+/* Search: the same look as Explore's box, bigger. */
+.shelf-search {
+  border: 1px solid color-mix(in oklch, var(--link) 35%, var(--border));
+  background: var(--background);
+  color: var(--muted-foreground);
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+.shelf-search:focus-within {
+  border-color: var(--link);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--link) 25%, transparent);
+  color: var(--foreground);
+}
+.shelf-search input {
+  color: var(--foreground);
+}
+/* The box shows the focus ring (focus-within), not the input inside it. */
+.shelf-search input:focus-visible {
+  outline: none;
+}
+
+/* Cards: lighter -> darker down the chapters. */
+.shelf-card[data-chapter="analytics"] {
+  --from: var(--journey-1);
+  --to: var(--journey-2);
+}
+.shelf-card[data-chapter="pipelines"] {
+  --from: var(--journey-2);
+  --to: var(--journey-4);
+}
+.shelf-card[data-chapter="ai"] {
+  --from: var(--journey-3);
+  --to: var(--journey-5);
+}
+.shelf-card {
+  transition: transform 0.2s;
+}
+.shelf-card:hover,
+.shelf-card:focus-visible {
+  transform: translateY(-2px);
+}
+.shelf-card--story {
+  --pj: var(--award);
+}
+.shelf-story-chip {
+  color: var(--award);
+  border: 1px solid color-mix(in oklch, var(--award) 45%, transparent);
+}
+.shelf-tools {
+  color: var(--card-text-soft);
+}
+.shelf-matched {
+  color: var(--link);
+}
+.shelf-count {
+  color: var(--muted-foreground);
+}
+
+/* The 3 stories: the brightest cards, at the top of the journey. */
+.shelf-story {
+  --from: var(--journey-1);
+  --to: var(--journey-3);
+}
+.shelf-story-number {
+  background: linear-gradient(100deg, var(--foreground) 30%, var(--sky));
+  background-clip: text;
+  color: transparent;
+}
+.shelf-read {
+  color: var(--foreground);
+}
+.shelf-none {
+  --from: var(--journey-2);
+  --to: var(--journey-4);
+}
+
+/* The stack: agents on top of pipelines on top of data, narrower as it
+   rises (a layer cake). A soft light rises from the bottom layer. */
+.shelf-layer {
+  width: calc(84% + var(--i) * 8%);
+}
+.shelf-layer a {
+  border: 1px solid color-mix(in oklch, var(--sky) 30%, var(--border));
+  background: radial-gradient(ellipse 90% 90% at 50% 0%, var(--journey-2), var(--journey-4));
+  box-shadow: inset 0 1px 0 color-mix(in oklch, var(--sky) 45%, transparent);
+  transition:
+    border-color 0.2s,
+    transform 0.2s;
+}
+.shelf-layer a .text-muted-foreground {
+  color: var(--card-text-soft);
+}
+.shelf-layer a:hover,
+.shelf-layer a:focus-visible {
+  border-color: var(--sky);
+  transform: translateY(-1px);
+}
+.shelf-layer-count {
+  color: var(--pj);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .shelf-layer a {
+    animation: shelf-rise 4.5s ease-in-out infinite;
+    animation-delay: calc((2 - var(--i)) * 0.7s);
+  }
+}
+@keyframes shelf-rise {
+  0%,
+  45%,
+  100% {
+    border-color: color-mix(in oklch, var(--sky) 30%, var(--border));
+  }
+  15% {
+    border-color: var(--sky);
+    box-shadow:
+      inset 0 1px 0 var(--sky),
+      0 0 24px -8px var(--sky);
+  }
+}
+/* On phones, while searching or filtering, results come first. */
+@media (max-width: 1023px) {
+  [data-active] .shelf-stack-wrap {
+    display: none;
+  }
+}
+
+/* The 2 filters: a small button + a chip panel (native popover). */
+.shelf-filter {
+  border: 1px solid color-mix(in oklch, var(--link) 35%, var(--border));
+  background: color-mix(in oklch, var(--card) 70%, transparent);
+  color: var(--foreground);
+}
+.shelf-filter:hover,
+.shelf-filter:focus-visible {
+  border-color: var(--link);
+}
+.shelf-filter-n {
+  background: var(--link);
+  color: var(--background);
+}
+.shelf-clear {
+  color: var(--link);
+}
+.shelf-pop {
+  width: min(30rem, 100vw - 2rem);
+  max-height: min(70dvh, 32rem);
+  overflow-y: auto;
+  padding: 0;
+  border-radius: 1.25rem;
+  border: 1px solid color-mix(in oklch, var(--link) 35%, var(--border));
+  background: color-mix(in oklch, var(--card) 96%, transparent);
+  color: var(--foreground);
+  box-shadow: 0 30px 80px -30px color-mix(in oklch, var(--link) 50%, transparent);
+}
+.shelf-pop::backdrop {
+  background: color-mix(in oklch, var(--background) 40%, transparent);
+}
+@media (max-width: 639px) {
+  .shelf-pop {
+    inset: auto 0 0;
+    width: 100%;
+    margin: 0;
+    border-radius: 1.25rem 1.25rem 0 0;
+  }
+}
+/* Wider screens: the panel opens under its own button. */
+@media (min-width: 640px) {
+  @supports (anchor-name: --a) {
+    .shelf-filter[data-lens="industry"] {
+      anchor-name: --filter-industry;
+    }
+    .shelf-filter[data-lens="tech"] {
+      anchor-name: --filter-tech;
+    }
+    .shelf-pop[data-lens="industry"] {
+      position-anchor: --filter-industry;
+    }
+    .shelf-pop[data-lens="tech"] {
+      position-anchor: --filter-tech;
+    }
+    .shelf-pop {
+      inset: auto;
+      margin: 0.5rem 0 0;
+      position-area: bottom span-right;
+      position-try-fallbacks: flip-block;
+    }
+  }
+}
+.shelf-chip {
+  border: 1px solid color-mix(in oklch, var(--link) 30%, var(--border));
+  color: var(--foreground);
+  transition:
+    background-color 0.15s,
+    border-color 0.15s;
+}
+.shelf-chip:hover:not(:disabled) {
+  border-color: var(--link);
+}
+.shelf-chip[aria-pressed="true"] {
+  background: var(--link);
+  border-color: var(--link);
+  color: var(--background);
+}
+.shelf-chip-n {
+  opacity: 0.75;
+}
+.shelf-chip:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.shelf-done {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}

@@ -6,7 +6,7 @@ import { BlueprintCard } from "./card";
 import { type Answer, askFollowups, makeBlueprint, type Question, saveBlueprint, savedBlueprint, ToolError, visitorId } from "./client";
 import { Drawing } from "./drawing";
 import { Questions } from "./questions";
-import { type Draft, StartForm } from "./start-form";
+import { type Draft, MAX_STORY, StartForm } from "./start-form";
 import type { Blueprint } from "./types";
 
 // The AI Project Blueprint tool (Phase 3b B5.1): story -> up to 3 questions
@@ -40,6 +40,10 @@ export function BlueprintTool() {
     // Restoring a saved blueprint from this browser after the first paint.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (bp) setState({ kind: "done", bp, returning: true });
+    // Coming from "I haven't built this one yet" on /projects: their search
+    // words start the story (text only: React renders it as plain text).
+    const idea = new URLSearchParams(window.location.search).get("idea")?.trim().slice(0, MAX_STORY);
+    if (!bp && idea) setDraft((d) => ({ ...d, story: idea }));
   }, []);
 
   useEffect(() => {

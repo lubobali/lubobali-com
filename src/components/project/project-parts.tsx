@@ -23,6 +23,9 @@ export function ProjectHero({ p }: { p: Project }) {
   return (
     <header className="grid items-center gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-14">
       <div className="flex flex-col gap-5">
+        <Link href="/projects" className="self-start text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
+          <span aria-hidden="true">←</span> All projects
+        </Link>
         <p className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
           <span className="pj-chip rounded-full px-3 py-1 font-semibold tracking-wide uppercase">{CHAPTERS[p.chapter]}</span>
           <span className="text-muted-foreground">{p.industries.join(" · ")}</span>
@@ -73,7 +76,7 @@ export function ProjectAnswers({ p }: { p: Project }) {
   return (
     <section aria-label="The project in four answers" className="grid gap-4 md:grid-cols-2">
       {blocks.map((b, i) => (
-        <article key={b.id} className="pj-answer flex flex-col gap-3 rounded-3xl p-6 sm:p-8" data-result={b.id === "result" || undefined}>
+        <article key={b.id} className="pj-answer edge-card flex flex-col gap-3 rounded-3xl p-6 sm:p-8" data-result={b.id === "result" || undefined}>
           <h2 className="flex items-baseline gap-3 text-xl font-semibold">
             <span className="pj-index text-sm tabular-nums" aria-hidden="true">
               {String(i + 1).padStart(2, "0")}
@@ -119,7 +122,7 @@ export function SimilarProjects({ list }: { list: readonly Project[] }) {
       <ul className="grid gap-4 md:grid-cols-3">
         {list.map((q) => (
           <li key={q.slug} data-chapter={q.chapter}>
-            <Link href={`/projects/${q.slug}`} className="pj-similar flex h-full flex-col gap-2 rounded-3xl p-6">
+            <Link href={`/projects/${q.slug}`} className="pj-similar edge-card flex h-full flex-col gap-2 rounded-3xl p-6">
               <span className="pj-chip self-start rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase">
                 {CHAPTERS[q.chapter]}
               </span>

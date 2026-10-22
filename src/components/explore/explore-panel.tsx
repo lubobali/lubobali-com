@@ -100,6 +100,8 @@ export default function ExplorePanel({ onClose }: { onClose: () => void }) {
           {exploreGroups.map((g) => {
             const inGroup = hits.filter((h) => h.item.group === g.id);
             if (inGroup.length === 0) return null;
+            if (g.id === "featured")
+              return inGroup.map((hit) => <Featured key={hit.item.title} hit={hit} onPick={() => dialog.current?.close()} onKey={move} />);
             return (
               <section key={g.id} aria-label={g.label} data-group={g.id} className="explore-section flex flex-col gap-2.5 rounded-2xl p-3">
                 <h2 className="explore-group flex items-center gap-2 text-[11px] font-semibold tracking-[0.14em] uppercase">
@@ -134,22 +136,58 @@ export default function ExplorePanel({ onClose }: { onClose: () => void }) {
   );
 }
 
+type HitProps = { hit: ExploreHit; onPick: () => void; onKey: (e: React.KeyboardEvent, el: HTMLElement) => void };
+
+// "All projects": the one big card on top (Lubo: first and easy to spot),
+// the finish-line card style with its moving edge light (edge-card.css).
+const CHAPTER_CHIPS = [
+  ["analytics", "Analytics & dashboards"],
+  ["pipelines", "Data pipelines"],
+  ["ai", "AI agents"],
+] as const;
+function Featured({ hit: { item, matched }, onPick, onKey }: HitProps) {
+  return (
+    <a
+      data-hit
+      href={item.href}
+      onClick={onPick}
+      onKeyDown={(e) => onKey(e, e.currentTarget)}
+      className="explore-featured edge-card flex shrink-0 items-center justify-between gap-5 rounded-2xl px-5 py-5 sm:px-7"
+    >
+      <span className="flex min-w-0 flex-col gap-2">
+        <span className="text-2xl font-semibold sm:text-3xl">{item.title}</span>
+        <span className="text-muted-foreground">{item.subtitle}</span>
+        <span className="flex flex-wrap gap-2 pt-1">
+          {CHAPTER_CHIPS.map(([c, label]) => (
+            <span key={c} data-chapter={c} className="pj-chip rounded-full px-2.5 py-0.5 text-xs font-semibold tracking-wide uppercase">
+              {label}
+            </span>
+          ))}
+        </span>
+        {matched.length > 0 && <span className="explore-matched text-xs">matched: {matched.join(", ")}</span>}
+      </span>
+      <span aria-hidden="true" className="explore-featured-arrow grid size-12 shrink-0 place-items-center rounded-full text-xl">
+        →
+      </span>
+    </a>
+  );
+}
+
 // One result tile (rows on phones, a grid per group on wider screens). A
-// page that is not built yet is plain text, not a link.
-function Hit({
-  hit: { item, matched },
-  onPick,
-  onKey,
-}: {
-  hit: ExploreHit;
-  onPick: () => void;
-  onKey: (e: React.KeyboardEvent, el: HTMLElement) => void;
-}) {
+// page that is not built yet is plain text, not a link. Stories show their
+// headline number.
+function Hit({ hit: { item, matched }, onPick, onKey }: HitProps) {
   const body = (
     <>
       <span className="flex min-w-0 flex-col gap-1">
         <span className="font-semibold">{item.title}</span>
         <span className="text-sm text-muted-foreground">{item.subtitle}</span>
+        {item.number && (
+          <span className="flex items-baseline gap-2 pt-1">
+            <span className="explore-number text-2xl font-semibold tabular-nums">{item.number.value}</span>
+            <span className="text-xs text-muted-foreground">{item.number.label}</span>
+          </span>
+        )}
         {matched.length > 0 && <span className="explore-matched text-xs">matched: {matched.join(", ")}</span>}
       </span>
       {item.href && (

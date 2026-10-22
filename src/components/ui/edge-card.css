@@ -1,0 +1,74 @@
+/* The site's card (Lubo 2026-10-22: "I love this style, keep it along all
+   pages, and keep the lighter to darker"): exactly the home finish-line
+   card (.finale-card). A slow sky + platinum light beam travels round the
+   edge (::before, a turning cone seen only through a 1.5px rim); the face
+   is lit from the top centre in the card's story colour (::after, set
+   --from / --to on the card: lighter -> darker down the page). No glow
+   outside: side by side, glows read as shadows ("glowing just around the
+   edges, not shadows behind"). Neighbours start their beam elsewhere.
+   data-beam="hover": the beam moves only under the pointer / focus (long
+   lists: 35 moving beams at once is busy and costs phone battery).
+   Reduced motion = the beams stand still. */
+.edge-card {
+  --r: 1.5rem;
+  --from: var(--journey-1);
+  --to: var(--journey-2);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.edge-card::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: -2;
+  width: 250%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  background: conic-gradient(
+    var(--border) 0 30%,
+    var(--sky) 42%,
+    var(--award) 46%,
+    var(--border) 56% 80%,
+    var(--sky) 92%,
+    var(--award) 95%,
+    var(--border) 100%
+  );
+}
+.edge-card::after {
+  content: "";
+  position: absolute;
+  inset: 1.5px;
+  z-index: -1;
+  border-radius: calc(var(--r) - 1.5px);
+  background: radial-gradient(ellipse 90% 75% at 50% 0%, var(--from), var(--to));
+  box-shadow: inset 0 1px 0 color-mix(in oklch, var(--sky) 60%, transparent);
+}
+.edge-card .text-muted-foreground {
+  color: var(--card-text-soft);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .edge-card::before {
+    animation: award-beam 16s linear infinite;
+  }
+  .edge-card[data-beam="hover"]::before {
+    animation-play-state: paused;
+  }
+  .edge-card[data-beam="hover"]:hover::before,
+  .edge-card[data-beam="hover"]:focus-visible::before {
+    animation-play-state: running;
+  }
+  .edge-card:nth-child(4n + 2)::before,
+  :nth-child(4n + 2) > .edge-card::before {
+    animation-delay: -4s;
+  }
+  .edge-card:nth-child(4n + 3)::before,
+  :nth-child(4n + 3) > .edge-card::before {
+    animation-delay: -8s;
+  }
+  .edge-card:nth-child(4n + 4)::before,
+  :nth-child(4n + 4) > .edge-card::before {
+    animation-delay: -12s;
+  }
+}

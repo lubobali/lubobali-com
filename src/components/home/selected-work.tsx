@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { storyPath } from "@/lib/case-studies";
 import { work } from "@/lib/work";
 import { WorkArt } from "./work-art";
@@ -78,6 +79,11 @@ export function SelectedWork() {
           );
         })}
       </ul>
+      <p className="mt-10 flex justify-center">
+        <Link href="/projects" className="work-all inline-flex items-center gap-2 rounded-full px-6 py-3 font-semibold">
+          See all projects <span aria-hidden="true">→</span>
+        </Link>
+      </p>
     </section>
   );
 }

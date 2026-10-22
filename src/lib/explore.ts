@@ -13,9 +13,13 @@ import { work } from "@/lib/work";
 // pages: listed now (Lubo: show the whole site), linked once built; the
 // site launches only after they exist, so no "soon" labels.
 // Order and tones: Lubo 2026-10-21 (start on top, then stories, then pages).
+// Lubo 2026-10-22: "All projects" first and easy to spot; the cards must
+// not all look the same. So: "All projects" alone as one big card (no
+// section frame), stories with their number, the rest as quiet rows.
 export const exploreGroups = [
-  { id: "start", label: "Start here" },
+  { id: "featured", label: "All projects" },
   { id: "stories", label: "Stories" },
+  { id: "start", label: "About me" },
   { id: "pages", label: "On this site" },
 ] as const;
 
@@ -26,6 +30,7 @@ export type ExploreItem = {
   href?: string; // none until the page is built
   keywords: readonly string[]; // shown as "matched: ..." when a word hits
   text: string; // searched too, never shown
+  number?: { value: string; label: string }; // a story's headline number
 };
 
 const projects: ExploreItem[] = work.map((w) => {
@@ -35,6 +40,7 @@ const projects: ExploreItem[] = work.map((w) => {
     title: w.name,
     subtitle: cs ? cs.title : w.summary,
     href: storyPath(w.id) ?? `/#${w.id}`,
+    number: cs?.numbers?.[0],
     keywords: [...(cs?.tags ?? []), ...w.stack],
     text: [w.summary, ...w.highlights, cs?.problem ?? ""].join(" "),
   };
@@ -75,11 +81,12 @@ const pages: ExploreItem[] = [
   },
   // Phase 5 + 6 pages: listed so the whole site shows, linked once built.
   {
-    group: "start",
+    group: "featured",
     title: "All projects",
-    subtitle: "30+ projects, searchable by tech",
+    subtitle: "Every system I built, end to end. Search by your problem, industry or tool.",
+    href: "/projects",
     keywords: ["projects", "portfolio", "GitHub", "SQL", "Tableau", "R"],
-    text: "data engineering analytics dashboards",
+    text: "data engineering analytics dashboards pipelines AI agents",
   },
   {
     group: "start",
