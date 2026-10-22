@@ -144,6 +144,21 @@ test("CEO verbs are filler: make my pipeline faster", () => {
   assert.equal(r.close, false);
 });
 
+// Found in P5.9 (2026-10-22): "linkedin posts" matched every Marketing
+// project equally through the same-meaning list, so file order decided and
+// the page that literally says "LinkedIn" came second. The visitor's own
+// words, found as typed, must beat a same-meaning match.
+test("the visitor's exact words beat a same-meaning match", () => {
+  const s = createSearch(
+    [
+      { id: "site", title: "Site", keywords: ["Marketing"], text: "a portfolio site" },
+      { id: "publisher", title: "Publisher", keywords: ["Marketing"], text: "writes 9 posts a week for LinkedIn" },
+    ],
+    [["marketing", "linkedin", "posts"]],
+  );
+  assert.deepEqual(s("linkedin posts").hits.map((h) => h.id), ["publisher", "site"]);
+});
+
 test("title beats keyword beats text", () => {
   const s = createSearch(
     [

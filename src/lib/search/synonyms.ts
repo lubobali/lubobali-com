@@ -1,5 +1,5 @@
 // Same-meaning words for site search (Phase 5 P5.2). A CEO types their own
-// words ("customers leaving"), not ours ("churn"): every phrase in a group
+// words ("employees leaving"), not ours ("churn"): every phrase in a group
 // finds what any other phrase in the group finds. Lower case; plurals are
 // handled by the engine. Grow it from the monthly search report (P5.8):
 // a search that found nothing usually means a missing word here.
@@ -31,7 +31,7 @@ export const synonyms: readonly (readonly string[])[] = [
   ["real estate", "property", "housing"],
 
   // Problems, in CEO words
-  ["customers leaving", "employees leaving", "flight risk", "churn", "attrition", "people leave", "quit", "turnover", "retention"],
+  ["employees leaving", "flight risk", "churn", "attrition", "people leave", "quit", "turnover", "retention"],
   ["fraud", "money laundering", "aml", "suspicious", "scam"],
   ["by hand", "manual", "copy paste", "repetitive"],
   ["automate", "automation", "automatic", "automated", "automatically", "workflow"],
@@ -41,7 +41,7 @@ export const synonyms: readonly (readonly string[])[] = [
   ["migration", "migrate", "move database", "legacy", "modernize"],
   ["slow", "speed", "performance", "faster", "optimization", "optimisation", "tuning"],
   ["costs", "save money", "cheaper", "spend", "tokens", "budget"],
-  ["real time", "realtime", "streaming", "live", "events"],
+  ["real time", "realtime", "streaming", "events"], // not "live": live demo / live since… is everywhere
   ["forecast", "forecasting", "prediction", "predict", "machine learning", "ml", "model"],
   ["search", "semantic search", "vector search", "rag", "embeddings"],
   ["sentiment", "mood", "feelings", "nlp", "text analysis"],

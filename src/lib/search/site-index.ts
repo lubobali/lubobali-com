@@ -69,7 +69,7 @@ const shelfSearch = createSearch(
   synonyms,
 );
 const TRY = [
-  "customers leaving",
+  "employees leaving",
   "fraud",
   "hospital",
   "payments",

@@ -6,7 +6,7 @@
 // How a query is read:
 // 1. normalize (lower case, no accents/punctuation), drop filler words;
 // 2. same-meaning groups turn CEO words into terms with alternatives
-//    ("customers leaving" -> churn, attrition ...), phrases first;
+//    ("employees leaving" -> churn, attrition ...), phrases first;
 // 3. every term must hit the doc (AND). A hit in the title counts most,
 //    then a keyword, then the text; an exact word beats a same-meaning
 //    word, a prefix (still typing) and a typo, in that order;
@@ -36,6 +36,7 @@ const FILLER = new Set(
 
 const WEIGHT = { title: 5, keyword: 3, text: 1 } as const;
 const QUALITY = { exact: 1, synonym: 0.8, prefix: 0.7, typo: 0.5 } as const;
+const EXACT_BONUS = 0.5; // per term, when the typed word itself is in the doc
 
 /** Lower case, accents and punctuation removed, single spaces. */
 export function normalize(s: string): string {
@@ -121,7 +122,7 @@ function parse(query: string, syn: ReturnType<typeof prepareSynonyms>): Term[] {
   const terms: Term[] = [];
   for (let i = 0; i < all.length; ) {
     let used = 0;
-    // Longest same-meaning phrase starting here wins ("customers leaving").
+    // Longest same-meaning phrase starting here wins ("employees leaving").
     for (let n = Math.min(syn.longest, all.length - i); n >= 1 && !used; n--) {
       const group = syn.byPhrase.get(all.slice(i, i + n).join(" "));
       if (group) {
@@ -192,6 +193,10 @@ export function createSearch(docs: readonly SearchDoc[], synonyms: readonly (rea
         }
         if (best > 0) {
           hitTerms++;
+          // The visitor's own word, found as typed anywhere in the doc, beats
+          // a same-meaning match: "linkedin posts" ranks the page that says
+          // "LinkedIn" above every other Marketing page.
+          if (term.typed && fields.some((f) => f.words.has(term.typed!))) best += EXACT_BONUS;
           score += best;
           const shown = label ?? (term.typed && !fields[0].words.has(term.typed) ? term.shown : undefined);
           if (shown && !matched.includes(shown)) matched.push(shown);
