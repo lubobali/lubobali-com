@@ -166,3 +166,11 @@ test("checkBotText: no h1, two h1s, or no <main> fail", () => {
   assert.match(checkBotText("<main><h1>A</h1><h1>Lubo Bali</h1></main>", ["Lubo Bali"]).join(), /found 2/);
   assert.match(checkBotText("<div><h1>Lubo Bali</h1></div>", ["Lubo Bali"]).join(), /no <main>/);
 });
+
+// Found in P5.6 batch 3: quotes in a description were counted as "&quot;"
+// (6 characters each), so a 157-character description failed the 160 cap.
+// Google reads the decoded text, so the check does too.
+test("parsePage decodes HTML entities in meta content (quotes count as 1)", () => {
+  const page = parsePage('<meta name="description" content="Ask &quot;will it rain&quot; &amp; it&#x27;s found"/>');
+  assert.equal(page.metas.description, 'Ask "will it rain" & it\'s found');
+});

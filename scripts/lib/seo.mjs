@@ -4,8 +4,16 @@
 
 export const ORIGIN = "https://lubobali.com";
 
-const attr = (tag, name) =>
-  tag.match(new RegExp(`\\s${name}="([^"]*)"`))?.[1]?.replaceAll("&amp;", "&");
+// The entities our build output uses, decoded so text and lengths are what
+// a reader (and Google) sees: "&quot;" is one character, not six.
+const ENTITIES = { "#x27": "'", "#39": "'", quot: '"', lt: "<", gt: ">" };
+const decodeEntities = (s) =>
+  s.replace(/&(#x27|#39|quot|lt|gt);/g, (_, e) => ENTITIES[e]).replaceAll("&amp;", "&"); // &amp; last: "&amp;lt;" stays "&lt;"
+
+const attr = (tag, name) => {
+  const v = tag.match(new RegExp(`\\s${name}="([^"]*)"`))?.[1];
+  return v === undefined ? undefined : decodeEntities(v);
+};
 
 /** All <meta>/<link> tags + title + JSON-LD blocks found in a page. */
 export function parsePage(html) {
@@ -94,16 +102,10 @@ export function checkJsonLd(blocks) {
   return p;
 }
 
-const ENTITIES = { "#x27": "'", "#39": "'", quot: '"', lt: "<", gt: ">" };
-
 /** Text a no-JavaScript reader sees: tags, scripts, styles removed. */
 export function visibleText(html) {
-  return html
-    .replace(/<(script|style|noscript|head)\b[\s\S]*?<\/\1>/g, " ")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&(#x27|#39|quot|lt|gt);/g, (_, e) => ENTITIES[e])
-    .replaceAll("&amp;", "&") // last, so "&amp;lt;" stays "&lt;"
-    .replace(/\s+/g, " ");
+  const stripped = html.replace(/<(script|style|noscript|head)\b[\s\S]*?<\/\1>/g, " ").replace(/<[^>]+>/g, " ");
+  return decodeEntities(stripped).replace(/\s+/g, " ");
 }
 
 /** "AI-bot test": AI crawlers don't run JavaScript, so the page's real

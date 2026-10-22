@@ -127,6 +127,18 @@ export type ProjectPicture =
       stats: readonly { value: string; label: string }[];
       caption: string;
     }
+  // Batch 3 (P5.6). Questions and what was found, with a match score.
+  | { kind: "matches"; title: string; rows: readonly { question: string; found: string; score: number }[]; caption: string }
+  // One question, the tools called, the answer (highlights must be in it).
+  | { kind: "chat"; title: string; question: string; calls: readonly string[]; answer: string; highlights: readonly string[]; caption: string }
+  // Steps on one time bar (e.g. seconds to a result).
+  | { kind: "timeline"; title: string; unit: string; steps: readonly { label: string; value: number }[]; caption: string }
+  // A grid of partitions; a query reads only the lit row.
+  | { kind: "grid"; title: string; rows: readonly string[]; cols: readonly string[]; lit: string; caption: string }
+  // Data quality rules as written, each one a check.
+  | { kind: "rules"; title: string; rules: readonly string[]; caption: string }
+  // Events split into sessions by an inactivity gap (illustration).
+  | { kind: "sessions"; title: string; gap: string; sessions: readonly number[]; caption: string }
   // The same rows in two systems; the share that silently went missing.
   | {
       kind: "reconcile";
@@ -243,6 +255,18 @@ export function checkProject(p: Project): string[] {
   if (pic.kind === "week" && pic.days.length !== 7) out.push("picture: a week needs 7 days");
   if (pic.kind === "toolbox" && (pic.read.length === 0 || pic.write.length === 0)) out.push("picture: a toolbox needs read and write tools");
   if (pic.kind === "sectors" && pic.groups.length < 2) out.push("picture: sectors needs 2+ groups");
+  if (pic.kind === "matches") {
+    if (pic.rows.length < 2) out.push("picture: matches needs 2+ rows");
+    if (pic.rows.some((r) => r.score < 0 || r.score > 1)) out.push("picture: a match score is between 0 and 1");
+  }
+  if (pic.kind === "chat") {
+    if (pic.calls.length === 0) out.push("picture: a chat needs at least one tool call");
+    for (const h of pic.highlights) if (!pic.answer.includes(h)) out.push(`picture: highlight "${h}" is not in the answer`);
+  }
+  if (pic.kind === "timeline" && pic.steps.length < 2) out.push("picture: a timeline needs 2+ steps");
+  if (pic.kind === "grid" && !pic.rows.includes(pic.lit)) out.push(`picture: lit row "${pic.lit}" is not one of the rows`);
+  if (pic.kind === "rules" && pic.rules.length < 2) out.push("picture: rules needs 2+ rules");
+  if (pic.kind === "sessions" && pic.sessions.length < 2) out.push("picture: sessions needs 2+ sessions");
   if (blank(pic.caption)) out.push("picture: caption is empty");
   if (p.chapter === "ai" && !p.anatomy) out.push("anatomy is required for an AI agent (model, harness, guardrails, knowledge, tools)");
   if (p.anatomy) {

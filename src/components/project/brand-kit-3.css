@@ -1,0 +1,104 @@
+/* Brand-card picture kit, batch 3 (brand-charts-proof.tsx, P5.6):
+   matches, chat, timeline, grid, rules, sessions. Same world colours as
+   brand-kit.css (--a, --a-dk, --up, --down). Complete at rest. */
+
+/* Matches: question, what came back, the score. */
+.bc-match {
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--a) 18%, transparent);
+}
+.bc-match:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+.bc-score {
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: #04060a;
+  background: var(--a);
+}
+
+/* Chat: bubbles; numbers from tools lit. */
+.bc-bubble {
+  max-width: 92%;
+  padding: 0.7rem 0.95rem;
+  border-radius: 1rem;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  background: rgb(255 255 255 / 0.05);
+  font-size: 0.95rem;
+}
+.bc-bubble--answer {
+  border-color: color-mix(in srgb, var(--a) 40%, transparent);
+  background: color-mix(in srgb, var(--a) 10%, transparent);
+}
+.bc-call {
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.4rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.72rem;
+  color: var(--a);
+  border: 1px dashed color-mix(in srgb, var(--a) 55%, transparent);
+}
+.bc-lit {
+  padding: 0 0.15rem;
+  border-radius: 0.25rem;
+  font-weight: 600;
+  color: #04060a;
+  background: var(--a);
+}
+
+/* Timeline: one bar of time. */
+.bc-timeline .bc-seg + .bc-seg {
+  box-shadow: inset 2px 0 0 #04060a;
+}
+
+/* Grid: partitions; the queried row lit. */
+.bc-cell-box {
+  height: 1.4rem;
+  border-radius: 0.3rem;
+  background: rgb(255 255 255 / 0.06);
+}
+.bc-cell-box[data-lit] {
+  background: var(--a);
+  box-shadow: 0 0 10px -2px var(--a);
+}
+.bc-ticker[data-lit] {
+  border-color: var(--a);
+  color: var(--a);
+}
+
+/* Rules: checks as written. */
+.bc-tick {
+  display: grid;
+  place-items: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  flex: none;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #04060a;
+  background: var(--up);
+}
+.bc-code {
+  padding: 0.35rem 0.6rem;
+  border-radius: 0.45rem;
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
+  background: rgb(255 255 255 / 0.05);
+  border: 1px solid rgb(255 255 255 / 0.08);
+}
+
+/* Sessions: groups of events, gaps between them. */
+.bc-session {
+  padding: 0.4rem 0.5rem;
+  border-radius: 0.6rem;
+  border: 1px solid color-mix(in srgb, var(--a) 45%, transparent);
+}
+.bc-gap {
+  font-size: 0.7rem;
+  color: var(--muted);
+  white-space: nowrap;
+}

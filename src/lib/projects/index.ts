@@ -1,21 +1,29 @@
 import { createSearch } from "@/lib/search/engine";
 import { synonyms } from "@/lib/search/synonyms";
+import { airflowDq } from "./airflow-dq";
+import { airflowSoda } from "./airflow-soda";
 import { awsJobStreamer } from "./aws-job-streamer";
 import { bitcoinStreaming } from "./bitcoin-streaming";
 import { briefMe } from "./briefme-ai";
 import { citibike } from "./citibike-agent";
 import { cvsContractors } from "./cvs-contractor-performance";
 import { dbtWap } from "./dbt-airflow-wap";
+import { deltaLakeStocks } from "./delta-lake-stocks";
+import { devTrack } from "./devtrack-ai";
 import { diabetesReadmissions } from "./diabetes-readmissions";
 import { employeeSentiment } from "./employee-sentiment";
+import { flinkSessions } from "./flink-sessions";
 import { jobRadar } from "./jobradar-ai";
 import { langchainAgents } from "./langchain-agents";
 import { publisher } from "./lubo-ai-publisher";
+import { lubobaliCom } from "./lubobali-com";
 import { marketMind } from "./marketmind-ai";
 import { mergeAI } from "./mergeai";
 import { CHAPTERS, type Chapter, checkProject, kindClashes, type Project } from "./model";
 import { portfolioScope } from "./portfolioscope";
 import { sentinelAI } from "./sentinel-ai";
+import { skyCast } from "./skycast-ai";
+import { skyIndex } from "./skyindex-ai";
 import { sparkTuning } from "./spark-pipeline-tuning";
 import { sqlServerToPostgres } from "./sql-server-to-postgres";
 import { supplyChain } from "./supply-chain-delays";
@@ -27,6 +35,7 @@ import { ticketDesk } from "./ticketdesk-ai";
 export const projects: readonly Project[] = [
   // AI agents
   mergeAI,
+  lubobaliCom,
   sentinelAI,
   langchainAgents,
   publisher,
@@ -34,6 +43,9 @@ export const projects: readonly Project[] = [
   jobRadar,
   citibike,
   marketMind,
+  skyCast,
+  skyIndex,
+  devTrack,
   // Data pipelines
   sqlServerToPostgres,
   awsJobStreamer,
@@ -41,6 +53,10 @@ export const projects: readonly Project[] = [
   sparkTuning,
   dbtWap,
   bitcoinStreaming,
+  airflowDq,
+  deltaLakeStocks,
+  airflowSoda,
+  flinkSessions,
   portfolioScope,
   // Analytics & dashboards
   diabetesReadmissions,

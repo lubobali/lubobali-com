@@ -231,3 +231,27 @@ test("week, toolbox, fork, sectors: enough parts to draw", () => {
   const sectors = { kind: "sectors", title: "t", groups: [{ name: "Tech", items: ["AAPL"] }], stats: [{ value: "6", label: "tools" }], caption: "c" };
   assert.match(withPicture(sectors).join(), /sectors needs 2\+/);
 });
+
+// Batch 3 kinds (P5.6).
+test("chat: every highlighted number is really in the answer", () => {
+  const chat = { kind: "chat", title: "t", question: "Jacket in Austin?", calls: ["get_forecast"], answer: "No jacket: 97°F Saturday, UV 8.4.", highlights: ["97°F", "8.4"], caption: "c" };
+  assert.deepEqual(withPicture(chat), []);
+  assert.match(withPicture({ ...chat, highlights: ["99°F"] }).join(), /not in the answer/);
+  assert.match(withPicture({ ...chat, calls: [] }).join(), /tool call/);
+});
+
+test("matches, timeline, grid, rules, sessions: real limits", () => {
+  const m = { kind: "matches", title: "t", rows: [{ question: "q", found: "f", score: 0.6 }, { question: "q2", found: "f2", score: 0.5 }], caption: "c" };
+  assert.deepEqual(withPicture(m), []);
+  assert.match(withPicture({ ...m, rows: [{ question: "q", found: "f", score: 1.4 }, m.rows[1]] }).join(), /between 0 and 1/);
+  const t = { kind: "timeline", title: "t", unit: "s", steps: [{ label: "Questions", value: 9 }, { label: "Blueprint", value: 21 }], caption: "c" };
+  assert.deepEqual(withPicture(t), []);
+  assert.match(withPicture({ ...t, steps: [t.steps[0]] }).join(), /timeline needs 2\+/);
+  const g = { kind: "grid", title: "t", rows: ["AAPL", "MSFT"], cols: ["Mon", "Tue"], lit: "AAPL", caption: "c" };
+  assert.deepEqual(withPicture(g), []);
+  assert.match(withPicture({ ...g, lit: "IBM" }).join(), /lit row/);
+  const r = { kind: "rules", title: "t", rules: ["row_count > 0"], caption: "c" };
+  assert.match(withPicture(r).join(), /rules needs 2\+/);
+  const s = { kind: "sessions", title: "t", gap: "5 min", sessions: [3], caption: "c" };
+  assert.match(withPicture(s).join(), /sessions needs 2\+/);
+});
