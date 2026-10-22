@@ -44,6 +44,8 @@ const PAIRS = [
     [t, "journey-1", TEXT],
   ]),
   ["tone-violet", "card", UI], // work cards: check marks + pictures
+  ["sky", "card", TEXT], // /projects Filters panel: "Industry" title + jump link
+  ["tone-violet", "card", TEXT], // /projects Filters panel: "Tech" title + jump link
   ["tone-ice", "card", UI],
   ["foreground", "card-blue", MAIN], // blue card faces (services + work)
   ["muted-foreground", "card-blue", TEXT],

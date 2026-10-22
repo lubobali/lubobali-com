@@ -39,6 +39,13 @@ export function topOptions(items: readonly ShelfItem[], lens: Lens, n: number): 
     .map(([v]) => v);
 }
 
+/** Every option A to Z, case ignored: the Industry and Tech lists. */
+export function allOptions(items: readonly ShelfItem[], lens: Lens): string[] {
+  return [...countOptions(items, { industry: [], tech: [] }, lens).keys()].sort((a, b) =>
+    a.localeCompare(b, "en", { sensitivity: "base" }),
+  );
+}
+
 /** "?q=...&industry=...&tech=..." ("" when nothing is picked). */
 export function shelfUrl({ filters, q }: ShelfState): string {
   const p = new URLSearchParams();

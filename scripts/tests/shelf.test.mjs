@@ -2,7 +2,7 @@
 // shareable URL. shelf.ts has no imports, so Node runs it directly.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { countOptions, matchesFilters, readShelfUrl, shelfUrl, topOptions } from "../../src/lib/projects/shelf.ts";
+import { allOptions, countOptions, matchesFilters, readShelfUrl, shelfUrl, topOptions } from "../../src/lib/projects/shelf.ts";
 
 const items = [
   { id: "a", industries: ["Health"], tech: ["SQL", "Python"] },
@@ -40,6 +40,15 @@ test("counts respect the search: only items search found are counted", () => {
 test("topOptions: most used first, then A to Z, cut to n", () => {
   assert.deepEqual(topOptions(items, "tech", 2), ["Python", "Spark"]);
   assert.deepEqual(topOptions(items, "industry", 9), ["Finance", "Health", "Jobs"]);
+});
+
+test("allOptions: every option A to Z, case ignored (filter lists, Lubo 2026-10-22)", () => {
+  const mixed = [
+    { id: "x", industries: ["retail", "Health"], tech: ["dbt", "SQL", "Airflow"] },
+    { id: "y", industries: ["Finance"], tech: ["SQL", "Python"] },
+  ];
+  assert.deepEqual(allOptions(mixed, "industry"), ["Finance", "Health", "retail"]);
+  assert.deepEqual(allOptions(mixed, "tech"), ["Airflow", "dbt", "Python", "SQL"]);
 });
 
 const allowed = { industry: ["Health", "Finance", "Jobs"], tech: ["SQL", "Python", "Spark"] };

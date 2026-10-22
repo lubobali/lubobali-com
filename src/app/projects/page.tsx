@@ -6,7 +6,7 @@ import { ProjectCard, StoryCard, StoryTiles } from "@/components/shelf/shelf-car
 import { Stack } from "@/components/shelf/stack";
 import { publishedCaseStudies } from "@/lib/case-studies";
 import { projects } from "@/lib/projects";
-import { topOptions } from "@/lib/projects/shelf";
+import { allOptions } from "@/lib/projects/shelf";
 import { shelfGraph } from "@/lib/schema";
 import { shelfTry } from "@/lib/search/site-index";
 import { site } from "@/lib/site";
@@ -43,8 +43,7 @@ export default function ProjectsPage() {
     ...stories.map((c) => [`work/${c.slug}`, <StoryCard key={c.slug} c={c} />]),
     ...projects.map((p) => [`projects/${p.slug}`, <ProjectCard key={p.slug} p={p} />]),
   ]);
-  const all = Number.POSITIVE_INFINITY;
-  const options = { industry: topOptions(entries, "industry", all), tech: topOptions(entries, "tech", all) };
+  const options = { industry: allOptions(entries, "industry"), tech: allOptions(entries, "tech") };
   const total = projects.length + stories.length;
 
   return (

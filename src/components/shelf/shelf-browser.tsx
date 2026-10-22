@@ -116,26 +116,24 @@ export function ShelfBrowser(props: {
             </p>
           )}
           <div className="flex flex-wrap items-center gap-3">
-            {(["industry", "tech"] as const).map((lens) => (
-              <FilterMenu
-                key={lens}
-                lens={lens}
-                label={lens === "industry" ? "Industry" : "Tech"}
-                options={options[lens]}
-                counts={countOptions(projects, state.filters, lens, found)}
-                picked={state.filters[lens]}
-                onToggle={(v) => toggle(lens, v)}
-              />
-            ))}
+            <FilterMenu
+              groups={(["industry", "tech"] as const).map((lens) => ({
+                lens,
+                label: lens === "industry" ? "Industry" : "Tech",
+                options: options[lens],
+                counts: countOptions(projects, state.filters, lens, found),
+                picked: state.filters[lens],
+              }))}
+              onToggle={toggle}
+            />
             {(q !== "" || filtersOn) && (
               <button type="button" onClick={() => update(EMPTY, true)} className="shelf-clear text-sm font-medium underline-offset-4 hover:underline">
                 Clear all
               </button>
             )}
           </div>
-          <p className="explore-query text-xs sm:text-sm" aria-live="polite">
-            <span className="explore-fn">projects.find</span>(&quot;{q}&quot;) <span aria-hidden="true">→</span>{" "}
-            {q && !ready ? "loading…" : status}
+          <p className="shelf-total text-sm text-muted-foreground tabular-nums" aria-live="polite">
+            {q && !ready ? "Searching…" : q ? `${status} for “${q}”` : status}
           </p>
         </div>
         <div className="shelf-stack-wrap">{props.stack}</div>

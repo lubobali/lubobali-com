@@ -172,7 +172,9 @@
   }
 }
 
-/* The 2 filters: a small button + a chip panel (native popover). */
+/* Filters: one small button + one panel (native popover): Industry then
+   Tech, A to Z, one checkbox row each; the list scrolls, Done stays.
+   Phones: a sheet from the bottom. Wider: a drawer on the right. */
 .shelf-filter {
   border: 1px solid color-mix(in oklch, var(--link) 35%, var(--border));
   background: color-mix(in oklch, var(--card) 70%, transparent);
@@ -190,18 +192,35 @@
   color: var(--link);
 }
 .shelf-pop {
-  width: min(30rem, 100vw - 2rem);
-  max-height: min(70dvh, 32rem);
-  overflow-y: auto;
+  width: min(24rem, 100vw - 2rem);
+  max-height: min(80dvh, 40rem);
+  overflow: hidden;
   padding: 0;
   border-radius: 1.25rem;
   border: 1px solid color-mix(in oklch, var(--link) 35%, var(--border));
-  background: color-mix(in oklch, var(--card) 96%, transparent);
+  /* Solid: the card tone over the page colour, so nothing shows through. */
+  background: linear-gradient(var(--card), var(--card)), var(--background);
   color: var(--foreground);
   box-shadow: 0 30px 80px -30px color-mix(in oklch, var(--link) 50%, transparent);
 }
+.shelf-pop:popover-open {
+  display: flex;
+  flex-direction: column;
+}
 .shelf-pop::backdrop {
   background: color-mix(in oklch, var(--background) 40%, transparent);
+}
+.shelf-pop-body {
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklch, var(--link) 55%, transparent) transparent;
+}
+.shelf-pop-foot {
+  border-top: 1px solid color-mix(in oklch, var(--link) 20%, var(--border));
 }
 @media (max-width: 639px) {
   .shelf-pop {
@@ -211,48 +230,81 @@
     border-radius: 1.25rem 1.25rem 0 0;
   }
 }
-/* Wider screens: the panel opens under its own button. */
+/* Wider screens: a full-height drawer on the right, so the whole list has
+   room and one scrollbar (Lubo 2026-10-22). */
 @media (min-width: 640px) {
-  @supports (anchor-name: --a) {
-    .shelf-filter[data-lens="industry"] {
-      anchor-name: --filter-industry;
-    }
-    .shelf-filter[data-lens="tech"] {
-      anchor-name: --filter-tech;
-    }
-    .shelf-pop[data-lens="industry"] {
-      position-anchor: --filter-industry;
-    }
-    .shelf-pop[data-lens="tech"] {
-      position-anchor: --filter-tech;
-    }
-    .shelf-pop {
-      inset: auto;
-      margin: 0.5rem 0 0;
-      position-area: bottom span-right;
-      position-try-fallbacks: flip-block;
-    }
+  .shelf-pop {
+    inset: 0 0 0 auto;
+    width: min(24rem, 100vw - 2rem);
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    border-radius: 1.25rem 0 0 1.25rem;
+    border-right: 0;
   }
 }
-.shelf-chip {
-  border: 1px solid color-mix(in oklch, var(--link) 30%, var(--border));
-  color: var(--foreground);
-  transition:
-    background-color 0.15s,
-    border-color 0.15s;
+/* Section titles in the panel: Industry sky, Tech violet, each a pill
+   with the home page's light sweep (award-shine), taking turns. */
+.shelf-sec {
+  --sec: var(--sky);
+  background: linear-gradient(var(--card), var(--card)), var(--background);
 }
-.shelf-chip:hover:not(:disabled) {
-  border-color: var(--link);
+.shelf-sec[data-lens="tech"] {
+  --sec: var(--tone-violet);
 }
-.shelf-chip[aria-pressed="true"] {
-  background: var(--link);
-  border-color: var(--link);
-  color: var(--background);
+.shelf-sec-pill {
+  position: relative;
+  overflow: hidden;
+  color: var(--sec);
+  border: 1px solid color-mix(in oklch, var(--sec) 60%, transparent);
+  background: color-mix(in oklch, var(--sec) 14%, transparent);
+  box-shadow: 0 0 24px -6px color-mix(in oklch, var(--sec) 60%, transparent);
+}
+.shelf-sec-pill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(110deg, transparent 35%, color-mix(in oklch, var(--sec) 55%, transparent) 50%, transparent 65%);
+  background-size: 300% 100%;
+  background-position: 100% 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .shelf-sec-pill::after {
+    animation: award-shine 6s ease-in-out infinite;
+  }
+  .shelf-sec[data-lens="tech"] .shelf-sec-pill::after {
+    animation-delay: 3s;
+  }
+}
+.shelf-sec-n {
+  opacity: 0.8;
+}
+.shelf-sec-jump {
+  --sec: var(--sky);
+  color: var(--sec);
+}
+.shelf-sec-jump[data-lens="tech"] {
+  --sec: var(--tone-violet);
+}
+.shelf-check {
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+.shelf-check:hover:not([data-off]) {
+  background: color-mix(in oklch, var(--link) 12%, transparent);
+}
+.shelf-check input {
+  accent-color: var(--link);
+  cursor: inherit;
+}
+.shelf-check:has(input:checked) {
+  font-weight: 600;
 }
 .shelf-chip-n {
   opacity: 0.75;
 }
-.shelf-chip:disabled {
+.shelf-check[data-off] {
   opacity: 0.4;
   cursor: not-allowed;
 }
