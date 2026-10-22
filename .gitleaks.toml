@@ -19,3 +19,14 @@ paths = [
   '''(^|/)node_modules/''',
   '''(^|/)out/''',
 ]
+
+# Power BI "Publish to web" links (Phase 5, 2026-10-22): public by design
+# (anyone with the link can view; they were already public on the old
+# Framer site). Their r= value is base64 JSON {k: report id, t: tenant id,
+# c: cluster}: no password or key, but the grafana-api-key rule reads the
+# "eyJr" start as a Grafana key. Only this exact URL shape, only that rule.
+[[allowlists]]
+description = "Power BI public 'Publish to web' view links"
+targetRules = ["grafana-api-key"]
+regexTarget = "line"
+regexes = ['''https://app\.powerbi\.com/view\?r=eyJrIjoi[A-Za-z0-9+/=]+''']
