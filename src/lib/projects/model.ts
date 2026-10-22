@@ -139,6 +139,29 @@ export type ProjectPicture =
   | { kind: "rules"; title: string; rules: readonly string[]; caption: string }
   // Events split into sessions by an inactivity gap (illustration).
   | { kind: "sessions"; title: string; gap: string; sessions: readonly number[]; caption: string }
+  // Batch 4 (P5.6). Two numbers side by side; the winner lit.
+  | {
+      kind: "versus";
+      title: string;
+      left: { value: string; label: string };
+      right: { value: string; label: string };
+      winner: "left" | "right";
+      caption: string;
+    }
+  // What was planned vs what was delivered, on one scale.
+  | {
+      kind: "gap";
+      title: string;
+      unit: string;
+      planned: { label: string; value: number };
+      actual: { label: string; value: number };
+      note: string;
+      caption: string;
+    }
+  // A scale with the sweet spot marked.
+  | { kind: "range"; title: string; unit: string; min: number; max: number; low: number; high: number; label: string; caption: string }
+  // What people assumed vs what the data showed.
+  | { kind: "myths"; title: string; rows: readonly { assumed: string; found: string }[]; caption: string }
   // The same rows in two systems; the share that silently went missing.
   | {
       kind: "reconcile";
@@ -267,6 +290,9 @@ export function checkProject(p: Project): string[] {
   if (pic.kind === "grid" && !pic.rows.includes(pic.lit)) out.push(`picture: lit row "${pic.lit}" is not one of the rows`);
   if (pic.kind === "rules" && pic.rules.length < 2) out.push("picture: rules needs 2+ rules");
   if (pic.kind === "sessions" && pic.sessions.length < 2) out.push("picture: sessions needs 2+ sessions");
+  if (pic.kind === "gap" && (pic.planned.value <= 0 || pic.actual.value <= 0)) out.push("picture: gap values must be above zero");
+  if (pic.kind === "range" && !(pic.min <= pic.low && pic.low < pic.high && pic.high <= pic.max)) out.push("picture: the range's sweet spot must sit inside its scale");
+  if (pic.kind === "myths" && pic.rows.length < 2) out.push("picture: myths needs 2+ rows");
   if (blank(pic.caption)) out.push("picture: caption is empty");
   if (p.chapter === "ai" && !p.anatomy) out.push("anatomy is required for an AI agent (model, harness, guardrails, knowledge, tools)");
   if (p.anatomy) {

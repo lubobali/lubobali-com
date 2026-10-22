@@ -2,10 +2,12 @@ import { createSearch } from "@/lib/search/engine";
 import { synonyms } from "@/lib/search/synonyms";
 import { airflowDq } from "./airflow-dq";
 import { airflowSoda } from "./airflow-soda";
+import { arizonaJobs } from "./arizona-job-market";
 import { awsJobStreamer } from "./aws-job-streamer";
 import { bitcoinStreaming } from "./bitcoin-streaming";
 import { briefMe } from "./briefme-ai";
 import { citibike } from "./citibike-agent";
+import { costaRica } from "./costa-rica-loan";
 import { cvsContractors } from "./cvs-contractor-performance";
 import { dbtWap } from "./dbt-airflow-wap";
 import { deltaLakeStocks } from "./delta-lake-stocks";
@@ -13,13 +15,18 @@ import { devTrack } from "./devtrack-ai";
 import { diabetesReadmissions } from "./diabetes-readmissions";
 import { employeeSentiment } from "./employee-sentiment";
 import { flinkSessions } from "./flink-sessions";
+import { foodDelivery } from "./food-delivery-customers";
+import { ibmHr } from "./ibm-hr-attrition";
 import { jobRadar } from "./jobradar-ai";
 import { langchainAgents } from "./langchain-agents";
 import { publisher } from "./lubo-ai-publisher";
 import { lubobaliCom } from "./lubobali-com";
 import { marketMind } from "./marketmind-ai";
+import { massSchools } from "./massachusetts-schools";
 import { mergeAI } from "./mergeai";
+import { mining } from "./mining-process-quality";
 import { CHAPTERS, type Chapter, checkProject, kindClashes, type Project } from "./model";
+import { nba } from "./nba-shooting";
 import { portfolioScope } from "./portfolioscope";
 import { sentinelAI } from "./sentinel-ai";
 import { skyCast } from "./skycast-ai";
@@ -63,6 +70,13 @@ export const projects: readonly Project[] = [
   supplyChain,
   cvsContractors,
   employeeSentiment,
+  ibmHr,
+  foodDelivery,
+  costaRica,
+  arizonaJobs,
+  mining,
+  massSchools,
+  nba,
 ];
 
 // What search reads for a project (also used by Explore in P5.5).

@@ -6,6 +6,7 @@ import { FlowArt, FunnelArt, LoopArt, ReconcileArt, StreamArt } from "./brand-ch
 import { DotsArt, KpisArt, LadderArt } from "./brand-charts-numbers";
 import { ForkArt, SectorsArt, ToolboxArt, WeekArt } from "./brand-charts-agents";
 import { DropsArt, MedallionArt, TallyArt } from "./brand-charts-compare";
+import { GapArt, MythsArt, RangeArt, VersusArt } from "./brand-charts-insight";
 import { ChatArt, GridArt, MatchesArt, RulesArt, SessionsArt, TimelineArt } from "./brand-charts-proof";
 
 // The one picture of a project page. A real screen shows as itself; every
@@ -88,6 +89,14 @@ function Art({ picture }: { picture: Exclude<ProjectPicture, { kind: "screen" }>
       return <RulesArt picture={picture} />;
     case "sessions":
       return <SessionsArt picture={picture} />;
+    case "versus":
+      return <VersusArt picture={picture} />;
+    case "gap":
+      return <GapArt picture={picture} />;
+    case "range":
+      return <RangeArt picture={picture} />;
+    case "myths":
+      return <MythsArt picture={picture} />;
     case "chart":
       return <LadderArt picture={picture} />;
     case "flow":

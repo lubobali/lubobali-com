@@ -255,3 +255,17 @@ test("matches, timeline, grid, rules, sessions: real limits", () => {
   const s = { kind: "sessions", title: "t", gap: "5 min", sessions: [3], caption: "c" };
   assert.match(withPicture(s).join(), /sessions needs 2\+/);
 });
+
+// Batch 4 kinds (P5.6).
+test("versus, gap, range, myths: real limits", () => {
+  const v = { kind: "versus", title: "t", left: { value: "$257", label: "per year of age" }, right: { value: "$489", label: "per year of experience" }, winner: "right", caption: "c" };
+  assert.deepEqual(withPicture(v), []);
+  const g = { kind: "gap", title: "t", unit: "km", planned: { label: "Promised", value: 640 }, actual: { label: "Built", value: 322 }, note: "n", caption: "c" };
+  assert.deepEqual(withPicture(g), []);
+  assert.match(withPicture({ ...g, actual: { label: "Built", value: 0 } }).join(), /above zero/);
+  const r = { kind: "range", title: "t", unit: "pH", min: 9, max: 11, low: 9.8, high: 10.2, label: "best yield", caption: "c" };
+  assert.deepEqual(withPicture(r), []);
+  assert.match(withPicture({ ...r, high: 12 }).join(), /inside/);
+  const m = { kind: "myths", title: "t", rows: [{ assumed: "a", found: "b" }], caption: "c" };
+  assert.match(withPicture(m).join(), /myths needs 2\+/);
+});
