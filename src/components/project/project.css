@@ -229,13 +229,15 @@
   box-shadow: 0 0 14px -2px var(--pj);
 }
 
-/* Every card like the home finish-line card (.finale-card, Lubo
-   2026-10-22: "these cards look better"): a slow light beam travels round
-   the edge (::before, a turning cone in the chapter tone + platinum), the
-   face is lit from the top centre in the card's story colour (::after,
-   lighter -> darker down the page), and a soft tone glow sits outside.
-   Same award-beam keyframes as the home cards; each card starts elsewhere
-   so they never move together. Reduced motion = the beams stand still. */
+/* Every card exactly like the home finish-line card (.finale-card, Lubo
+   2026-10-22: "I love this style, keep it along all pages, and keep the
+   lighter to darker"): a slow sky + platinum light beam travels round the
+   edge (::before, a turning cone seen only through a 1.5px rim), the face
+   is lit from the top centre in the card's story colour (::after, lighter
+   -> darker down the page). No glow outside: side by side, glows read as
+   shadows ("glowing just around the edges, not shadows behind"). Same
+   award-beam keyframes as home; each card starts elsewhere. Reduced
+   motion = the beams stand still. */
 .pj-answer,
 .pj-part,
 .pj-safe,
@@ -244,10 +246,6 @@
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  /* Same soft glow as .finale-card (--glow-sky = 18%), in the chapter tone. */
-  box-shadow:
-    0 0 48px -8px color-mix(in oklch, var(--pj) 18%, transparent),
-    0 0 140px -30px color-mix(in oklch, var(--pj) 18%, transparent);
 }
 .pj-part {
   --r: 1rem;
@@ -266,10 +264,10 @@
   translate: -50% -50%;
   background: conic-gradient(
     var(--border) 0 30%,
-    var(--pj) 42%,
+    var(--sky) 42%,
     var(--award) 46%,
     var(--border) 56% 80%,
-    var(--pj) 92%,
+    var(--sky) 92%,
     var(--award) 95%,
     var(--border) 100%
   );
@@ -284,7 +282,7 @@
   z-index: -1;
   border-radius: calc(var(--r) - 1.5px);
   background: radial-gradient(ellipse 90% 75% at 50% 0%, var(--from), var(--to));
-  box-shadow: inset 0 1px 0 color-mix(in oklch, var(--award) 45%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in oklch, var(--sky) 60%, transparent);
 }
 @media (prefers-reduced-motion: no-preference) {
   .pj-answer::before,
