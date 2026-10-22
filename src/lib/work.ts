@@ -50,11 +50,11 @@ export const work = [
     art: "payments",
     tone: "violet",
     // \u2060 + \u00a0 keep the dates on one line on phones.
-    role: "Senior Data & AI Platform Engineer · Mar\u2060–\u2060Aug\u00a02026",
+    role: "Senior Data & AI Platform Engineer · Mar\u2060–\u2060Sep\u00a02026",
     summary:
       "Lead engineer for a multi-product B2B SaaS for payment-processing sales organizations. Built DataSwim, an automated residual and commission engine that replaces manual Excel.",
     highlights: [
-      "Residual engine end to end: ledger in, every commission split computed, no Excel",
+      "Residual engine end to end: the pilot customer ran 6 months of real data through it, $31K+ in commissions",
       "AI column mapper: a new payment processor needs zero code change",
       "3-tier LLM gateway: 80% of queries at $0 LLM cost",
     ],

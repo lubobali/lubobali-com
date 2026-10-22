@@ -103,7 +103,7 @@ export const hellopayments: CaseStudy = {
   ],
   quote: "Matthew Hamann", // same gate as the home page: Matt's written yes before launch
   role: "Senior Data & AI Platform Engineer (lead engineer)",
-  when: "Mar–Aug 2026",
+  when: "Mar–Sep 2026",
   stack: ["Python", "FastAPI", "PostgreSQL", "Next.js"],
   shelf: { industries: ["Payments", "Finance"], tech: ["Python", "FastAPI", "PostgreSQL", "Next.js"] },
 };
