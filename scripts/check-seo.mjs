@@ -4,6 +4,7 @@
 // (AI-bot test: one <h1>, <main>, name + job title), the home page's
 // JSON-LD is broken, or robots.txt / sitemap.xml / llms.txt / the social
 // image are wrong. Usage: node scripts/check-seo.mjs out
+import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import { join, relative } from "node:path";
 import {
@@ -11,6 +12,7 @@ import {
   checkBotText,
   checkJsonLd,
   checkLlmsTxt,
+  assetPath,
   checkPage,
   checkRobots,
   checkSitemap,
@@ -85,6 +87,9 @@ for (const file of files) {
   }
   if (path === "/") home = page;
   fail(path, checkPage(page, path));
+  // The share image must be in the build, or the LinkedIn preview breaks.
+  const img = assetPath(page.metas["og:image"]);
+  if (img && !existsSync(join(out, img))) fail(path, [`og:image file missing in the build: ${img}`]);
 }
 if (!home) fail("/", ["no index.html"]);
 else {

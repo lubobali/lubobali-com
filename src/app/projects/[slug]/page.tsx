@@ -25,6 +25,12 @@ type Props = { params: Promise<{ slug: string }> };
 // Title in the words people search: "Diabetes readmissions: SQL analytics project".
 const KIND = { analytics: "analytics project", pipelines: "data pipeline", ai: "AI agent" } as const;
 const pageTitle = (p: Project) => `${p.name}: ${p.tech[0]} ${KIND[p.chapter]}`;
+const shareImage = (p: Project) => ({
+  url: `/share/${p.slug}.jpg`,
+  width: 1200,
+  height: 630,
+  alt: `${p.name}, by ${site.name}: ${"title" in p.picture && p.picture.title ? p.picture.title : p.oneLine}`,
+});
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const p = findProject((await params).slug);
@@ -33,7 +39,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: pageTitle(p),
     description: p.description,
     // A page that sets openGraph replaces the whole object: repeat images.
-    // Own share image per project = P5.7.
+    // Its own share card (P5.7): public/share/<slug>.jpg, rendered by
+    // scripts/brand/share-images.mjs (a test fails if it is missing or stale).
     openGraph: {
       type: "article",
       url: "./",
@@ -41,8 +48,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       locale: site.locale,
       title: `${pageTitle(p)} — ${site.name}`,
       description: p.description,
-      images: [{ url: "/og.png", width: 1200, height: 630, alt: `${site.name}, ${site.jobTitle}` }],
+      images: [shareImage(p)],
     },
+    twitter: { card: "summary_large_image", creator: "@Lubo_Bali", images: [shareImage(p)] },
   };
 }
 

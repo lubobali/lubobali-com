@@ -2,6 +2,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
+  assetPath,
   checkBotText,
   checkJsonLd,
   checkLlmsTxt,
@@ -173,4 +174,12 @@ test("checkBotText: no h1, two h1s, or no <main> fail", () => {
 test("parsePage decodes HTML entities in meta content (quotes count as 1)", () => {
   const page = parsePage('<meta name="description" content="Ask &quot;will it rain&quot; &amp; it&#x27;s found"/>');
   assert.equal(page.metas.description, 'Ask "will it rain" & it\'s found');
+});
+
+// P5.7: every page's share image must exist in the build (a missing file =
+// a broken LinkedIn preview).
+test("assetPath maps a share image URL on our origin to its file in the build", () => {
+  assert.equal(assetPath("https://lubobali.com/share/mergeai.jpg"), "share/mergeai.jpg");
+  assert.equal(assetPath("https://lubobali.com/og.png?v=2"), "og.png");
+  assert.equal(assetPath("https://example.com/x.png"), null);
 });

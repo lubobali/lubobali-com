@@ -1,0 +1,68 @@
+<!doctype html>
+<!-- Project share card (1200x630), P5.7. Lubo's Publisher LinkedIn look
+     (/srv/lubot-publisher/src/cards.py `_frame`) in each chapter's world,
+     same colours as src/components/project/brand-card.css. Rendered per
+     project by share-images.mjs -> public/share/<slug>.jpg. Text is filled
+     in by the script (data-slot elements). -->
+<html><head><meta charset="utf-8"><style>
+@font-face { font-family: "Fraunces"; src: url("../../src/app/fonts/Fraunces-latin-400.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Inter Tight"; src: url("../../src/app/fonts/InterTight-latin-wght400-600.woff2") format("woff2"); font-weight: 400 600; }
+* { margin: 0; box-sizing: border-box; }
+:root { --a: #7c6cf0; --a-dk: #4632b0; --hi: #241b48; --lo: #0b0720; --text: #eef2f8; --muted: #aab6cc; }
+[data-world="ai"] { --a: #f2a33a; --a-dk: #b8641c; --hi: #3d2610; --lo: #140b04; }
+[data-world="analytics"] { --a: #1fb2a6; --a-dk: #0f6f68; --hi: #0d3b37; --lo: #04130f; }
+body { width: 1200px; height: 630px; overflow: hidden; position: relative; color: var(--text);
+  font-family: "Inter Tight", sans-serif;
+  background:
+    radial-gradient(900px 620px at 2% -12%, color-mix(in srgb, var(--a) 33%, transparent), transparent 46%),
+    radial-gradient(1600px 1100px at 24% -8%, var(--hi) 0%, var(--lo) 60%, #04060a 100%); }
+/* Grain + vignette, like the Publisher cards. */
+body::before { content: ""; position: absolute; inset: 0; opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+body::after { content: ""; position: absolute; inset: 0; box-shadow: inset 0 0 240px 60px rgb(0 0 0 / 0.5); pointer-events: none; }
+.rail { position: absolute; left: 0; top: 60px; bottom: 60px; width: 4px;
+  background: linear-gradient(180deg, var(--a-dk), var(--a) 45%, #dfe6ef 74%, var(--a)); }
+.motif { position: absolute; right: -120px; top: -140px; width: 640px; color: var(--a); opacity: 0.45; }
+.frame { position: absolute; inset: 52px 64px 40px 70px; display: flex; flex-direction: column; }
+.top { display: flex; justify-content: space-between; align-items: flex-start; }
+.kicker { font-weight: 600; font-size: 19px; letter-spacing: 0.3em; text-transform: uppercase;
+  background: linear-gradient(105deg, var(--a), color-mix(in srgb, var(--a) 70%, #dfe6ef) 60%, #dfe6ef);
+  -webkit-background-clip: text; background-clip: text; color: transparent; }
+.rule { width: 64px; height: 2px; margin-top: 16px; background: linear-gradient(90deg, var(--a), #dfe6ef); }
+.logo { height: 76px; width: auto; filter: drop-shadow(0 2px 10px rgb(0 0 0 / 0.5)); }
+.body { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 26px; }
+.hook { font-family: "Fraunces", Georgia, serif; font-weight: 400; font-size: 60px; line-height: 1.08;
+  max-width: 900px; color: #f4f7fc; text-shadow: 0 2px 30px rgb(0 0 0 / 0.4); text-wrap: balance; }
+.num { display: flex; align-items: baseline; gap: 20px; }
+.num:has(.value:empty) { display: none; }
+.value { font-family: "Fraunces", Georgia, serif; font-size: 76px; line-height: 1; color: var(--a);
+  text-shadow: 0 0 40px color-mix(in srgb, var(--a) 45%, transparent); }
+.label { font-size: 24px; color: var(--muted); max-width: 640px; line-height: 1.3; }
+.foot { display: flex; justify-content: space-between; align-items: center; padding-top: 18px;
+  border-top: 1px solid color-mix(in srgb, var(--a) 30%, transparent); }
+.sign { display: flex; align-items: baseline; gap: 14px; font-weight: 600; font-size: 30px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: #cfd6e2; }
+.sign::before { content: ""; align-self: center; width: 56px; height: 1px; background: #cfd6e2; }
+.site { font-weight: 500; font-size: 18px; letter-spacing: 0.02em; text-transform: none; color: var(--muted); }
+.name { display: flex; align-items: center; gap: 12px; font-size: 17px; font-weight: 500; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--muted); }
+.name::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--a); box-shadow: 0 0 12px var(--a); }
+</style></head>
+<body data-world="pipelines">
+  <span class="rail"></span>
+  <svg class="motif" viewBox="0 0 400 400" fill="none" data-slot="motif"></svg>
+  <div class="frame">
+    <div class="top">
+      <div><p class="kicker" data-slot="kicker">Data pipelines</p><div class="rule"></div></div>
+      <img class="logo" src="../../public/brand/lb-logo-lg.webp" alt="">
+    </div>
+    <div class="body">
+      <p class="hook" data-slot="hook">Hook</p>
+      <p class="num"><span class="value" data-slot="value">0</span><span class="label" data-slot="label">label</span></p>
+    </div>
+    <div class="foot">
+      <p class="sign">Lubo Bali <span class="site">· lubobali.com</span></p>
+      <p class="name" data-slot="name">Project</p>
+    </div>
+  </div>
+</body></html>

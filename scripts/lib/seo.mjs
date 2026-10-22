@@ -164,3 +164,10 @@ export function pngSize(buf) {
   if (buf.subarray(0, 8).toString("hex") !== sig) return null;
   return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
 }
+
+/** A URL on our own origin -> its file path inside the build folder
+ * ("https://lubobali.com/share/x.jpg" -> "share/x.jpg"), else null. */
+export function assetPath(url) {
+  if (!url?.startsWith(ORIGIN + "/")) return null;
+  return url.slice(ORIGIN.length + 1).split(/[?#]/)[0];
+}
