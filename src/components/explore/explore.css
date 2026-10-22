@@ -114,7 +114,8 @@ html.explore-open {
 .explore-section[data-group="start"] {
   --g: var(--tone-violet);
 }
-.explore-section[data-group="pages"] {
+.explore-section[data-group="pages"],
+.explore-section[data-group="projects"] {
   --g: var(--tone-ice);
 }
 .explore-group {
@@ -177,7 +178,9 @@ html.explore-open {
 }
 /* Desktop: each group is one row, so the whole site fits on one screen. */
 @media (min-width: 640px) {
-  .explore-grid--stories {
+  .explore-grid--stories,
+  .explore-grid--projects,
+  .explore-grid--closest {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .explore-grid--start {
@@ -244,4 +247,9 @@ html.explore-open {
 .explore-section[data-group="pages"] .explore-hit {
   padding-block: 0.6rem;
   background: color-mix(in oklch, var(--card) 50%, transparent);
+}
+/* Nothing found: the same "not built yet" card as /projects. */
+.explore-none {
+  --from: var(--journey-2);
+  --to: var(--journey-4);
 }

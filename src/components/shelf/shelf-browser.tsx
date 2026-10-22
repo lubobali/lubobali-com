@@ -3,10 +3,11 @@
 import { type ReactNode, useEffect, useState } from "react";
 import { flushSync } from "react-dom";
 import type { Chapter } from "@/lib/projects/model";
+import type { SiteGroup } from "@/lib/search/site-index";
+import { useSiteSearch } from "@/lib/search/use-site-search";
 import { countOptions, type Lens, matchesFilters, readShelfUrl, type ShelfFilters, type ShelfState, shelfUrl } from "@/lib/projects/shelf";
 import { FilterMenu } from "./filter-menu";
 import { type Card, CardGrid, Chapters, NotBuiltYet } from "./shelf-results";
-import { useSiteSearch } from "./use-site-search";
 
 // The /projects shelf (Phase 5 P5.4, agreed with Lubo 2026-10-22): one
 // search box with "Try" words (like Explore), 2 filters (Industry, Tech)
@@ -18,6 +19,7 @@ import { useSiteSearch } from "./use-site-search";
 export type ShelfEntry = { id: string; chapter?: Chapter; industries: readonly string[]; tech: readonly string[] };
 const CHAPTER_ORDER: readonly Chapter[] = ["analytics", "pipelines", "ai"];
 const EMPTY: ShelfState = { filters: { industry: [], tech: [] }, q: "" };
+const SHELF_GROUPS: readonly SiteGroup[] = ["stories", "projects"];
 
 export function ShelfBrowser(props: {
   intro: ReactNode;
@@ -30,7 +32,7 @@ export function ShelfBrowser(props: {
 }) {
   const { entries, cards, options } = props;
   const [state, setState] = useState<ShelfState>(EMPTY);
-  const { load, run, ready } = useSiteSearch();
+  const { load, run, ready } = useSiteSearch(SHELF_GROUPS);
 
   useEffect(() => {
     const shared = readShelfUrl(window.location.search, options);

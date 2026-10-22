@@ -19,6 +19,7 @@ import { work } from "@/lib/work";
 export const exploreGroups = [
   { id: "featured", label: "All projects" },
   { id: "stories", label: "Stories" },
+  { id: "projects", label: "Projects" }, // whole-site search only (P5.5)
   { id: "start", label: "About me" },
   { id: "pages", label: "On this site" },
 ] as const;

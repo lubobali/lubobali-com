@@ -3,24 +3,43 @@
 import { useEffect, useRef, useState } from "react";
 import { BookCall } from "@/components/book-call";
 import { buttonVariants } from "@/components/ui/button";
-import { type ExploreHit, exploreGroups, exploreTry, searchExplore } from "@/lib/explore";
+import { exploreGroups, exploreTry, searchExplore } from "@/lib/explore";
+import type { SearchHit } from "@/lib/search/engine";
+import { useSiteSearch } from "@/lib/search/use-site-search";
+import { Featured, Hit, NotBuilt, type Tile } from "./explore-hits";
 
 // The Explore panel: a search over Lubo's work that reads like a query
 // (Lubo: "something different than the others"): explore("fraud") ->
 // 1 match in 0.1 ms, each result says why it matched. Native <dialog>
 // (Esc, focus, screen readers). Arrow keys move through the results.
-// Styles: explore.css.
+// Phase 5 P5.5: typing searches the whole site (/search-index.json, every
+// project too), fetched when the panel opens; until it arrives the small
+// built-in list answers. Empty box = the built-in list. Styles: explore.css.
 export default function ExplorePanel({ onClose }: { onClose: () => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const list = useRef<HTMLDivElement>(null);
-  // Search runs in the event (not during render), so the time is real.
-  const [{ query, hits, ms }, setSearch] = useState(() => ({ query: "", hits: searchExplore(""), ms: 0 }));
+  const site = useSiteSearch();
+  const { load } = site;
+  // The time is measured in the event (not during render), so it is real.
+  const [{ query, ms }, setSearch] = useState({ query: "", ms: 0 });
   const setQuery = (q: string) => {
     const t = performance.now();
-    const found = searchExplore(q);
-    setSearch({ query: q, hits: found, ms: performance.now() - t });
+    if (site.ready) site.run(q);
+    else searchExplore(q);
+    setSearch({ query: q, ms: performance.now() - t });
   };
 
+  const q = query.trim();
+  const result = q && site.ready ? site.run(q) : null;
+  const tiles = (hs: readonly SearchHit[]): Tile[] =>
+    hs.flatMap((h) => {
+      const item = site.entry(h.id);
+      return item ? [{ item, matched: h.matched }] : [];
+    });
+  const hits: Tile[] = result ? (result.close ? [] : tiles(result.hits)) : searchExplore(query);
+  const closest: Tile[] = result?.close ? tiles(result.hits) : [];
+
+  useEffect(load, [load]);
   useEffect(() => {
     const d = dialog.current;
     d?.showModal();
@@ -40,6 +59,7 @@ export default function ExplorePanel({ onClose }: { onClose: () => void }) {
     e.preventDefault();
   };
 
+  const pick = () => dialog.current?.close();
   const time = ms < 0.1 ? "under 0.1 ms" : `${ms.toFixed(1)} ms`;
   const count = `${hits.length} ${hits.length === 1 ? "match" : "matches"}`;
 
@@ -100,108 +120,49 @@ export default function ExplorePanel({ onClose }: { onClose: () => void }) {
           {exploreGroups.map((g) => {
             const inGroup = hits.filter((h) => h.item.group === g.id);
             if (inGroup.length === 0) return null;
-            if (g.id === "featured")
-              return inGroup.map((hit) => <Featured key={hit.item.title} hit={hit} onPick={() => dialog.current?.close()} onKey={move} />);
-            return (
-              <section key={g.id} aria-label={g.label} data-group={g.id} className="explore-section flex flex-col gap-2.5 rounded-2xl p-3">
-                <h2 className="explore-group flex items-center gap-2 text-[11px] font-semibold tracking-[0.14em] uppercase">
-                  <span aria-hidden="true" className="explore-dot" />
-                  {g.label}
-                </h2>
-                <ul className={`explore-grid explore-grid--${g.id} grid gap-2`}>
-                  {inGroup.map((hit) => (
-                    <li key={hit.item.title}>
-                      <Hit hit={hit} onPick={() => dialog.current?.close()} onKey={move} />
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            );
+            if (g.id === "featured") return inGroup.map((hit) => <Featured key={hit.item.title} hit={hit} onPick={pick} onKey={move} />);
+            return <Group key={g.id} id={g.id} label={g.label} tiles={inGroup} onPick={pick} onKey={move} />;
           })}
-          {hits.length === 0 && (
-            <p className="rounded-xl p-4 text-muted-foreground">
-              Nothing for &quot;{query.trim()}&quot; yet. Tell me about it on a call: maybe it&apos;s your project.
-            </p>
+          {q !== "" && hits.length === 0 && (
+            <>
+              <NotBuilt q={q} />
+              {closest.length > 0 && <Group id="closest" label="Closest I've built" tiles={closest} onPick={pick} onKey={move} />}
+            </>
           )}
         </div>
 
-        <div className="explore-actions flex flex-wrap items-center justify-center gap-3 pt-3">
-          <a href="/blueprint" className={buttonVariants({ variant: "outline", size: "lg" })}>
-            Free AI blueprint
-          </a>
-          <BookCall size="lg" />
-        </div>
+        {/* The "not built yet" card already carries both buttons. */}
+        {!(q !== "" && hits.length === 0) && (
+          <div className="explore-actions flex flex-wrap items-center justify-center gap-3 pt-3">
+            <a href="/blueprint" className={buttonVariants({ variant: "outline", size: "lg" })}>
+              Free AI blueprint
+            </a>
+            <BookCall size="lg" />
+          </div>
+        )}
       </div>
     </dialog>
   );
 }
 
-type HitProps = { hit: ExploreHit; onPick: () => void; onKey: (e: React.KeyboardEvent, el: HTMLElement) => void };
+type GroupProps = { id: string; label: string; tiles: readonly Tile[]; onPick: () => void; onKey: (e: React.KeyboardEvent, el: HTMLElement) => void };
 
-// "All projects": the one big card on top (Lubo: first and easy to spot),
-// the finish-line card style with its moving edge light (edge-card.css).
-const CHAPTER_CHIPS = [
-  ["analytics", "Analytics & dashboards"],
-  ["pipelines", "Data pipelines"],
-  ["ai", "AI agents"],
-] as const;
-function Featured({ hit: { item, matched }, onPick, onKey }: HitProps) {
+// One group of results: its label, then its tiles (rows on phones, a grid
+// on wider screens).
+function Group({ id, label, tiles, onPick, onKey }: GroupProps) {
   return (
-    <a
-      data-hit
-      href={item.href}
-      onClick={onPick}
-      onKeyDown={(e) => onKey(e, e.currentTarget)}
-      className="explore-featured edge-card flex shrink-0 items-center justify-between gap-5 rounded-2xl px-5 py-5 sm:px-7"
-    >
-      <span className="flex min-w-0 flex-col gap-2">
-        <span className="text-2xl font-semibold sm:text-3xl">{item.title}</span>
-        <span className="text-muted-foreground">{item.subtitle}</span>
-        <span className="flex flex-wrap gap-2 pt-1">
-          {CHAPTER_CHIPS.map(([c, label]) => (
-            <span key={c} data-chapter={c} className="pj-chip rounded-full px-2.5 py-0.5 text-xs font-semibold tracking-wide uppercase">
-              {label}
-            </span>
-          ))}
-        </span>
-        {matched.length > 0 && <span className="explore-matched text-xs">matched: {matched.join(", ")}</span>}
-      </span>
-      <span aria-hidden="true" className="explore-featured-arrow grid size-12 shrink-0 place-items-center rounded-full text-xl">
-        →
-      </span>
-    </a>
-  );
-}
-
-// One result tile (rows on phones, a grid per group on wider screens). A
-// page that is not built yet is plain text, not a link. Stories show their
-// headline number.
-function Hit({ hit: { item, matched }, onPick, onKey }: HitProps) {
-  const body = (
-    <>
-      <span className="flex min-w-0 flex-col gap-1">
-        <span className="font-semibold">{item.title}</span>
-        <span className="text-sm text-muted-foreground">{item.subtitle}</span>
-        {item.number && (
-          <span className="flex items-baseline gap-2 pt-1">
-            <span className="explore-number text-2xl font-semibold tabular-nums">{item.number.value}</span>
-            <span className="text-xs text-muted-foreground">{item.number.label}</span>
-          </span>
-        )}
-        {matched.length > 0 && <span className="explore-matched text-xs">matched: {matched.join(", ")}</span>}
-      </span>
-      {item.href && (
-        <span aria-hidden="true" className="explore-arrow shrink-0">
-          →
-        </span>
-      )}
-    </>
-  );
-  const cls = "explore-hit flex h-full items-start justify-between gap-3 rounded-xl px-3.5 py-3";
-  if (!item.href) return <div className={cls}>{body}</div>;
-  return (
-    <a data-hit href={item.href} onClick={onPick} onKeyDown={(e) => onKey(e, e.currentTarget)} className={cls}>
-      {body}
-    </a>
+    <section aria-label={label} data-group={id} className="explore-section flex flex-col gap-2.5 rounded-2xl p-3">
+      <h2 className="explore-group flex items-center gap-2 text-[11px] font-semibold tracking-[0.14em] uppercase">
+        <span aria-hidden="true" className="explore-dot" />
+        {label}
+      </h2>
+      <ul className={`explore-grid explore-grid--${id} grid gap-2`}>
+        {tiles.map((hit) => (
+          <li key={hit.item.title}>
+            <Hit hit={hit} onPick={onPick} onKey={onKey} />
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
