@@ -13,6 +13,7 @@
 @import "../components/project/project.css";
 @import "../components/project/brand-card.css";
 @import "../components/project/brand-kit.css";
+@import "../components/project/brand-kit-2.css";
 @import "../components/shelf/shelf.css";
 
 /* Dark only: `dark:` styles always apply (layout.tsx sets class="dark"),

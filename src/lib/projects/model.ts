@@ -91,6 +91,42 @@ export type ProjectPicture =
     }
   // One dot per `per` items, by group; lit groups glow.
   | { kind: "dots"; title: string; per: number; groups: readonly { label: string; count: number; lit?: boolean }[]; caption: string }
+  // Batch 2 (P5.6). Big before → after lines (cost, tokens, tools).
+  | { kind: "drops"; title: string; rows: readonly { label: string; before: string; after: string; cut: string }[]; caption: string }
+  // Counted things before vs after, drawn as dots.
+  | { kind: "tally"; title: string; unit: string; rows: readonly { label: string; before: number; after: number }[]; caption: string }
+  // Raw rows split into clean + held back (must add up), then the result.
+  | {
+      kind: "medallion";
+      title: string;
+      raw: { label: string; count: number };
+      clean: { label: string; count: number };
+      held: { label: string; count: number; detail: string };
+      gold: { label: string; detail: string };
+      caption: string;
+    }
+  // A week of scheduled work, day by day.
+  | { kind: "week"; title: string; days: readonly { day: string; posts: readonly string[] }[]; note: string; caption: string }
+  // An agent's tools: what it reads, what it writes, around one store.
+  | { kind: "toolbox"; title: string; read: readonly string[]; write: readonly string[]; center: string; caption: string }
+  // A question that takes one of two roads to the same answer.
+  | {
+      kind: "fork";
+      title: string;
+      question: string;
+      left: { label: string; detail: string };
+      right: { label: string; detail: string };
+      end: { label: string; detail: string };
+      caption: string;
+    }
+  // Groups of named items (e.g. stocks by sector) plus a few stats.
+  | {
+      kind: "sectors";
+      title: string;
+      groups: readonly { name: string; items: readonly string[] }[];
+      stats: readonly { value: string; label: string }[];
+      caption: string;
+    }
   // The same rows in two systems; the share that silently went missing.
   | {
       kind: "reconcile";
@@ -195,6 +231,18 @@ export function checkProject(p: Project): string[] {
     if (pic.per < 1 || dots > 400) out.push(`picture: too many dots (${dots}): raise "per" so the page stays light`);
   }
   if (pic.kind === "reconcile" && (pic.missingShare < 0 || pic.missingShare > 1)) out.push("picture: missingShare is between 0 and 1");
+  if (pic.kind === "drops" && pic.rows.length < 2) out.push("picture: drops needs 2+ rows");
+  if (pic.kind === "tally") {
+    if (pic.rows.length < 2) out.push("picture: tally needs 2+ rows");
+    for (const r of pic.rows) if (r.after > r.before) out.push(`picture: tally "${r.label}" grew: check the data`);
+    if (pic.rows.some((r) => r.before > 40)) out.push("picture: tally draws one dot each: keep rows under 40 dots");
+  }
+  if (pic.kind === "medallion" && pic.clean.count + pic.held.count !== pic.raw.count) {
+    out.push(`picture: medallion ${pic.clean.label} + ${pic.held.label} must add up to ${pic.raw.label} (nothing lost)`);
+  }
+  if (pic.kind === "week" && pic.days.length !== 7) out.push("picture: a week needs 7 days");
+  if (pic.kind === "toolbox" && (pic.read.length === 0 || pic.write.length === 0)) out.push("picture: a toolbox needs read and write tools");
+  if (pic.kind === "sectors" && pic.groups.length < 2) out.push("picture: sectors needs 2+ groups");
   if (blank(pic.caption)) out.push("picture: caption is empty");
   if (p.chapter === "ai" && !p.anatomy) out.push("anatomy is required for an AI agent (model, harness, guardrails, knowledge, tools)");
   if (p.anatomy) {

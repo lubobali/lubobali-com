@@ -34,7 +34,7 @@ export const synonyms: readonly (readonly string[])[] = [
   ["customers leaving", "employees leaving", "flight risk", "churn", "attrition", "people leave", "quit", "turnover", "retention"],
   ["fraud", "money laundering", "aml", "suspicious", "scam"],
   ["by hand", "manual", "copy paste", "repetitive"],
-  ["automate", "automation", "automatic", "automated", "workflow"],
+  ["automate", "automation", "automatic", "automated", "automatically", "workflow"],
   ["reports", "reporting", "dashboard", "kpi", "bi", "visualization", "charts"],
   ["month end", "close the books", "reconciliation"],
   ["bad data", "data quality", "dq", "validation", "audit", "wrong numbers"],
@@ -47,6 +47,10 @@ export const synonyms: readonly (readonly string[])[] = [
   ["sentiment", "mood", "feelings", "nlp", "text analysis"],
   // Word forms (P5.6): match each other even when both are on the site.
   ["analysis", "analyze", "analyzed", "analyse", "analysed", "analyzing"],
+  ["match", "matches", "matching", "matched"],
+  // A whole word on the site no longer matches longer words as a prefix
+  // ("posts" ≠ "PostgreSQL"), so related forms are listed here.
+  ["track", "tracking", "tracker", "tracked"],
   ["readmissions", "come back", "return to hospital"],
   ["late deliveries", "delays", "late", "on time"],
 

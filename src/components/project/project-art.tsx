@@ -4,6 +4,8 @@ import { BrandCard } from "./brand-card";
 import { GatesArt, RaceArt, RingsArt } from "./brand-charts";
 import { FlowArt, FunnelArt, LoopArt, ReconcileArt, StreamArt } from "./brand-charts-flow";
 import { DotsArt, KpisArt, LadderArt } from "./brand-charts-numbers";
+import { ForkArt, SectorsArt, ToolboxArt, WeekArt } from "./brand-charts-agents";
+import { DropsArt, MedallionArt, TallyArt } from "./brand-charts-compare";
 
 // The one picture of a project page. A real screen shows as itself; every
 // picture drawn in code shows inside Lubo's brand card (P5.6: his Publisher
@@ -59,6 +61,20 @@ function Art({ picture }: { picture: Exclude<ProjectPicture, { kind: "screen" }>
       return <KpisArt picture={picture} />;
     case "dots":
       return <DotsArt picture={picture} />;
+    case "drops":
+      return <DropsArt picture={picture} />;
+    case "tally":
+      return <TallyArt picture={picture} />;
+    case "medallion":
+      return <MedallionArt picture={picture} />;
+    case "week":
+      return <WeekArt picture={picture} />;
+    case "toolbox":
+      return <ToolboxArt picture={picture} />;
+    case "fork":
+      return <ForkArt picture={picture} />;
+    case "sectors":
+      return <SectorsArt picture={picture} />;
     case "chart":
       return <LadderArt picture={picture} />;
     case "flow":

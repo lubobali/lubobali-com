@@ -141,12 +141,14 @@ function parse(query: string, syn: ReturnType<typeof prepareSynonyms>): Term[] {
 // How well a typed word fits each word of the site's vocabulary: done
 // once per search (not once per doc), so 500 docs stay ~1 ms. A word that
 // exists on the site (or starts one) is never read as a typo of another
-// word: "stock" must not find "stack".
+// word: "stock" must not find "stack". And a whole word that exists on the
+// site is not also a prefix of longer ones: "posts" must not find
+// "PostgreSQL" (prefixes are for words still being typed: "postg").
 function fits(typed: string, vocabulary: readonly string[]): Map<string, number> {
   const out = new Map<string, number>();
+  if (vocabulary.includes(typed)) return out.set(typed, QUALITY.exact);
   for (const w of vocabulary) {
-    if (w === typed) out.set(w, QUALITY.exact);
-    else if (typed.length >= 3 && w.startsWith(typed)) out.set(w, QUALITY.prefix);
+    if (typed.length >= 3 && w.startsWith(typed)) out.set(w, QUALITY.prefix);
   }
   const limit = typoLimit(typed);
   if (out.size > 0 || !limit) return out;

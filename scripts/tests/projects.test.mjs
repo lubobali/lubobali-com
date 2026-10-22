@@ -200,3 +200,34 @@ test("two neighbours in a chapter never share a picture kind (each one easy to r
   assert.deepEqual(kindClashes([p("a", "ai", "loop"), p("b", "pipelines", "loop"), p("c", "ai", "gates")]), []);
   assert.match(kindClashes([p("a", "ai", "loop"), p("b", "ai", "loop")]).join(), /a and b/);
 });
+
+// Batch 2 kinds (P5.6).
+test("drops and tally: before vs after, never invented as worse", () => {
+  const drops = { kind: "drops", title: "t", rows: [{ label: "Cost per question", before: "$12", after: "$0.001", cut: "12,000× cheaper" }], caption: "c" };
+  assert.match(withPicture(drops).join(), /drops needs 2\+/);
+  const two = { ...drops, rows: [...drops.rows, { label: "Tokens", before: "571K", after: "133", cut: "99.98% less" }] };
+  assert.deepEqual(withPicture(two), []);
+  const tally = { kind: "tally", title: "t", unit: "calls", rows: [{ label: "Tool calls", before: 19, after: 4 }, { label: "Searches", before: 11, after: 1 }], caption: "c" };
+  assert.deepEqual(withPicture(tally), []);
+  assert.match(withPicture({ ...tally, rows: [{ label: "x", before: 2, after: 5 }, tally.rows[0]] }).join(), /grew/);
+  assert.match(withPicture({ ...tally, rows: [{ label: "x", before: 90, after: 1 }, tally.rows[0]] }).join(), /dots/);
+});
+
+test("medallion: clean + quarantined rows add up to the raw rows (nothing lost)", () => {
+  const m = { kind: "medallion", title: "t", raw: { label: "Bronze", count: 18 }, clean: { label: "Silver", count: 15 }, held: { label: "Quarantine", count: 3, detail: "d" }, gold: { label: "Gold", detail: "d" }, caption: "c" };
+  assert.deepEqual(withPicture(m), []);
+  assert.match(withPicture({ ...m, held: { ...m.held, count: 2 } }).join(), /add up/);
+});
+
+test("week, toolbox, fork, sectors: enough parts to draw", () => {
+  const week = { kind: "week", title: "t", days: [{ day: "Sun", posts: ["a"] }], note: "n", caption: "c" };
+  assert.match(withPicture(week).join(), /7 days/);
+  const toolbox = { kind: "toolbox", title: "t", read: ["a"], write: ["b"], center: "db", caption: "c" };
+  assert.deepEqual(withPicture(toolbox), []);
+  assert.match(withPicture({ ...toolbox, write: [] }).join(), /toolbox/);
+  const side = { label: "x", detail: "y" };
+  const fork = { kind: "fork", title: "t", question: "q", left: side, right: side, end: side, caption: "c" };
+  assert.deepEqual(withPicture(fork), []);
+  const sectors = { kind: "sectors", title: "t", groups: [{ name: "Tech", items: ["AAPL"] }], stats: [{ value: "6", label: "tools" }], caption: "c" };
+  assert.match(withPicture(sectors).join(), /sectors needs 2\+/);
+});

@@ -122,6 +122,21 @@ test("word forms match each other even when both are on the site (analysis = ana
   assert.deepEqual(s("analyze").hits.map((h) => h.id).sort(), ["a", "b"]);
 });
 
+// Found in P5.6 batch 2: "posts" (a real word on the site) also matched
+// "PostgreSQL" as a prefix, so "LinkedIn posts" listed database projects.
+// A whole word that exists on the site is not also a prefix of others.
+test("a whole word on the site is not a prefix of others (posts is not PostgreSQL)", () => {
+  const s = createSearch(
+    [
+      { id: "pub", title: "Publisher", keywords: [], text: "writes 9 posts a week" },
+      { id: "db", title: "Migration", keywords: ["PostgreSQL"], text: "a database move" },
+    ],
+    [],
+  );
+  assert.deepEqual(s("posts").hits.map((h) => h.id), ["pub"]);
+  assert.deepEqual(s("postg").hits.map((h) => h.id), ["db"]); // still a prefix while typing
+});
+
 test("CEO verbs are filler: make my pipeline faster", () => {
   const s = createSearch([{ id: "spark", title: "Spark tuning", keywords: [], text: "a slow pipeline made 4x faster" }], realSynonyms);
   const r = s("make my pipeline faster");

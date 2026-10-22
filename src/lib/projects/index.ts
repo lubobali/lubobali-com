@@ -1,9 +1,17 @@
 import { createSearch } from "@/lib/search/engine";
 import { synonyms } from "@/lib/search/synonyms";
 import { awsJobStreamer } from "./aws-job-streamer";
+import { bitcoinStreaming } from "./bitcoin-streaming";
+import { briefMe } from "./briefme-ai";
+import { citibike } from "./citibike-agent";
 import { cvsContractors } from "./cvs-contractor-performance";
+import { dbtWap } from "./dbt-airflow-wap";
 import { diabetesReadmissions } from "./diabetes-readmissions";
 import { employeeSentiment } from "./employee-sentiment";
+import { jobRadar } from "./jobradar-ai";
+import { langchainAgents } from "./langchain-agents";
+import { publisher } from "./lubo-ai-publisher";
+import { marketMind } from "./marketmind-ai";
 import { mergeAI } from "./mergeai";
 import { CHAPTERS, type Chapter, checkProject, kindClashes, type Project } from "./model";
 import { portfolioScope } from "./portfolioscope";
@@ -20,11 +28,19 @@ export const projects: readonly Project[] = [
   // AI agents
   mergeAI,
   sentinelAI,
+  langchainAgents,
+  publisher,
+  briefMe,
+  jobRadar,
+  citibike,
+  marketMind,
   // Data pipelines
   sqlServerToPostgres,
   awsJobStreamer,
   ticketDesk,
   sparkTuning,
+  dbtWap,
+  bitcoinStreaming,
   portfolioScope,
   // Analytics & dashboards
   diabetesReadmissions,

@@ -1,0 +1,124 @@
+/* Brand-card picture kit, batch 2 (brand-charts-compare.tsx,
+   brand-charts-agents.tsx, P5.6): drops, tally, medallion, week, toolbox,
+   fork, sectors. Same world colours as brand-kit.css (--a, --a-dk, --up,
+   --down). Complete at rest. */
+
+/* Drops: before struck and dim, after lit. */
+.bc-drop-row {
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--a) 18%, transparent);
+}
+.bc-drop-row:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+.bc-before {
+  font-size: 1.15rem;
+  color: var(--muted);
+  text-decoration-color: color-mix(in srgb, var(--down) 80%, transparent);
+  text-decoration-thickness: 2px;
+}
+.bc-after {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: clamp(1.6rem, 3.2vw, 2.2rem);
+  line-height: 1;
+  color: var(--a);
+  text-shadow: 0 0 24px color-mix(in srgb, var(--a) 45%, transparent);
+}
+.bc-cut {
+  margin-left: auto;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #04060a;
+  background: var(--a);
+}
+
+/* Tally: one dot per item. */
+.bc-tally-dot {
+  display: inline-block;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.16);
+}
+.bc-tally-dot[data-lit] {
+  background: var(--a);
+  box-shadow: 0 0 8px var(--a);
+}
+
+/* Layers (medallion, fork): boxes in tiers. */
+.bc-layer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.8rem;
+  border: 1px solid color-mix(in srgb, var(--a) 35%, transparent);
+  background: rgb(255 255 255 / 0.03);
+}
+.bc-layer[data-tier="clean"] {
+  background: color-mix(in srgb, var(--a) 14%, transparent);
+}
+.bc-layer[data-tier="held"] {
+  border-color: color-mix(in srgb, var(--down) 60%, transparent);
+  background: color-mix(in srgb, var(--down) 10%, transparent);
+}
+.bc-layer[data-tier="gold"] {
+  align-self: center;
+  border-color: var(--a);
+  background: color-mix(in srgb, var(--a) 22%, transparent);
+  box-shadow: 0 0 24px -8px var(--a);
+}
+
+/* Week: day columns with post slots. */
+.bc-day {
+  padding: 0.5rem 0.2rem;
+  border-radius: 0.6rem;
+  background: rgb(255 255 255 / 0.03);
+}
+.bc-slot {
+  display: block;
+  width: 70%;
+  height: 0.9rem;
+  border-radius: 0.3rem;
+  background: var(--a);
+  box-shadow: 0 0 10px -2px var(--a);
+}
+
+/* Toolbox: read tools cool, write tools lit. */
+.bc-tool {
+  padding: 0.35rem 0.6rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgb(255 255 255 / 0.08);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+}
+.bc-tool[data-kind="write"] {
+  border-color: color-mix(in srgb, var(--a) 45%, transparent);
+  background: color-mix(in srgb, var(--a) 12%, transparent);
+}
+.bc-store {
+  padding: 0.6rem;
+  border-radius: 0.8rem;
+  border: 1px dashed color-mix(in srgb, var(--a) 55%, transparent);
+  font-weight: 600;
+}
+
+/* Fork: the question on top. */
+.bc-question {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+/* Sectors: ticker chips. */
+.bc-ticker {
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.4rem;
+  border: 1px solid color-mix(in srgb, var(--a) 35%, transparent);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
