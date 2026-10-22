@@ -1,0 +1,313 @@
+/* Project pages (Phase 5 P5.3, src/app/projects/[slug]). One tone per
+   chapter, inside the brand blues (same tones as Explore): a card says its
+   chapter at a glance. Motion = progressive: complete at rest, and only
+   when the visitor allows motion. */
+[data-chapter="analytics"] {
+  --pj: var(--tone-ice);
+}
+[data-chapter="pipelines"] {
+  --pj: var(--tone-violet);
+}
+[data-chapter="ai"] {
+  --pj: var(--link);
+}
+
+.pj-chip {
+  color: var(--pj);
+  border: 1px solid color-mix(in oklch, var(--pj) 45%, transparent);
+  background: color-mix(in oklch, var(--pj) 10%, transparent);
+}
+
+/* The one number: light text that fades into the chapter tone, with a
+   soft glow behind it. */
+.pj-number {
+  background: linear-gradient(100deg, var(--foreground) 30%, var(--pj));
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 28px color-mix(in oklch, var(--pj) 40%, transparent));
+}
+
+.pj-cta {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: 0 10px 40px -12px color-mix(in oklch, var(--pj) 80%, transparent);
+  transition: box-shadow 0.2s;
+}
+.pj-cta:hover {
+  box-shadow: 0 10px 50px -8px color-mix(in oklch, var(--pj) 95%, transparent);
+}
+
+/* Glass panel for the drawn picture: thin light line on top + tone glow,
+   like the case-study screens (.cs-screen-frame). */
+.pj-art {
+  position: relative;
+  border: 1px solid color-mix(in oklch, var(--pj) 30%, var(--border));
+  background:
+    radial-gradient(120% 80% at 100% 0%, color-mix(in oklch, var(--pj) 12%, transparent), transparent 60%),
+    color-mix(in oklch, var(--card) 80%, transparent);
+  box-shadow: 0 30px 80px -40px color-mix(in oklch, var(--pj) 60%, transparent);
+}
+.pj-art::before {
+  content: "";
+  position: absolute;
+  inset: 0 14% auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in oklch, var(--pj) 90%, white), transparent);
+}
+
+/* Chart bars: honest scale from zero; the top bar carries the tone. */
+.pj-track {
+  background: color-mix(in oklch, var(--foreground) 8%, transparent);
+}
+.pj-bar {
+  background: color-mix(in oklch, var(--pj) 45%, var(--border));
+  transform-origin: left;
+}
+.pj-bar[data-top] {
+  background: linear-gradient(90deg, color-mix(in oklch, var(--pj) 55%, transparent), var(--pj));
+  box-shadow: 0 0 18px -2px color-mix(in oklch, var(--pj) 70%, transparent);
+}
+
+/* Flow: steps on a line; a soft light travels down it. */
+.pj-flow {
+  position: relative;
+}
+.pj-flow::before {
+  content: "";
+  position: absolute;
+  top: 1.5rem;
+  bottom: 1.5rem;
+  left: calc(1rem + 1rem - 0.5px); /* step padding + half the number */
+  width: 1px;
+  background: linear-gradient(transparent, color-mix(in oklch, var(--pj) 55%, transparent), transparent);
+}
+.pj-step {
+  position: relative;
+  border: 1px solid color-mix(in oklch, var(--pj) 20%, var(--border));
+  background: color-mix(in oklch, var(--background) 55%, transparent);
+}
+.pj-step-n {
+  color: var(--background);
+  background: var(--pj);
+  box-shadow: 0 0 20px -4px var(--pj);
+}
+
+/* The story as a journey (Lubo 2026-10-22: "lighter to darker along the
+   story"): the same blues as the home "How it works" steps (--journey-N,
+   contrast-checked), lightest at the problem, darkest at the result; the
+   anatomy and Safe by design continue darker below. Text on these blues =
+   --card-text-soft (checked against --journey-1, the lightest). */
+.pj-answer,
+.pj-part,
+.pj-safe {
+  --from: var(--journey-1);
+  --to: var(--journey-2);
+}
+.pj-answer .text-muted-foreground,
+.pj-part .text-muted-foreground,
+.pj-safe .text-muted-foreground,
+.pj-similar .text-muted-foreground {
+  color: var(--card-text-soft);
+}
+.pj-answer:nth-child(2) {
+  --from: var(--journey-2);
+  --to: var(--journey-3);
+}
+.pj-answer:nth-child(3) {
+  --from: var(--journey-3);
+  --to: var(--journey-4);
+}
+.pj-answer:nth-child(4) {
+  --from: var(--journey-4);
+  --to: var(--journey-5);
+}
+
+.pj-index {
+  color: var(--award);
+}
+.pj-tech {
+  border: 1px solid color-mix(in oklch, var(--pj) 35%, var(--border));
+  color: var(--foreground);
+}
+
+.pj-similar {
+  --from: var(--journey-4);
+  --to: var(--journey-5);
+  transition: transform 0.2s;
+}
+.pj-similar:hover,
+.pj-similar:focus-visible {
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Bars grow as they scroll into view (browsers without scroll timelines
+     simply show them full). */
+  @supports (animation-timeline: view()) {
+    .pj-bar {
+      animation: pj-grow linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 35%;
+    }
+  }
+  .pj-flow::after {
+    content: "";
+    position: absolute;
+    left: calc(2rem - 3px);
+    top: 1.5rem;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--pj);
+    box-shadow: 0 0 12px 2px var(--pj);
+    animation: pj-run 3.6s ease-in-out infinite;
+  }
+}
+@keyframes pj-grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes pj-run {
+  0% {
+    top: 1.5rem;
+    opacity: 0;
+  }
+  15%,
+  85% {
+    opacity: 1;
+  }
+  100% {
+    top: calc(100% - 1.5rem);
+    opacity: 0;
+  }
+}
+
+/* Proof, Safe by design, agent anatomy (project-trust.tsx). */
+.pj-proof {
+  color: var(--foreground);
+}
+.pj-proof > span {
+  color: var(--pj);
+}
+.pj-safe {
+  --from: var(--journey-4);
+  --to: var(--journey-5);
+}
+.pj-shield {
+  color: var(--pj);
+  filter: drop-shadow(0 0 12px color-mix(in oklch, var(--pj) 60%, transparent));
+}
+/* The 5 parts on one line: a thin tone line runs behind them on wide
+   screens, like the harness holding the agent together. */
+.pj-anatomy {
+  position: relative;
+}
+@media (min-width: 1024px) {
+  .pj-anatomy::before {
+    content: "";
+    position: absolute;
+    left: 2%;
+    right: 2%;
+    top: 2.1rem;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, color-mix(in oklch, var(--pj) 60%, transparent), transparent);
+  }
+}
+.pj-part {
+  position: relative;
+  --from: var(--journey-3);
+  --to: var(--journey-4);
+}
+.pj-part:nth-child(n + 3) {
+  --from: var(--journey-4);
+  --to: var(--journey-5);
+}
+.pj-part-n {
+  color: var(--background);
+  background: var(--pj);
+  box-shadow: 0 0 14px -2px var(--pj);
+}
+
+/* Every card like the home finish-line card (.finale-card, Lubo
+   2026-10-22: "these cards look better"): a slow light beam travels round
+   the edge (::before, a turning cone in the chapter tone + platinum), the
+   face is lit from the top centre in the card's story colour (::after,
+   lighter -> darker down the page), and a soft tone glow sits outside.
+   Same award-beam keyframes as the home cards; each card starts elsewhere
+   so they never move together. Reduced motion = the beams stand still. */
+.pj-answer,
+.pj-part,
+.pj-safe,
+.pj-similar {
+  --r: 1.5rem;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  /* Same soft glow as .finale-card (--glow-sky = 18%), in the chapter tone. */
+  box-shadow:
+    0 0 48px -8px color-mix(in oklch, var(--pj) 18%, transparent),
+    0 0 140px -30px color-mix(in oklch, var(--pj) 18%, transparent);
+}
+.pj-part {
+  --r: 1rem;
+}
+.pj-answer::before,
+.pj-part::before,
+.pj-safe::before,
+.pj-similar::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: -2;
+  width: 250%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  background: conic-gradient(
+    var(--border) 0 30%,
+    var(--pj) 42%,
+    var(--award) 46%,
+    var(--border) 56% 80%,
+    var(--pj) 92%,
+    var(--award) 95%,
+    var(--border) 100%
+  );
+}
+.pj-answer::after,
+.pj-part::after,
+.pj-safe::after,
+.pj-similar::after {
+  content: "";
+  position: absolute;
+  inset: 1.5px;
+  z-index: -1;
+  border-radius: calc(var(--r) - 1.5px);
+  background: radial-gradient(ellipse 90% 75% at 50% 0%, var(--from), var(--to));
+  box-shadow: inset 0 1px 0 color-mix(in oklch, var(--award) 45%, transparent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .pj-answer::before,
+  .pj-part::before,
+  .pj-safe::before,
+  .pj-similar::before {
+    animation: award-beam 16s linear infinite;
+  }
+  .pj-answer:nth-child(2)::before,
+  .pj-part:nth-child(2)::before,
+  li:nth-child(2) > .pj-similar::before {
+    animation-delay: -4s;
+  }
+  .pj-answer:nth-child(3)::before,
+  .pj-part:nth-child(3)::before,
+  li:nth-child(3) > .pj-similar::before {
+    animation-delay: -8s;
+  }
+  .pj-answer:nth-child(4)::before,
+  .pj-part:nth-child(4)::before {
+    animation-delay: -12s;
+  }
+  .pj-part:nth-child(5)::before {
+    animation-delay: -2s;
+  }
+}

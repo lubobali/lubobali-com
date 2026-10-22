@@ -30,7 +30,7 @@ const MAX_QUERY = 100; // characters; longer input is cut, never slow
 const FILLER = new Set(
   ("a an and any are as at be by can do does for from have help how i in is it me my need of on " +
     "or our some something that the their there this to us want we what which who with you your " +
-    "build built find example examples like looking project projects similar show")
+    "about build built find example examples like looking project projects similar show")
     .split(" "),
 );
 
@@ -81,9 +81,10 @@ const typoLimit = (w: string) => (w.length >= 8 ? 2 : w.length >= 5 ? 1 : 0);
 
 type Field = { weight: number; words: Set<string>; joined: string; label?: string };
 type Prepared = { doc: SearchDoc; fields: Field[] };
-// One query term: what the visitor typed (`typed`, typo + prefix allowed)
-// and same-meaning alternatives (each a word list, matched exactly).
-type Term = { typed?: string; alternatives: string[][] };
+// One query term: what the visitor typed (`typed`, stemmed; typo + prefix
+// allowed), how to show it back (`shown`, never trimmed) and same-meaning
+// alternatives (each a word list, matched exactly).
+type Term = { typed?: string; shown: string; alternatives: string[][] };
 
 function prepare(doc: SearchDoc): Prepared {
   const field = (weight: number, text: string, label?: string): Field => {
@@ -115,7 +116,8 @@ function prepareSynonyms(groups: readonly (readonly string[])[]) {
 }
 
 function parse(query: string, syn: ReturnType<typeof prepareSynonyms>): Term[] {
-  const all = words(query.slice(0, MAX_QUERY));
+  const raw = normalize(query.slice(0, MAX_QUERY)).split(" ").filter(Boolean);
+  const all = raw.map(stem);
   const terms: Term[] = [];
   for (let i = 0; i < all.length; ) {
     let used = 0;
@@ -123,12 +125,12 @@ function parse(query: string, syn: ReturnType<typeof prepareSynonyms>): Term[] {
     for (let n = Math.min(syn.longest, all.length - i); n >= 1 && !used; n--) {
       const group = syn.byPhrase.get(all.slice(i, i + n).join(" "));
       if (group) {
-        terms.push({ typed: n === 1 ? all[i] : undefined, alternatives: group });
+        terms.push({ typed: n === 1 ? all[i] : undefined, shown: raw.slice(i, i + n).join(" "), alternatives: group });
         used = n;
       }
     }
     if (!used) {
-      if (!FILLER.has(all[i])) terms.push({ typed: all[i], alternatives: [] });
+      if (!FILLER.has(all[i])) terms.push({ typed: all[i], shown: raw[i], alternatives: [] });
       used = 1;
     }
     i += used;
@@ -189,7 +191,7 @@ export function createSearch(docs: readonly SearchDoc[], synonyms: readonly (rea
         if (best > 0) {
           hitTerms++;
           score += best;
-          const shown = label ?? (term.typed && !fields[0].words.has(term.typed) ? term.typed : undefined);
+          const shown = label ?? (term.typed && !fields[0].words.has(term.typed) ? term.shown : undefined);
           if (shown && !matched.includes(shown)) matched.push(shown);
         }
       });

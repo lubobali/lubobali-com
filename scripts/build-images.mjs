@@ -35,6 +35,9 @@ const PHOTOS = {
   "lubot-stock-chart.png": "lubot-stock-chart",
   "lubot-ai-noticed.png": "lubot-ai-noticed",
   "lubot-portfolio.png": "lubot-portfolio",
+  // Project pages (Phase 5): screens from Lubo's own public repos only
+  // (Framer's stock photos are never reused).
+  "mergeai-dashboard.png": "mergeai-dashboard", // github.com/lubobali/mergeAI screenshots/
 };
 const WIDTHS = [400, 640, 960, 1280, 1920, 2560];
 const FORMATS = {

@@ -1,5 +1,6 @@
 import type { Graph } from "schema-dts";
 import type { CaseStudy } from "@/lib/case-studies/types";
+import type { Project } from "@/lib/projects/model";
 import { imageUrl } from "@/lib/images";
 import { intro } from "@/lib/intro";
 import { services } from "@/lib/services";
@@ -122,6 +123,41 @@ export function caseStudyGraph(cs: CaseStudy): Graph {
         publisher: { "@id": id("person") },
         isPartOf: { "@id": id("website") },
         about: { "@type": "Thing", name: cs.name },
+      },
+    ],
+  };
+}
+
+// A project page (Phase 5 P5.3): breadcrumbs (Home › Projects › name,
+// shown in Google results) + the work itself. A project with a public repo
+// is SoftwareSourceCode (repo + tech), others a CreativeWork; both by the
+// same Person as the rest of the site.
+export function projectGraph(p: Project): Graph {
+  const url = `${site.url}/projects/${p.slug}`;
+  const repo = p.links.find((l) => l.kind === "github")?.url;
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${url}#breadcrumbs`,
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${site.url}/` },
+          { "@type": "ListItem", position: 2, name: "Projects", item: `${site.url}/projects` },
+          { "@type": "ListItem", position: 3, name: p.name, item: url },
+        ],
+      },
+      {
+        "@type": repo ? "SoftwareSourceCode" : "CreativeWork",
+        "@id": `${url}#work`,
+        name: p.name,
+        description: p.description,
+        url,
+        inLanguage: "en",
+        keywords: [...p.industries, ...p.tech].join(", "),
+        ...(repo ? { codeRepository: repo, programmingLanguage: p.tech.join(", ") } : {}),
+        author: { "@id": id("person") },
+        isPartOf: { "@id": id("website") },
       },
     ],
   };

@@ -1,6 +1,8 @@
 import { storyPath } from "@/lib/case-studies";
 import { intro } from "@/lib/intro";
 import { now, steps, terms } from "@/lib/process";
+import { projectsIn } from "@/lib/projects";
+import { CHAPTERS } from "@/lib/projects/model";
 import { services } from "@/lib/services";
 import { site } from "@/lib/site";
 import { work } from "@/lib/work";
@@ -42,6 +44,17 @@ ${services.map((s) => `- **${s.name}**: ${s.description} Proof: ${s.proof}`).joi
 ## Selected work
 
 ${work.map((w) => `### ${w.name}\n\n${plain(w.role)}. ${w.summary}\n\n${list(w.highlights)}${links(w).length ? "\n\n" + links(w).map((l) => `- [${l.label}](${l.url})`).join("\n") : ""}`).join("\n\n")}
+
+## More projects
+${(Object.keys(CHAPTERS) as (keyof typeof CHAPTERS)[])
+  .map((c) => {
+    const inChapter = projectsIn(c);
+    if (inChapter.length === 0) return "";
+    const items = inChapter.map((p) => `- [${p.name}](${site.url}/projects/${p.slug}): ${p.oneLine}. ${p.number.value} ${p.number.label}.`);
+    return `### ${CHAPTERS[c]}\n\n${items.join("\n")}`;
+  })
+  .filter(Boolean)
+  .join("\n\n")}
 
 ## How it works
 

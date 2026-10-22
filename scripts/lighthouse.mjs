@@ -15,7 +15,7 @@ import { mkdtemp, readdir, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
-import { gatePage, isFlake, medianSummary, samplePages, summarize } from "./lib/lighthouse.mjs";
+import { gatePage, isFlake, medianSummary, pictureKind, samplePages, summarize } from "./lib/lighthouse.mjs";
 
 const [url, build, env = "staging", runsArg = "3"] = process.argv.slice(2);
 if (!url || !build) {
@@ -36,6 +36,7 @@ for (const f of files) {
     path: f === "index.html" ? "/" : "/" + f.replace(/\.html$/, ""),
     indexable: !/<meta name="robots" content="[^"]*noindex/.test(html),
     bytes: html.length,
+    kind: pictureKind(html),
   });
 }
 // One-template pages are sampled (see samplePages); the rest all run.

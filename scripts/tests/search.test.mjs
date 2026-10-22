@@ -87,6 +87,11 @@ test("a real word is never treated as a typo of another (stock is not stack)", (
   assert.deepEqual(s("stakc").hits.map((h) => h.id), ["dial"]); // a real typo still works
 });
 
+test("matched words are shown as typed, never trimmed (postgres, not postgre)", () => {
+  const s = createSearch([{ id: "m", title: "Move", keywords: [], text: "postgres analysis" }], []);
+  assert.deepEqual(s("postgres analysis").hits[0].matched, ["postgres", "analysis"]);
+});
+
 test("plurals and prefixes while typing", () => {
   assert.deepEqual(ids("readmission"), ["diabetes"]);
   assert.deepEqual(ids("tabl"), ["nba"]);

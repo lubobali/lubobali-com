@@ -88,14 +88,28 @@ export function isFlake(err) {
 
 // Pages built from one template (Phase 5: /projects/<slug>, 35 -> 100+)
 // would push the gate past the 15-min CI limit at 3 runs each. Keep every
-// other page; from each template keep the 2 heaviest (largest HTML = most
-// likely to be slow). SEO/CSP/bot checks still cover every page.
+// other page; from each template keep the heaviest page of each picture
+// kind (chart / flow / screen: the picture is what changes speed, not the
+// text). At most 3 pages, however many projects. SEO/CSP/bot checks still
+// cover every page.
 export const SAMPLED = ["/projects/"];
-export function samplePages(pages, keep = 2) {
+export function samplePages(pages) {
   const out = pages.filter((p) => !SAMPLED.some((pre) => p.path.startsWith(pre)));
-  for (const pre of SAMPLED) {
-    const family = pages.filter((p) => p.path.startsWith(pre));
-    out.push(...family.sort((a, b) => b.bytes - a.bytes).slice(0, keep));
+  const best = new Map();
+  for (const p of pages) {
+    const pre = SAMPLED.find((x) => p.path.startsWith(x));
+    if (!pre) continue;
+    const key = `${pre}|${p.kind ?? ""}`;
+    if (!best.has(key) || p.bytes > best.get(key).bytes) best.set(key, p);
   }
+  out.push(...best.values());
   return out.sort((a, b) => (a.path < b.path ? -1 : 1));
+}
+
+// The picture kind of a built project page (project-art.tsx class names).
+export function pictureKind(html) {
+  if (html.includes("pj-track")) return "chart";
+  if (html.includes("pj-flow")) return "flow";
+  if (html.includes("cs-screen")) return "screen";
+  return undefined;
 }
