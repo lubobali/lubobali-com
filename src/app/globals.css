@@ -17,6 +17,7 @@
 @import "../components/project/brand-kit-3.css";
 @import "../components/project/brand-kit-4.css";
 @import "../components/shelf/shelf.css";
+@import "../components/about/about.css";
 
 /* Dark only: `dark:` styles always apply (layout.tsx sets class="dark"),
    not just when the visitor's OS is in dark mode. */
@@ -84,6 +85,9 @@
   --input: oklch(0.554 0.041 257.4); /* #64748b, form fields need 3:1 */
   --ring: oklch(0.68 0.155 266); /* #6b93f7 */
   --destructive: oklch(0.637 0.208 25.3); /* #ef4444 */
+  /* /about Security pill (Phase 6, Lubo: "red, like it should be"): a
+     lighter red than --destructive so small text stays 4.5:1 on dark cards. */
+  --alert: oklch(0.76 0.14 22);
   /* "Available" status dot (next to the availability text, so not the
      only signal); kept >= 3:1 like other UI parts. */
   --success: oklch(0.773 0.153 163.2); /* #34d399 */

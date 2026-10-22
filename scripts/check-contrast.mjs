@@ -46,6 +46,8 @@ const PAIRS = [
   ["tone-violet", "card", UI], // work cards: check marks + pictures
   ["sky", "card", TEXT], // /projects Filters panel: "Industry" title + jump link
   ["tone-violet", "card", TEXT], // /projects Filters panel: "Tech" title + jump link
+  // /about Security pill: red text on the vault card (journey-3 -> -5).
+  ...["journey-3", "journey-4", "journey-5"].map((bg) => ["alert", bg, TEXT]),
   ["tone-ice", "card", UI],
   ["foreground", "card-blue", MAIN], // blue card faces (services + work)
   ["muted-foreground", "card-blue", TEXT],

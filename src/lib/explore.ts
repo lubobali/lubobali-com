@@ -92,9 +92,10 @@ const pages: ExploreItem[] = [
   {
     group: "start",
     title: "About me",
-    subtitle: "Who I was, who I am, where I'm going",
-    keywords: ["about", "story", "bio"],
-    text: "background experience",
+    subtitle: "How I think, how I keep your data safe, and who I am",
+    href: "/about",
+    keywords: ["about", "story", "bio", "security", "data privacy", "encryption"],
+    text: "background experience basketball Bulgarian US citizen business first encrypted your cloud never trains AI",
   },
   {
     group: "start",

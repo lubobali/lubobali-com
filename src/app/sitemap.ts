@@ -11,6 +11,7 @@ export const dynamic = "force-static";
 
 const pages = [
   "/",
+  "/about",
   "/blueprint",
   "/projects",
   ...publishedCaseStudies().map((c) => `/work/${c.slug}`),

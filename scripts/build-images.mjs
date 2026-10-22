@@ -23,8 +23,11 @@ const CACHE = process.env.IMAGE_CACHE;
 // Original file -> public name (SEO-friendly, no spaces).
 const PHOTOS = {
   "DSC04525.JPG": "lubo-bali-portrait", // home hero
-  "DSC05154 copy.jpg": "lubo-bali-about",
-  "DSC04577.jpg": "lubo-bali-basketball",
+  // About (Phase 6, Lubo picked 2026-10-22): the gray-suit portrait with its
+  // white studio background swapped to the site navy (edge-only fill, so the
+  // white collar stays), and the basketball photo (dark studio, no edit).
+  "lubo-about-navy.jpg": "lubo-bali-about",
+  "DSC04614.jpg": "lubo-bali-basketball",
   "DSC05154 copy 2.jpg": "lubo-bali-headshot", // contact
   // Testimonial avatar (H10): Zach's LinkedIn photo, cropped to 240 px
   // (shown at 64 px, so 240 covers 3x screens). Used with his OK.

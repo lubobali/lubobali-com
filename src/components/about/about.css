@@ -1,0 +1,127 @@
+/* /about (Phase 6). Built on the site's beam card (edge-card.css): lighter
+   at the top of the page, darker going down (Lubo: "lighter to darker").
+   Big numbers + the quote in the brand serif (Fraunces, like the project
+   cards). Security = the vault: the darkest card, a faint turning dial,
+   each promise in its own glass tile. */
+.about-portrait {
+  --from: var(--journey-1);
+  --to: var(--journey-3);
+}
+.about-stat {
+  --from: var(--journey-2);
+  --to: var(--journey-4);
+}
+.about-figure {
+  font-family: var(--font-fraunces), Georgia, serif;
+  /* Phones: 2 columns of ~155px must fit "260,000+". */
+  font-size: clamp(1.9rem, 1.2rem + 3vw, 3.5rem);
+  line-height: 1;
+  white-space: nowrap;
+  background: linear-gradient(100deg, var(--foreground) 35%, var(--sky));
+  background-clip: text;
+  color: transparent;
+}
+
+.about-vault {
+  --r: 2rem;
+  --from: var(--journey-3);
+  --to: var(--journey-5);
+}
+/* The dial: faint rings at the top right, the LB logo in its middle. */
+.about-dial {
+  position: absolute;
+  top: -3.5rem;
+  right: -3.5rem;
+  width: 13rem;
+  aspect-ratio: 1;
+  pointer-events: none;
+}
+.about-dial svg {
+  width: 100%;
+  height: 100%;
+  color: var(--sky);
+  opacity: 0.2;
+}
+.about-dial-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: auto;
+  height: 22%;
+  translate: -50% -50%;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 18px color-mix(in oklch, var(--sky) 55%, transparent));
+}
+@media (min-width: 640px) {
+  .about-dial {
+    top: -5rem;
+    right: -5rem;
+    width: 26rem;
+  }
+}
+/* Accent rail on the left edge, like the chapter cards (.bc-rail). */
+.about-rail {
+  position: absolute;
+  top: 9%;
+  bottom: 9%;
+  left: 0;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: linear-gradient(180deg, var(--journey-1), var(--sky) 45%, var(--award) 74%, var(--sky));
+}
+/* Security pill: red, so it reads "security" at a glance (Lubo). */
+.about-security-eyebrow {
+  color: var(--alert);
+  border: 1px solid color-mix(in oklch, var(--alert) 55%, transparent);
+  background: color-mix(in oklch, var(--alert) 12%, transparent);
+  box-shadow: 0 0 22px -6px color-mix(in oklch, var(--alert) 70%, transparent);
+}
+.about-guard {
+  border: 1px solid color-mix(in oklch, var(--sky) 20%, transparent);
+  background: color-mix(in oklch, var(--background) 38%, transparent);
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
+}
+.about-guard:hover {
+  border-color: color-mix(in oklch, var(--sky) 55%, transparent);
+  background: color-mix(in oklch, var(--background) 22%, transparent);
+}
+.about-guard-icon {
+  color: var(--sky);
+  background: color-mix(in oklch, var(--sky) 12%, transparent);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklch, var(--sky) 35%, transparent),
+    0 0 24px -6px color-mix(in oklch, var(--sky) 70%, transparent);
+}
+
+.about-court {
+  --from: var(--journey-3);
+  --to: var(--journey-5);
+}
+.about-quote {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: clamp(1.75rem, 1.2rem + 2.4vw, 3rem);
+  line-height: 1.2;
+  background: linear-gradient(100deg, var(--foreground) 40%, var(--sky));
+  background-clip: text;
+  color: transparent;
+}
+.about-quote::before {
+  content: "“";
+}
+.about-quote::after {
+  content: "”";
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .about-dial svg {
+    animation: award-beam 120s linear infinite;
+  }
+}
+
+/* The signature's "· lubobali.com" (brand-card.css .bc-site) reads on the
+   chapter cards' own palette; on the vault it needs the soft card text. */
+.about-vault .bc-site {
+  color: var(--card-text-soft);
+}

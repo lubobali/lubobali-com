@@ -32,6 +32,12 @@ ${site.product.description}.
 
 ${site.availability}
 
+## About
+
+How I think, how I keep your data safe (encrypted, in your own cloud,
+never used to train AI, read-only by default) and who I am:
+${site.url}/about
+
 ## Contact
 
 - [${site.bookCall.label}](${site.bookCall.url})

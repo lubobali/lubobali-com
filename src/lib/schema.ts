@@ -103,6 +103,37 @@ export function homeGraph(): Graph {
   };
 }
 
+// /about (Phase 6): an AboutPage whose main entity is the same Person as
+// the home page (same @id, so Google merges the facts), plus what only this
+// page says: languages and schools (resume v11, plans docs/phase-6-facts.md).
+export function aboutGraph(): Graph {
+  const url = `${site.url}/about`;
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "AboutPage",
+        "@id": `${url}#page`,
+        url,
+        name: `About ${site.name}`,
+        isPartOf: { "@id": id("website") },
+        mainEntity: { "@id": id("person") },
+      },
+      {
+        "@type": "Person",
+        "@id": id("person"),
+        name: site.name,
+        image: imageUrl("lubo-bali-about"),
+        knowsLanguage: ["English", "Bulgarian"],
+        alumniOf: [
+          { "@type": "CollegeOrUniversity", name: "Lincoln Land Community College" },
+          { "@type": "CollegeOrUniversity", name: "National Sports Academy Vasil Levski" },
+        ],
+      },
+    ],
+  };
+}
+
 // A case study (Phase 4 C6b): an Article by Lubo, tied to the same Person
 // and WebSite ids as the home page, so search and AI assistants know who
 // built it. Client work (mystery) says "about" the client only by name.
