@@ -54,7 +54,7 @@ export const work = [
     summary:
       "Lead engineer for a multi-product B2B SaaS for payment-processing sales organizations. Built DataSwim, an automated residual and commission engine that replaces manual Excel.",
     highlights: [
-      "Residual engine end to end: 6 months of ledger, $31K+ in computed splits in the pilot",
+      "Residual engine end to end: ledger in, every commission split computed, no Excel",
       "AI column mapper: a new payment processor needs zero code change",
       "3-tier LLM gateway: 80% of queries at $0 LLM cost",
     ],
