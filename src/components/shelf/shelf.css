@@ -29,8 +29,8 @@
   outline: none;
 }
 
-/* Cards: lighter -> darker down the chapters. */
-.shelf-card[data-chapter="analytics"] {
+/* Cards: lighter -> darker down the chapters (AI agents first). */
+.shelf-card[data-chapter="ai"] {
   --from: var(--journey-1);
   --to: var(--journey-2);
 }
@@ -38,9 +38,44 @@
   --from: var(--journey-2);
   --to: var(--journey-4);
 }
-.shelf-card[data-chapter="ai"] {
+.shelf-card[data-chapter="analytics"] {
   --from: var(--journey-3);
   --to: var(--journey-5);
+}
+/* "See all 11 AI agents" (Lubo 2026-10-22: "make it more visible, the
+   projects are my assets"): a real button, like the main ones, with the
+   sky edge. */
+.shelf-more {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, var(--sky) 60%, transparent),
+    0 10px 40px -14px color-mix(in oklch, var(--sky) 80%, transparent);
+  transition:
+    box-shadow 0.2s,
+    transform 0.2s;
+}
+.shelf-more:hover,
+.shelf-more:focus-visible {
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, var(--sky) 70%, transparent),
+    0 12px 48px -10px color-mix(in oklch, var(--sky) 95%, transparent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .shelf-more:not([aria-expanded="true"]) .shelf-more-arrow {
+    animation: shelf-nudge 2.4s ease-in-out infinite;
+  }
+}
+@keyframes shelf-nudge {
+  0%,
+  60%,
+  100% {
+    translate: 0 0;
+  }
+  30% {
+    translate: 0 3px;
+  }
 }
 .shelf-card {
   transition: transform 0.2s;
@@ -62,8 +97,11 @@
 .shelf-matched {
   color: var(--link);
 }
+/* How many in each chapter, next to its title: easy to see at a glance. */
 .shelf-count {
-  color: var(--muted-foreground);
+  color: var(--foreground);
+  border: 1px solid color-mix(in oklch, var(--sky) 55%, var(--border));
+  background: color-mix(in oklch, var(--sky) 12%, transparent);
 }
 
 /* The 3 stories: the brightest cards, at the top of the journey. */

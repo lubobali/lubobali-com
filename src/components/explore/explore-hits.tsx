@@ -1,5 +1,6 @@
 import { BookCall } from "@/components/book-call";
 import { buttonVariants } from "@/components/ui/button";
+import { CHAPTER_ORDER, CHAPTERS } from "@/lib/projects/model";
 import type { SiteEntry } from "@/lib/search/site-index";
 
 // The result tiles of Explore (explore-panel.tsx). Lubo 2026-10-22: "All
@@ -13,11 +14,7 @@ type HitProps = { hit: Tile; onPick: () => void; onKey: (e: React.KeyboardEvent,
 
 // "All projects": the one big card on top (Lubo: first and easy to spot),
 // the finish-line card style with its moving edge light (edge-card.css).
-const CHAPTER_CHIPS = [
-  ["analytics", "Analytics & dashboards"],
-  ["pipelines", "Data pipelines"],
-  ["ai", "AI agents"],
-] as const;
+
 export function Featured({ hit: { item, matched }, onPick, onKey }: HitProps) {
   return (
     <a
@@ -31,9 +28,9 @@ export function Featured({ hit: { item, matched }, onPick, onKey }: HitProps) {
         <span className="text-2xl font-semibold sm:text-3xl">{item.title}</span>
         <span className="text-muted-foreground">{item.subtitle}</span>
         <span className="flex flex-wrap gap-2 pt-1">
-          {CHAPTER_CHIPS.map(([c, label]) => (
+          {CHAPTER_ORDER.map((c) => (
             <span key={c} data-chapter={c} className="pj-chip rounded-full px-2.5 py-0.5 text-xs font-semibold tracking-wide uppercase">
-              {label}
+              {CHAPTERS[c]}
             </span>
           ))}
         </span>

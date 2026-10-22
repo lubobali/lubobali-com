@@ -37,7 +37,8 @@ test("a complete project passes", () => {
 });
 
 test("the fixed lists exist (a typo can't invent a filter)", () => {
-  assert.deepEqual(Object.keys(CHAPTERS), ["analytics", "pipelines", "ai"]);
+  // Page order too: AI agents first (Lubo 2026-10-22: "this is hot right now").
+  assert.deepEqual(Object.keys(CHAPTERS), ["ai", "pipelines", "analytics"]);
   assert.ok(INDUSTRIES.includes("Health"));
 });
 

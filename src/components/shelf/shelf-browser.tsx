@@ -2,7 +2,7 @@
 
 import { type ReactNode, useEffect, useState } from "react";
 import { flushSync } from "react-dom";
-import type { Chapter } from "@/lib/projects/model";
+import { CHAPTER_ORDER, type Chapter } from "@/lib/projects/model";
 import type { SiteGroup } from "@/lib/search/site-index";
 import { useSiteSearch } from "@/lib/search/use-site-search";
 import { countOptions, type Lens, matchesFilters, readShelfUrl, type ShelfFilters, type ShelfState, shelfUrl } from "@/lib/projects/shelf";
@@ -17,7 +17,6 @@ import { type Card, CardGrid, Chapters, NotBuiltYet } from "./shelf-results";
 // to show. Styles: shelf.css.
 
 export type ShelfEntry = { id: string; chapter?: Chapter; industries: readonly string[]; tech: readonly string[] };
-const CHAPTER_ORDER: readonly Chapter[] = ["analytics", "pipelines", "ai"];
 const EMPTY: ShelfState = { filters: { industry: [], tech: [] }, q: "" };
 const SHELF_GROUPS: readonly SiteGroup[] = ["stories", "projects"];
 
@@ -32,6 +31,7 @@ export function ShelfBrowser(props: {
 }) {
   const { entries, cards, options } = props;
   const [state, setState] = useState<ShelfState>(EMPTY);
+  const [opened, setOpened] = useState<readonly Chapter[]>([]);
   const { load, run, ready } = useSiteSearch(SHELF_GROUPS);
 
   useEffect(() => {
@@ -160,7 +160,12 @@ export function ShelfBrowser(props: {
       ) : (
         <>
           {!filtersOn && props.stories}
-          <Chapters groups={groups} cards={cards} />
+          <Chapters
+            groups={groups}
+            cards={cards}
+            open={(c) => filtersOn || opened.includes(c)}
+            onToggle={(c) => setOpened(opened.includes(c) ? opened.filter((x) => x !== c) : [...opened, c])}
+          />
         </>
       )}
     </div>

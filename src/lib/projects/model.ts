@@ -3,13 +3,16 @@
 // this one; adding a project = one file + one picture (Lubo: 100+ later).
 // No imports, so Node runs the tests on this file directly.
 
-// The 3 chapters, in the order Lubo grew (Lubo 2026-10-22). Fixed lists:
-// a typo can never invent a new chapter or filter.
+// The 3 chapters, in the order every page shows them: AI agents first
+// (Lubo 2026-10-22: "this is hot right now"), then Data pipelines, then
+// Analytics & dashboards. Fixed lists: a typo can never invent a new
+// chapter or filter.
 export const CHAPTERS = {
-  analytics: "Analytics & dashboards",
-  pipelines: "Data pipelines",
   ai: "AI agents",
+  pipelines: "Data pipelines",
+  analytics: "Analytics & dashboards",
 } as const;
+export const CHAPTER_ORDER = Object.keys(CHAPTERS) as (keyof typeof CHAPTERS)[];
 export type Chapter = keyof typeof CHAPTERS;
 
 export const INDUSTRIES = [
