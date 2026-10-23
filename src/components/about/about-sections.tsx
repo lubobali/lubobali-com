@@ -44,7 +44,10 @@ export function AboutHero() {
           <Picture
             name="lubo-bali-about"
             alt={about.portraitAlt}
-            sizes="(min-width: 1024px) 36vw, 90vw"
+            // The real shown width: the frame is max 24rem wide minus its padding
+            // (phones: screen minus the gutters). "90vw" made phones fetch the
+            // 960 px file (38 KB) instead of 640 (18 KB): CI LCP 2506 ms.
+            sizes="(min-width: 1024px) 36vw, min(23rem, calc(100vw - 3rem))"
             priority
             className="h-auto w-full rounded-[1.3rem]"
           />
