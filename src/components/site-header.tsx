@@ -1,9 +1,8 @@
 import Link from "next/link";
+import { BlueprintLink } from "@/components/blueprint-link";
 import { BookCall } from "@/components/book-call";
 import { ExploreButton } from "@/components/explore/explore-button";
-import { buttonVariants } from "@/components/ui/button";
 import { site } from "@/lib/site";
-import { cn } from "@/lib/utils";
 
 // Sticky top bar: name (home link) + Explore (search the work) + the AI
 // blueprint tool + Book-a-call.
@@ -11,7 +10,7 @@ import { cn } from "@/lib/utils";
 // H3+), never before, so there is no link to something that does not
 // exist yet. "Free AI blueprint" (Phase 3b B5.3, Lubo: the tool is too far
 // down the page) is outlined so Book a call stays the main action; it is
-// "Blueprint" on phones. Pages without the tool have no #blueprint.
+// "Blueprint" on phones. It always lands on the tool (BlueprintLink).
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur-md">
@@ -37,16 +36,8 @@ export function SiteHeader() {
           <ExploreButton />
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Plain in-page link: Next's <Link> skips the scroll when the URL
-              is already "/#blueprint" (Lubo: "it does nothing"). Home and
-              /blueprint both have id="blueprint". */}
-          <a
-            href="#blueprint"
-            className={cn(buttonVariants({ variant: "outline", size: "lg" }), "header-blueprint px-3 sm:px-4")}
-          >
-            <span className="sm:hidden">Blueprint</span>
-            <span className="hidden sm:inline">Free AI blueprint</span>
-          </a>
+          {/* The tool: on home and /blueprint in place, else the home card. */}
+          <BlueprintLink />
           <BookCall size="lg" compact className="px-4" />
         </div>
       </div>

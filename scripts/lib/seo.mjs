@@ -159,12 +159,6 @@ export function checkLlmsTxt(txt) {
 }
 
 /** PNG width/height from the IHDR header. */
-/** The header's "Free AI blueprint" button links to #blueprint (Lubo
- * 2026-10-22: "does not work from other pages"), so every page needs it. */
-export function checkBlueprintTarget(html) {
-  return /\sid="blueprint"/.test(html) ? [] : ['no id="blueprint": the header\'s "Free AI blueprint" button does nothing here'];
-}
-
 export function pngSize(buf) {
   const sig = "89504e470d0a1a0a";
   if (buf.subarray(0, 8).toString("hex") !== sig) return null;

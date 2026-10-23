@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { AboutHero, AboutPerson, AboutProof, AboutQuote, AboutSecurity, AboutThink } from "@/components/about/about-sections";
-import { BlueprintSpot } from "@/components/blueprint-spot";
 import { FinalCta } from "@/components/home/final-cta";
 import { JsonLd } from "@/components/seo/json-ld";
 import { about } from "@/lib/about";
@@ -37,7 +36,6 @@ export default function AboutPage() {
         <AboutProof />
         <AboutPerson />
         <AboutQuote />
-        <BlueprintSpot lead="Want to see what AI could do for your business?" />
       </div>
       <FinalCta />
     </main>

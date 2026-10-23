@@ -9,7 +9,6 @@ import { readdir, readFile } from "node:fs/promises";
 import { join, relative } from "node:path";
 import {
   ORIGIN,
-  checkBlueprintTarget,
   checkBotText,
   checkJsonLd,
   checkLlmsTxt,
@@ -85,7 +84,6 @@ for (const file of files) {
   if (!/noindex/.test(page.metas.robots ?? "")) {
     indexable.push(path);
     fail(`${path} (AI-bot text)`, checkBotText(html, [NAME, ...(PAGE_TEXT[path] ?? [])]));
-    fail(path, checkBlueprintTarget(html)); // public pages (not /styleguide)
   }
   if (path === "/") home = page;
   fail(path, checkPage(page, path));
