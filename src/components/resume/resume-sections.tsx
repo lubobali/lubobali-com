@@ -85,9 +85,12 @@ export function ResumeJourney() {
 // Skills counted from the proof the fit box uses (lib/fit), so a new
 // project grows its bars the day it's added. Tech only, broadest first.
 const SKILL_KINDS = new Set(["ai", "data", "cloud", "app", "analytics"]);
+// LLMs and prompting are proven by the same AI projects as AI agents: one bar, not three.
+const NOT_BARS = new Set(["llm", "prompting"]);
+const query = (t: (typeof FIT_TERMS)[number]) => t.short?.[0] ?? t.aliases[0];
 const SKILLS_SHOWN = 12;
-const skillBars = FIT_TERMS.filter((t) => SKILL_KINDS.has(t.kind))
-  .map((t) => ({ term: t, count: matchFit(t.aliases[0], FIT_TERMS, fitSources).needs.find((n) => n.id === t.id)?.proof.length ?? 0 }))
+const skillBars = FIT_TERMS.filter((t) => SKILL_KINDS.has(t.kind) && !NOT_BARS.has(t.id) && query(t))
+  .map((t) => ({ term: t, count: matchFit(query(t), FIT_TERMS, fitSources).needs.find((n) => n.id === t.id)?.proof.length ?? 0 }))
   .filter((b) => b.count > 0)
   .sort((a, b) => b.count - a.count)
   .slice(0, SKILLS_SHOWN);
@@ -105,7 +108,7 @@ export function ResumeSkillsEducation() {
         <ul className="cv-bars">
           {skillBars.map(({ term, count }) => (
             <li key={term.id}>
-              <a href={`/resume?fit=${encodeURIComponent(term.aliases[0])}#fit`} className="cv-bar">
+              <a href={`/resume?fit=${encodeURIComponent(query(term))}#fit`} className="cv-bar">
                 <span className="cv-bar-name">{shortLabel(term.label)}</span>
                 <span className="cv-bar-track" aria-hidden="true">
                   <span className="cv-bar-fill" style={{ inlineSize: `${Math.round((count / max) * 100)}%` }} />

@@ -164,6 +164,11 @@
   font-size: 0.85rem;
   text-decoration: none;
 }
+/* Long titles wrap as soft cards, not stretched pills (review: phones). */
+.fit-chip {
+  white-space: normal;
+  border-radius: 0.75rem;
+}
 .fit-chip:hover {
   background: color-mix(in oklch, var(--link) 24%, transparent);
 }

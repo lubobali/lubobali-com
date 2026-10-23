@@ -6,7 +6,7 @@ import "../lib/ts-paths.mjs";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { HOLDOUT, JOBS, QUESTIONS } from "./fixtures/fit-jobs.mjs";
+import { HOLDOUT, JOBS, NOT_TECH, QUESTIONS, REVIEW_TECH } from "./fixtures/fit-jobs.mjs";
 
 const repo = new URL("../../", import.meta.url).pathname;
 const { FIT_TERMS } = await import("../../src/lib/fit/terms.ts");
@@ -17,7 +17,7 @@ const { fitCopy } = await import("../../src/lib/fit/copy.ts");
 const run = (text) => matchFit(text, FIT_TERMS, fitSources);
 const ids = (r, status) => r.needs.filter((n) => n.status === status).map((n) => n.id).sort();
 
-for (const c of [...JOBS, ...HOLDOUT, ...QUESTIONS]) {
+for (const c of [...JOBS, ...HOLDOUT, ...QUESTIONS, ...NOT_TECH, ...REVIEW_TECH]) {
   test(`finds what ${c.id} asks for`, () => {
     const r = run(c.text);
     assert.deepEqual({ yes: ids(r, "yes"), new: ids(r, "new") }, { yes: [...c.yes].sort(), new: [...c.new].sort() });
@@ -26,7 +26,7 @@ for (const c of [...JOBS, ...HOLDOUT, ...QUESTIONS]) {
 }
 
 test("every ✓ links to real work, every miss has no ✓ wording", () => {
-  for (const c of [...JOBS, ...HOLDOUT, ...QUESTIONS]) {
+  for (const c of [...JOBS, ...HOLDOUT, ...QUESTIONS, ...NOT_TECH, ...REVIEW_TECH]) {
     for (const n of run(c.text).needs) {
       if (n.status === "yes") assert.ok(n.proof.length > 0 && n.proof.every((p) => p.href.startsWith("/")), n.id);
       else assert.deepEqual(n.proof, [], n.id);
@@ -63,19 +63,31 @@ test("needs come back in the order the post names them", () => {
 
 test("every word a visitor can read is positive (Lubo: never 'I can't')", () => {
   const NEGATIVE = /\b(can'?t|cannot|not qualified|no experience|lack|unable|never used|not yet|don'?t have|missing)\b/i;
+  const kinds = ["tool", "industry", "adjacent", "talk"];
   const words = [
-    ...Object.values(fitCopy).filter((v) => typeof v === "string"),
-    ...[[0, 0], [0, 1], [0, 3], [1, 1], [1, 2], [7, 9], [8, 9]].map(([f, t]) => fitCopy.summary(f, t, ["Azure", "Go"])),
+    ...["title", "placeholder", "button", "privacy", "limits", "proven"].map((k) => fitCopy[k]),
+    ...kinds.flatMap((k) => [fitCopy.miss[k], fitCopy.closest[k], fitCopy.ask(k, "Azure")]),
+    ...[[0, 0], [0, 1], [0, 3], [1, 1], [1, 2], [7, 9], [8, 9]].flatMap(([f, t]) =>
+      kinds.map((k) => fitCopy.summary(f, t, [{ name: "Azure", miss: k }, { name: "Go", miss: "tool" }])),
+    ),
+    fitCopy.summary(0, 0, [], 2),
     fitCopy.breadth(37, "15+"),
-    fitCopy.askHow("Azure"),
     fitCopy.topics.rate,
     fitCopy.topics.location,
     ...FIT_TERMS.map((t) => t.label),
   ];
   for (const w of words) assert.doesNotMatch(w, NEGATIVE, w);
-  assert.equal(fitCopy.summary(8, 10, ["Kubernetes", "Azure"]), "8 of 10 needs already proven in real projects. Kubernetes and Azure: different tools for work I already deliver.");
-  assert.equal(fitCopy.summary(0, 1, ["Azure"]), "Azure: a different tool for work I already deliver.");
-  assert.equal(fitCopy.summary(2, 6, ["Go", "Java", "Azure", "Looker"]), "2 of 6 needs already proven in real projects. Go, Java and 2 more: different tools for work I already deliver.");
+  const tools = [{ name: "Kubernetes", miss: "tool" }, { name: "Azure", miss: "tool" }];
+  assert.equal(fitCopy.summary(8, 10, tools), "8 of 10 needs already proven in real projects. Kubernetes and Azure: different tools for work I already deliver.");
+  assert.equal(fitCopy.summary(0, 1, [tools[1]]), "Azure: a different tool for work I already deliver.");
+  // Not a tool: never "a different tool" (review: "Insurance: a different tool").
+  assert.equal(fitCopy.summary(1, 2, [{ name: "Insurance", miss: "industry" }]), "1 of 2 needs already proven in real projects. For Insurance, see my closest work below.");
+  assert.equal(fitCopy.ask("talk", "Public Trust"), "Let's talk about Public Trust");
+  assert.equal(fitCopy.summary(0, 0, [], 1), "Good questions for our call.");
+});
+
+test("needs come back in the order the post names them", () => {
+  assert.deepEqual(run("Data pipelines in Python and Airflow on AWS Lambda, then Snowflake.").needs.map((n) => n.id), ["pipelines", "python", "airflow", "aws", "lambda", "snowflake"]);
 });
 
 test("a long paste is cut, never slow", () => {
@@ -88,5 +100,20 @@ test("a long paste is cut, never slow", () => {
 test("nothing is sent anywhere: the matcher has no network calls", () => {
   for (const f of ["src/lib/fit/match.ts", "src/lib/fit/terms.ts"]) {
     assert.doesNotMatch(readFileSync(`${repo}${f}`, "utf8"), /\bfetch\(|XMLHttpRequest|sendBeacon|WebSocket\(/);
+  }
+});
+
+test("short questions: a tool name alone counts ('Spark?'), a long text needs context", () => {
+  for (const [q, id] of [["Spark?", "spark"], ["React", "react"], ["Do you know Go?", "go"], ["Flask?", "flask"], ["Excel", "excel"]]) {
+    assert.ok(run(q).needs.some((n) => n.id === id && n.status !== undefined), q);
+  }
+  assert.deepEqual(run("You will spark new ideas, react to feedback and go the extra mile every single day.").needs, []);
+});
+
+test("every skill bar link opens with its own skill proven", () => {
+  for (const t of FIT_TERMS.filter((x) => ["ai", "data", "cloud", "app", "analytics"].includes(x.kind))) {
+    const q = t.short?.[0] ?? t.aliases[0];
+    if (!q) continue;
+    assert.ok(run(q).needs.some((n) => n.id === t.id), `${t.id}: "${q}" doesn't find itself`);
   }
 });

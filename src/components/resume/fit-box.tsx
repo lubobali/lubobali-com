@@ -10,12 +10,13 @@ import { resumePage } from "@/lib/resume-page";
 
 // "Does Lubo fit your project?" (Phase 6, P6.7): the box at the top of
 // /resume. Matching runs here in the browser (lib/fit/match.ts); nothing
-// typed is sent or saved. The proof list (sources) comes from the server
-// HTML, so the page ships no project data it doesn't need. A short check
-// is kept in the URL (?fit=...), so Lubo can send a link that opens with
-// the answer; skill chips lower on the page use the same link.
+// typed is sent or saved, and typed text never goes into the URL (review
+// 2026-10-24: a URL lands in history and logs). Only Lubo's own "Try"
+// words and the skill bars use ?fit=..., so a link can open with an answer.
+// The proof list (sources) comes from the server HTML.
 
-const SHARE_MAX = 120; // characters; longer posts stay out of the URL
+const SHARE_MAX = 120; // characters read from ?fit=
+const STAGGER_MAX = 12; // rows that arrive one by one; the rest arrive together
 const PROOF_SHOWN = 3;
 // "Kubernetes" from "Kubernetes", "Azure" from "Azure"; long labels keep
 // their first part ("Running models yourself (vLLM, GPUs)" -> "Running models yourself").
@@ -26,7 +27,7 @@ function ProofLinks({ proof }: { proof: readonly FitProof[] }) {
   return (
     <span className="fit-proof">
       {proof.slice(0, PROOF_SHOWN).map((p) => (
-        <a key={p.href} href={p.href} className="fit-chip">
+        <a key={`${p.kind}:${p.id}`} href={p.href} className="fit-chip">
           {p.title}
         </a>
       ))}
@@ -75,16 +76,22 @@ export function FitBox(props: {
   const [result, setResult] = useState<FitResult | null>(null);
   const summaryRef = useRef<HTMLParagraphElement>(null);
 
+  // Never let one odd input break the page: a failed match shows nothing.
+  const run = (v: string): FitResult | null => {
+    try {
+      return matchFit(v, FIT_TERMS, sources);
+    } catch {
+      return null;
+    }
+  };
   const check = (value: string, share: boolean) => {
     const v = value.trim();
     if (!v) return;
-    setResult(matchFit(v, FIT_TERMS, sources));
-    if (share) {
-      const url = new URL(window.location.href);
-      if (v.length <= SHARE_MAX) url.searchParams.set("fit", v);
-      else url.searchParams.delete("fit");
-      window.history.replaceState(null, "", url.pathname + url.search + url.hash);
-    }
+    setResult(run(v));
+    const url = new URL(window.location.href);
+    if (share) url.searchParams.set("fit", v);
+    else url.searchParams.delete("fit");
+    window.history.replaceState(null, "", url.pathname + url.search + url.hash);
   };
 
   // A shared link (/resume?fit=...) opens with its answer.
@@ -93,7 +100,8 @@ export function FitBox(props: {
     if (!shared) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setText(shared);
-    setResult(matchFit(shared, FIT_TERMS, sources));
+    setResult(run(shared));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sources]);
 
   // New answer: move focus to it, so keyboards and screen readers land there.
@@ -103,11 +111,11 @@ export function FitBox(props: {
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    check(text, true);
+    check(text, false);
   };
-  const tryWith = (value: string) => {
+  const tryWith = (value: string, share = true) => {
     setText(value);
-    check(value, true);
+    check(value, share);
   };
 
   return (
@@ -123,9 +131,15 @@ export function FitBox(props: {
           maxLength={20_000}
           placeholder={fitCopy.placeholder}
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={(e) => {
+            setText(e.target.value);
+            setResult(null); // an old answer never sits under new text
+          }}
           onKeyDown={(e) => {
-            if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) check(text, true);
+            if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+              e.preventDefault();
+              check(text, false);
+            }
           }}
         />
         <div className="flex flex-wrap items-center gap-2">
@@ -138,7 +152,7 @@ export function FitBox(props: {
               {t}
             </button>
           ))}
-          <button type="button" className="fit-try" onClick={() => tryWith(resumePage.sample)}>
+          <button type="button" className="fit-try" onClick={() => tryWith(resumePage.sample, false)}>
             {resumePage.sampleLabel}
           </button>
         </div>
@@ -150,15 +164,22 @@ export function FitBox(props: {
           <div className="fit-head">
             {result.found > 0 ? <Ring found={result.found} total={result.total} /> : result.total > 0 && <SameWorkRing />}
             <div className="flex flex-col gap-1">
-              <p ref={summaryRef} tabIndex={-1} role="status" className="fit-summary">
-                {fitCopy.summary(result.found, result.total, result.needs.filter((n) => n.status === "new").map((n) => shortName(n.label)))}
+              {/* Focus moves here (no role="status": it would be read twice). */}
+              <p ref={summaryRef} tabIndex={-1} className="fit-summary">
+                {fitCopy.summary(
+                  result.found,
+                  result.total,
+                  result.needs.filter((n) => n.status === "new").map((n) => ({ name: shortName(n.shown), miss: n.miss })),
+                  result.topics.length,
+                )}
               </p>
               {result.total > 0 && <p className="text-sm text-muted-foreground">{fitCopy.breadth(props.systems, props.industries)}</p>}
             </div>
           </div>
+          {result.total > 0 && (
           <ul className="fit-list">
             {result.needs.map((n, i) => (
-              <li key={n.id} className="fit-need" data-status={n.status} style={{ "--i": i } as CSSProperties}>
+              <li key={n.id} className="fit-need" data-status={n.status} style={{ "--i": Math.min(i, STAGGER_MAX) } as CSSProperties}>
                 <span className="fit-mark" aria-hidden="true">
                   {n.status === "yes" ? (
                     "✓"
@@ -172,8 +193,8 @@ export function FitBox(props: {
                 </span>
                 <div className="flex min-w-0 flex-col gap-1.5">
                   <span className="fit-label">
-                    {n.label}
-                    <span className="sr-only">{n.status === "yes" ? ": proven" : ": different tool, same work"}</span>
+                    {n.shown}
+                    <span className="sr-only">{n.status === "yes" ? ": proven" : `: ${fitCopy.miss[n.miss]}`}</span>
                   </span>
                   {n.status === "yes" ? (
                     <span className="fit-line">
@@ -181,21 +202,21 @@ export function FitBox(props: {
                     </span>
                   ) : (
                     <>
-                      <span className="fit-line text-muted-foreground">{fitCopy.newTool}</span>
+                      <span className="fit-line text-muted-foreground">{fitCopy.miss[n.miss]}</span>
                       {n.closest.length > 0 && (
                         <span className="fit-line">
-                          <span className="text-muted-foreground">{fitCopy.closest}</span>{" "}
+                          <span className="text-muted-foreground">{fitCopy.closest[n.miss]}</span>{" "}
                           <span className="fit-proof">
                             {n.closest.map((c) => (
                               <a key={c.id} href={c.proof[0].href} className="fit-chip">
-                                {c.label}
+                                {shortName(c.label)}
                               </a>
                             ))}
                           </span>
                         </span>
                       )}
                       <a href={bookUrl} target="_blank" rel="noopener" className="fit-ask">
-                        {fitCopy.askHow(n.label)} →<span className="sr-only"> (opens Calendly in a new tab)</span>
+                        {fitCopy.ask(n.miss, shortName(n.shown))} →<span className="sr-only"> (opens Calendly in a new tab)</span>
                       </a>
                     </>
                   )}
@@ -203,6 +224,7 @@ export function FitBox(props: {
               </li>
             ))}
           </ul>
+          )}
           {result.topics.length > 0 && (
             <ul className="fit-topics">
               {result.topics.map((t) => (
