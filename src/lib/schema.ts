@@ -3,6 +3,7 @@ import type { CaseStudy } from "@/lib/case-studies/types";
 import type { Project } from "@/lib/projects/model";
 import { imageUrl } from "@/lib/images";
 import { intro } from "@/lib/intro";
+import { resumePdfPath } from "@/lib/resume";
 import { services } from "@/lib/services";
 import { site } from "@/lib/site";
 import { tech } from "@/lib/tech";
@@ -129,6 +130,32 @@ export function aboutGraph(): Graph {
           { "@type": "CollegeOrUniversity", name: "Lincoln Land Community College" },
           { "@type": "CollegeOrUniversity", name: "National Sports Academy Vasil Levski" },
         ],
+      },
+    ],
+  };
+}
+
+// /resume (Phase 6): a profile page about the same Person, with the PDF as
+// a document Google can connect to him.
+export function resumeGraph(): Graph {
+  const url = `${site.url}/resume`;
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ProfilePage",
+        "@id": `${url}#page`,
+        url,
+        name: `${site.name} — Resume`,
+        isPartOf: { "@id": id("website") },
+        mainEntity: { "@id": id("person") },
+        hasPart: {
+          "@type": "DigitalDocument",
+          name: `${site.name} resume (PDF)`,
+          url: `${site.url}${resumePdfPath}`,
+          encodingFormat: "application/pdf",
+          author: { "@id": id("person") },
+        },
       },
     ],
   };

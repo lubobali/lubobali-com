@@ -19,6 +19,7 @@ import {
   parsePage,
   pngSize,
 } from "./lib/seo.mjs";
+import { PHONE } from "./lib/resume.mjs";
 
 const out = process.argv[2] ?? "out";
 const problems = [];
@@ -28,6 +29,16 @@ const fail = (where, list) => list.forEach((p) => problems.push(`${where}: ${p}`
 // extra phrases per page. Keep in sync with src/lib/site.ts.
 const NAME = "Lubo Bali";
 const PAGE_TEXT = {
+  "/resume": [
+    "Does Lubo fit your project?", // P6.7 fit box (the box itself is client-side)
+    "Download PDF resume",
+    "From finance to AI, one step at a time",
+    "HelloPayments",
+    "Full resume (text)",
+    "Built the residual engine and 7 APIs.", // folded full text is still in the HTML
+    "Senior Data & AI Platform Engineer",
+    "Lincoln Land Community College",
+  ],
   "/blueprint": [
     "Get your free AI blueprint", // Phase 3b B6
     "See what you'd get",
@@ -87,6 +98,9 @@ for (const file of files) {
   }
   if (path === "/") home = page;
   fail(path, checkPage(page, path));
+  // Phone number: only in the resume PDF, never in a page (bots scrape them).
+  const [a3, b3, c4] = PHONE.split("-");
+  if (new RegExp(`${a3}\\D{0,3}${b3}\\D{0,3}${c4}`).test(html)) fail(path, ["the phone number is in the page (PDF only)"]);
   // The share image must be in the build, or the LinkedIn preview breaks.
   const img = assetPath(page.metas["og:image"]);
   if (img && !existsSync(join(out, img))) fail(path, [`og:image file missing in the build: ${img}`]);

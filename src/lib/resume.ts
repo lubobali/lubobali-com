@@ -103,7 +103,18 @@ export const resume = {
   ],
   education: [
     { degree: "Associate of Applied Science, Computer Systems", school: "Lincoln Land Community College", dates: "Aug 2026" },
-    { degree: "AI, Data and Analytics Engineering Tracks (Highest Distinction)", school: "DataExpert.io", dates: "Mar - May 2026" },
+    {
+      degree: "AI, Data and Analytics Engineering Tracks (Highest Distinction)",
+      school: "DataExpert.io",
+      dates: "Mar - May 2026",
+      // Verified credentials (Lubo 2026-10-24), checked live: AE No. 99
+      // (Mar 10), DE No. 139 (Apr 5), AI No. 177 (May 16, 2026).
+      verify: [
+        { label: "Analytics Engineering", url: "https://www.dataexpert.io/certification/lubo/ae-superb" },
+        { label: "Data Engineering", url: "https://www.dataexpert.io/certification/lubo/de-0226-superb" },
+        { label: "AI Engineering", url: "https://www.dataexpert.io/certification/lubo/ai-superb-allaccess-103" },
+      ],
+    },
     { degree: "Bachelor of Science, Basketball Coaching | Master of Science, Sports Management", school: "National Sports Academy 'Vasil Levski'", dates: "" },
   ],
   projects: [

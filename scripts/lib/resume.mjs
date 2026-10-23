@@ -41,7 +41,7 @@ export function resumeHtml(r, phone = PHONE) {
     `<h2>Work Experience</h2>${r.jobs.map(job).join("")}`,
     `<h2>Technical Skills</h2><ul class="skills">${r.skills.map((s) => `<li><b>${esc(s.label)}:</b> ${esc(s.items)}</li>`).join("")}</ul>`,
     `<h2>Education</h2>${r.education
-      .map((e) => `<div class="row edu"><p><b>${esc(e.degree)}</b><br>${esc(e.school)}</p><p class="dates">${esc(e.dates)}</p></div>`)
+      .map((e) => `<div class="row edu"><p><b>${esc(e.degree)}</b><br>${esc(e.school)}${e.verify ? ` | Verified: ${e.verify.map(link).join(" | ")}` : ""}</p><p class="dates">${esc(e.dates)}</p></div>`)
       .join("")}`,
     `<h2>Projects</h2>${r.projects.map(project).join("")}`,
     `<p class="more">More projects: ${r.more.map(link).join(" | ")}</p>`,

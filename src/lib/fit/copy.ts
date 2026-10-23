@@ -5,6 +5,7 @@
 // qualified", ...). No imports: counts come in as arguments.
 
 const plural = (n: number, one: string, many: string) => (n === 1 ? one : many);
+const listed = (xs: readonly string[]) => (xs.length < 2 ? xs.join("") : `${xs.slice(0, -1).join(", ")} and ${xs.at(-1)}`);
 
 export const fitCopy = {
   title: "Does Lubo fit your project?",
@@ -13,18 +14,19 @@ export const fitCopy = {
   privacy: "Runs in your browser. Nothing you paste is sent or saved.",
   limits: "It reads skills, tools and industries. Years and degrees are for our call.",
 
-  summary(found: number, total: number): string {
+  // Names the new tools (Lubo: "the other 2" was vague): "Kubernetes and
+  // Azure: different tools for work I already deliver."
+  summary(found: number, total: number, newTools: readonly string[] = []): string {
     if (total === 0) return "No skills found yet. Try words like Python, AI agents, AWS or healthcare.";
-    if (found === total) return `All ${total} ${plural(total, "need is", "needs are")} already proven in real projects.`;
-    const other = total - found;
-    const rest = `${plural(other, "is a new tool", "are new tools")} for the same work, and I learn fast.`;
-    if (found === 0) return `${plural(other, "This", "These")} ${rest}`;
-    return `${found} of ${total} needs already proven in real projects. The other ${plural(other, "one", String(other))} ${rest}`;
+    if (found === total) return total === 1 ? "Already proven in real projects." : total === 2 ? "Both needs are already proven in real projects." : `All ${total} needs are already proven in real projects.`;
+    const names = newTools.length > 3 ? `${newTools.slice(0, 2).join(", ")} and ${newTools.length - 2} more` : listed(newTools);
+    const tools = `${names}: ${plural(newTools.length, "a different tool", "different tools")} for work I already deliver.`;
+    return found === 0 ? tools : `${found} of ${total} needs already proven in real projects. ${tools}`;
   },
   breadth: (systems: number, industries: string) => `${systems} systems across ${industries} industries, on AWS, Databricks, Snowflake and more.`,
 
   proven: "Proven in",
-  newTool: "New tool for me, same job.",
+  newTool: "Different tool, same work I already deliver.",
   closest: "I build the same things with",
   askHow: (label: string) => `Ask me how I'd do it with ${label}`,
 

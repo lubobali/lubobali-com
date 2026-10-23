@@ -1,0 +1,373 @@
+/* /resume (Phase 6, P6.7): the fit box and the career cards. Same Midnight
+   tokens and beam cards as /about; lighter to darker down the page. */
+
+/* ── Fit box ─────────────────────────────────────────────────────────── */
+.fit-box {
+  --from: var(--journey-1);
+  --to: var(--journey-3);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.fit-text {
+  width: 100%;
+  min-height: 7rem;
+  resize: vertical;
+  border: 1px solid var(--input);
+  border-radius: 1rem;
+  background: color-mix(in oklch, var(--background) 70%, transparent);
+  padding: 0.9rem 1rem;
+  color: var(--foreground);
+  font: inherit;
+  line-height: 1.55;
+}
+.fit-text::placeholder {
+  color: var(--muted-foreground);
+}
+.fit-text:focus {
+  border-color: var(--sky);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--sky) 25%, transparent);
+  outline: none;
+}
+.fit-go {
+  border-radius: 9999px;
+  background: var(--primary);
+  padding: 0.65rem 1.4rem;
+  color: var(--primary-foreground);
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+.fit-go:hover:not(:disabled) {
+  background: var(--brand);
+}
+.fit-go:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.fit-go:focus-visible,
+.fit-try:focus-visible,
+.fit-chip:focus-visible,
+.fit-ask:focus-visible,
+.cv-bar:focus-visible,
+.cv-full summary:focus-visible,
+.cv-story:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}
+.fit-try {
+  border: 1px solid color-mix(in oklch, var(--award) 30%, transparent);
+  border-radius: 9999px;
+  padding: 0.35rem 0.85rem;
+  color: var(--award);
+  font-size: 0.875rem;
+  transition: border-color 0.2s;
+}
+.fit-try:hover {
+  border-color: color-mix(in oklch, var(--award) 65%, transparent);
+}
+
+/* The answer: a ring that fills with the proven share, then each need
+   arrives one after another, like a scan (reduced motion: all at once). */
+.fit-result {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  border-top: 1px solid color-mix(in oklch, var(--award) 20%, transparent);
+  padding-top: 1.5rem;
+}
+.fit-head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.fit-ring {
+  flex: none;
+  width: 4.5rem;
+  height: 4.5rem;
+}
+.fit-ring-track {
+  fill: none;
+  stroke: color-mix(in oklch, var(--award) 18%, transparent);
+  stroke-width: 6;
+}
+.fit-ring-fill {
+  fill: none;
+  stroke: var(--success);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+.fit-ring--new {
+  color: var(--sky);
+}
+.fit-ring--new .fit-ring-fill {
+  stroke: var(--sky);
+}
+.fit-ring-text {
+  fill: var(--foreground);
+  font-size: 15px;
+  font-weight: 600;
+}
+.fit-summary {
+  font-size: 1.15rem;
+  font-weight: 600;
+  text-wrap: balance;
+  outline: none;
+}
+.fit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.fit-need {
+  display: flex;
+  gap: 0.85rem;
+  border: 1px solid color-mix(in oklch, var(--award) 14%, transparent);
+  border-radius: 1rem;
+  background: var(--card); /* solid: chip + sky text contrast is checked on it */
+  padding: 0.85rem 1rem;
+}
+.fit-need[data-status="new"] {
+  border-color: color-mix(in oklch, var(--sky) 30%, transparent);
+}
+.fit-mark {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 9999px;
+  background: color-mix(in oklch, var(--success) 18%, transparent);
+  color: var(--success);
+  font-weight: 700;
+}
+.fit-need[data-status="new"] .fit-mark {
+  background: color-mix(in oklch, var(--sky) 16%, transparent);
+  color: var(--sky);
+}
+.fit-label {
+  font-weight: 600;
+}
+.fit-line {
+  font-size: 0.9rem;
+}
+.fit-proof {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  vertical-align: middle;
+}
+.fit-chip {
+  border-radius: 9999px;
+  background: color-mix(in oklch, var(--link) 14%, transparent);
+  padding: 0.15rem 0.6rem;
+  color: var(--link);
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+.fit-chip:hover {
+  background: color-mix(in oklch, var(--link) 24%, transparent);
+}
+.fit-more {
+  align-self: center;
+  color: var(--muted-foreground);
+  font-size: 0.8rem;
+}
+.fit-ask {
+  width: fit-content;
+  color: var(--sky);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.fit-ask:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.fit-topics {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  border-left: 2px solid var(--award);
+  padding-left: 0.85rem;
+  color: var(--card-text-soft);
+  font-size: 0.95rem;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .fit-ring-fill {
+    animation: fit-fill 0.9s ease-out both;
+  }
+  .fit-need {
+    animation: fit-in 0.45s ease-out both;
+    animation-delay: calc(var(--i, 0) * 70ms);
+  }
+}
+@keyframes fit-fill {
+  from {
+    stroke-dasharray: 0 164;
+  }
+}
+@keyframes fit-in {
+  from {
+    opacity: 0;
+    translate: 0 0.5rem;
+  }
+}
+
+/* ── Career journey: oldest left, lighter to darker, one number each ── */
+.cv-journey {
+  display: grid;
+  gap: 1rem;
+}
+@media (min-width: 640px) {
+  .cv-journey {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1024px) {
+  .cv-journey {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+.cv-step {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  --from: var(--journey-1);
+  --to: var(--journey-2);
+}
+.cv-step[data-step="1"] {
+  --from: var(--journey-2);
+  --to: var(--journey-3);
+}
+.cv-step[data-step="2"] {
+  --from: var(--journey-3);
+  --to: var(--journey-4);
+}
+.cv-step[data-step="3"] {
+  --from: var(--journey-4);
+  --to: var(--journey-5);
+}
+.cv-years {
+  color: var(--award);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.cv-role {
+  color: var(--award);
+  font-size: 0.9rem;
+}
+.cv-figure {
+  margin-top: 0.75rem;
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: clamp(1.9rem, 1.4rem + 1.4vw, 2.5rem);
+  line-height: 1.05;
+  background: linear-gradient(100deg, var(--foreground) 35%, var(--sky));
+  background-clip: text;
+  color: transparent;
+}
+.cv-story {
+  width: fit-content;
+  padding-top: 0.5rem;
+  color: var(--award);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklch, var(--award) 40%, transparent);
+  text-underline-offset: 4px;
+}
+.cv-story:hover {
+  text-decoration-color: var(--award);
+}
+
+/* ── Skills counted from real work ───────────────────────────────────── */
+.cv-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.cv-bar {
+  display: grid;
+  grid-template-columns: 8.5rem 1fr 2rem;
+  align-items: center;
+  gap: 0.85rem;
+  border-radius: 0.6rem;
+  padding: 0.35rem 0.5rem;
+  color: var(--foreground);
+  text-decoration: none;
+}
+@media (min-width: 640px) {
+  .cv-bar {
+    grid-template-columns: 11rem 1fr 2.5rem;
+  }
+}
+.cv-bar:hover {
+  background: color-mix(in oklch, var(--link) 10%, transparent);
+}
+.cv-bar-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cv-bar-track {
+  height: 0.55rem;
+  border-radius: 9999px;
+  background: color-mix(in oklch, var(--award) 12%, transparent);
+}
+.cv-bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--brand-deep), var(--sky));
+}
+.cv-bar-count {
+  color: var(--link);
+  font-weight: 600;
+  text-align: right;
+}
+
+/* ── Full resume, folded ─────────────────────────────────────────────── */
+.cv-full {
+  border-top: 1px solid color-mix(in oklch, var(--award) 20%, transparent);
+  padding-top: 1.5rem;
+}
+.cv-full summary {
+  width: fit-content;
+  cursor: pointer;
+  color: var(--award);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+.cv-bullets {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding-left: 1.1rem;
+  list-style: disc;
+}
+.cv-bullets li::marker {
+  color: var(--award);
+}
+
+/* Verified credentials under a degree: real links, checked by anyone. */
+.cv-verify {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.6rem;
+  padding-top: 0.25rem;
+  color: var(--muted-foreground);
+  font-size: 0.9rem;
+}
+.cv-verify a {
+  color: var(--link);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklch, var(--link) 40%, transparent);
+  text-underline-offset: 3px;
+}
+.cv-verify a::after {
+  content: " ↗";
+}
+.cv-verify a:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}

@@ -14,6 +14,7 @@ const pages = [
   "/about",
   "/blueprint",
   "/projects",
+  "/resume",
   ...publishedCaseStudies().map((c) => `/work/${c.slug}`),
   ...projects.map((p) => `/projects/${p.slug}`),
 ];

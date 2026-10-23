@@ -65,7 +65,7 @@ test("every word a visitor can read is positive (Lubo: never 'I can't')", () => 
   const NEGATIVE = /\b(can'?t|cannot|not qualified|no experience|lack|unable|never used|not yet|don'?t have|missing)\b/i;
   const words = [
     ...Object.values(fitCopy).filter((v) => typeof v === "string"),
-    ...[[0, 0], [0, 1], [0, 3], [1, 1], [1, 2], [7, 9], [8, 9]].map(([f, t]) => fitCopy.summary(f, t)),
+    ...[[0, 0], [0, 1], [0, 3], [1, 1], [1, 2], [7, 9], [8, 9]].map(([f, t]) => fitCopy.summary(f, t, ["Azure", "Go"])),
     fitCopy.breadth(37, "15+"),
     fitCopy.askHow("Azure"),
     fitCopy.topics.rate,
@@ -73,8 +73,9 @@ test("every word a visitor can read is positive (Lubo: never 'I can't')", () => 
     ...FIT_TERMS.map((t) => t.label),
   ];
   for (const w of words) assert.doesNotMatch(w, NEGATIVE, w);
-  assert.equal(fitCopy.summary(7, 9), "7 of 9 needs already proven in real projects. The other 2 are new tools for the same work, and I learn fast.");
-  assert.equal(fitCopy.summary(8, 9), "8 of 9 needs already proven in real projects. The other one is a new tool for the same work, and I learn fast.");
+  assert.equal(fitCopy.summary(8, 10, ["Kubernetes", "Azure"]), "8 of 10 needs already proven in real projects. Kubernetes and Azure: different tools for work I already deliver.");
+  assert.equal(fitCopy.summary(0, 1, ["Azure"]), "Azure: a different tool for work I already deliver.");
+  assert.equal(fitCopy.summary(2, 6, ["Go", "Java", "Azure", "Looker"]), "2 of 6 needs already proven in real projects. Go, Java and 2 more: different tools for work I already deliver.");
 });
 
 test("a long paste is cut, never slow", () => {

@@ -46,6 +46,12 @@ const PAIRS = [
   ["tone-violet", "card", UI], // work cards: check marks + pictures
   ["sky", "card", TEXT], // /projects Filters panel: "Industry" title + jump link
   ["tone-violet", "card", TEXT], // /projects Filters panel: "Tech" title + jump link
+  // /resume (P6.7): fit-box rows sit on solid card (sky: "Ask me how" +
+  // new-tool mark; link: proof chips; success: ✓); the job cards use
+  // platinum (award) for titles and story links on every face they get.
+  ["link", "card", TEXT],
+  ["success", "card", UI],
+  ...["journey-2", "journey-3", "journey-4", "journey-5"].map((bg) => ["award", bg, TEXT]),
   // /about Security pill: red text on the vault card (journey-3 -> -5).
   ...["journey-3", "journey-4", "journey-5"].map((bg) => ["alert", bg, TEXT]),
   ["tone-ice", "card", UI],
