@@ -1,5 +1,7 @@
 "use client";
 
+import "./shelf.css";
+
 import { type ReactNode, useEffect, useState } from "react";
 import { flushSync } from "react-dom";
 import { CHAPTER_ORDER, type Chapter } from "@/lib/projects/model";

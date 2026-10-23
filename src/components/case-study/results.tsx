@@ -1,3 +1,5 @@
+import "./case-study.css";
+import "./story.css";
 import { Part } from "./sections";
 import type { CaseStudy } from "@/lib/case-studies/types";
 

@@ -1,3 +1,5 @@
+import "./case-study.css";
+import "./story.css";
 import type { CaseStudy } from "@/lib/case-studies/types";
 
 // One real laundering ring, drawn (Phase 4 C4): there is no product screen

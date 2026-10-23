@@ -1,3 +1,5 @@
+import "./case-study.css";
+import "./story.css";
 import type { CaseStudy } from "@/lib/case-studies/types";
 import { PayoutsArt } from "./payouts";
 import { Ring } from "./ring";

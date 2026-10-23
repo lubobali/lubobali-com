@@ -1,3 +1,4 @@
+import "./about.css";
 import Link from "next/link";
 import { DataRain } from "@/components/ambient/data-rain";
 import { BookCall } from "@/components/book-call";

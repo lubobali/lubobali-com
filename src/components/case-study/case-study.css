@@ -44,12 +44,6 @@
 .cs-screen-caption {
   color: var(--muted-foreground);
 }
-.cs-chip {
-  border: 1px solid color-mix(in oklch, var(--link) 45%, var(--border));
-  background: color-mix(in oklch, var(--link) 10%, transparent);
-  color: var(--foreground);
-  box-shadow: 0 0 30px -12px color-mix(in oklch, var(--link) 70%, transparent);
-}
 .cs-learns {
   color: var(--link);
 }

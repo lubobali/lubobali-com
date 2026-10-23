@@ -3,31 +3,8 @@
    violet Data pipelines, teal Analytics (--chapter-* in globals.css): a
    chip or number says its chapter at a glance, everywhere on the site. Motion = progressive: complete at rest, and only
    when the visitor allows motion. */
-[data-chapter="analytics"] {
-  --pj: var(--chapter-analytics);
-}
-[data-chapter="pipelines"] {
-  --pj: var(--chapter-pipelines);
-}
-[data-chapter="ai"] {
-  --pj: var(--chapter-ai);
-}
-
-.pj-chip {
-  color: var(--pj);
-  border: 1px solid color-mix(in oklch, var(--pj) 45%, transparent);
-  background: color-mix(in oklch, var(--pj) 10%, transparent);
-}
-
 /* The one number: light text that fades into the chapter tone, with a
    soft glow behind it. */
-.pj-number {
-  background: linear-gradient(100deg, var(--foreground) 30%, var(--pj));
-  background-clip: text;
-  color: transparent;
-  filter: drop-shadow(0 0 28px color-mix(in oklch, var(--pj) 40%, transparent));
-}
-
 .pj-cta {
   background: var(--primary);
   color: var(--primary-foreground);

@@ -1,3 +1,9 @@
+import "./brand-card.css";
+import "./brand-kit-2.css";
+import "./brand-kit-3.css";
+import "./brand-kit-4.css";
+import "./brand-kit.css";
+import "./project.css";
 import type { ProjectPicture } from "@/lib/projects/model";
 
 // Brand-card pictures about before vs after (P5.6 batch 2): big drops,

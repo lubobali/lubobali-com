@@ -1,7 +1,7 @@
 // node --test scripts/tests/lighthouse.test.mjs
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { BUDGETS, checkBudgets, gatePage, isFlake, median, medianSummary, pictureKind, samplePages, summarize } from "../lib/lighthouse.mjs";
+import { BUDGETS, checkBudgets, gatePage, isFlake, median, medianSummary, pictureKind, samplePages, summarize, confirmRuns } from "../lib/lighthouse.mjs";
 
 // Smallest Lighthouse JSON shape that summarize() reads.
 const report = ({ perf = 0.95, a11y = 1, bp = 1, seo = 1, lcp = 1800, cls = 0, tbt = 200, requests = 12 } = {}) => ({
@@ -126,4 +126,10 @@ test("pictureKind reads the picture type from a built page", () => {
   assert.equal(pictureKind('<figure data-world="ai" class="bc"></figure><figure class="cs-screen flex">'), "brand+screen");
   assert.equal(pictureKind('<figure class="cs-screen flex">'), "screen");
   assert.equal(pictureKind("<main>"), undefined);
+});
+
+test("confirmRuns: a page that fails on 3 runs gets 2 more, judged on the median of 5", () => {
+  assert.equal(confirmRuns(3, 1), 2); // failed: confirm with 5 runs in total
+  assert.equal(confirmRuns(3, 0), 0); // passed: done
+  assert.equal(confirmRuns(5, 1), 0); // already confirmed: a real failure
 });

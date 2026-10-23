@@ -1,3 +1,5 @@
+import "./case-study.css";
+import "./story.css";
 // The automation, drawn (Phase 4 C5, mystery pages): processor reports flow
 // into one engine and come out as many payouts. The idea only: no names,
 // no numbers, no screens. Dots travel the lines (hidden for reduced motion).

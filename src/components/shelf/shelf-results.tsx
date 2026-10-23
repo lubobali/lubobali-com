@@ -1,3 +1,4 @@
+import "./shelf.css";
 import type { ReactNode } from "react";
 import { BookCall } from "@/components/book-call";
 import { buttonVariants } from "@/components/ui/button";

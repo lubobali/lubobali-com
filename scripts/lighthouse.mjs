@@ -15,7 +15,7 @@ import { mkdtemp, readdir, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
-import { gatePage, isFlake, medianSummary, pictureKind, samplePages, summarize } from "./lib/lighthouse.mjs";
+import { confirmRuns, gatePage, isFlake, medianSummary, pictureKind, samplePages, summarize } from "./lib/lighthouse.mjs";
 
 const [url, build, env = "staging", runsArg = "3"] = process.argv.slice(2);
 if (!url || !build) {
@@ -78,8 +78,15 @@ console.log(`lighthouse: ${pages.length} pages x ${runs} runs, phone, ${site} ($
 for (const { path, indexable } of pages) {
   const results = [];
   for (let i = 1; i <= runs; i++) results.push(await lighthouse(path, i));
-  const s = medianSummary(results);
-  const { fails, warns } = gatePage(s, { indexable });
+  let s = medianSummary(results);
+  let { fails, warns } = gatePage(s, { indexable });
+  const more = confirmRuns(results.length, fails.length);
+  if (more) {
+    console.log(`  confirm ${path}: ${fails.join(", ")} on ${results.length} runs -> ${more} more`);
+    for (let i = 1; i <= more; i++) results.push(await lighthouse(path, results.length + 1));
+    s = medianSummary(results);
+    ({ fails, warns } = gatePage(s, { indexable }));
+  }
   console.log(
     `${path.padEnd(14)} perf ${pct(s.performance)} · a11y ${pct(s.accessibility)} · best ${pct(s.bestPractices)} · seo ${pct(s.seo)}` +
       ` · LCP ${Math.round(s.lcpMs)} ms · TBT ${Math.round(s.tbtMs)} ms · CLS ${s.cls.toFixed(3)} · ${s.requests} requests` +

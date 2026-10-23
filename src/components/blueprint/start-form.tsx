@@ -1,5 +1,11 @@
 "use client";
 
+import "./blueprint-flow.css";
+import "./blueprint.css";
+import "./copy.css";
+import "./examples.css";
+import "./tool.css";
+
 import Link from "next/link";
 import type { DataLocation, TeamSize } from "./client";
 

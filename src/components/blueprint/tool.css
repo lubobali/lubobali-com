@@ -311,14 +311,6 @@
 
 /* Header door to the tool (site-header.tsx, B5.3): outline + a soft sky
    edge, so it reads as "special" next to the main Book a call button. */
-.header-blueprint {
-  border-color: color-mix(in oklch, var(--sky) 45%, transparent);
-  box-shadow: 0 0 16px -6px var(--glow-sky);
-}
-.header-blueprint:hover {
-  border-color: var(--sky);
-}
-
 @media (prefers-reduced-motion: no-preference) {
   .bpt-orb span {
     animation: bpt-spin 2.6s linear infinite;

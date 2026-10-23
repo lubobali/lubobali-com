@@ -1,23 +1,11 @@
 @import "tailwindcss";
-/* Component styles kept in their own files (no monster globals), bundled
-   into this one stylesheet: one render-blocking CSS file, not two (H12). */
-@import "../components/blueprint/blueprint.css";
-@import "../components/blueprint/blueprint-flow.css";
-@import "../components/blueprint/tool.css";
-@import "../components/blueprint/examples.css";
-@import "../components/blueprint/copy.css";
-@import "../components/case-study/case-study.css";
-@import "../components/case-study/story.css";
+/* Global parts only (header, Explore, the shared card). Each folder's own
+   styles are imported by its components, so a page downloads only what it
+   uses (2026-10-23 speed pass; H12's "one file" now = one shared file plus
+   the page's own). */
 @import "../components/explore/explore.css";
 @import "../components/ui/edge-card.css";
-@import "../components/project/project.css";
-@import "../components/project/brand-card.css";
-@import "../components/project/brand-kit.css";
-@import "../components/project/brand-kit-2.css";
-@import "../components/project/brand-kit-3.css";
-@import "../components/project/brand-kit-4.css";
-@import "../components/shelf/shelf.css";
-@import "../components/about/about.css";
+@import "../components/ui/shared.css";
 
 /* Dark only: `dark:` styles always apply (layout.tsx sets class="dark"),
    not just when the visitor's OS is in dark mode. */

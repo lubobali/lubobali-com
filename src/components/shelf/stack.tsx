@@ -1,3 +1,4 @@
+import "./shelf.css";
 import { projectsIn } from "@/lib/projects";
 import { CHAPTERS, type Chapter } from "@/lib/projects/model";
 import { topOptions } from "@/lib/projects/shelf";

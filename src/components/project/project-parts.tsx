@@ -1,3 +1,9 @@
+import "./brand-card.css";
+import "./brand-kit-2.css";
+import "./brand-kit-3.css";
+import "./brand-kit-4.css";
+import "./brand-kit.css";
+import "./project.css";
 import Link from "next/link";
 import { projects } from "@/lib/projects";
 import { CHAPTERS, type Project, type ProjectLink } from "@/lib/projects/model";

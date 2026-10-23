@@ -1,3 +1,4 @@
+import "./shelf.css";
 import Link from "next/link";
 import type { CaseStudy } from "@/lib/case-studies/types";
 import { CHAPTERS, type Project } from "@/lib/projects/model";

@@ -1,5 +1,11 @@
 "use client";
 
+import "./blueprint-flow.css";
+import "./blueprint.css";
+import "./copy.css";
+import "./examples.css";
+import "./tool.css";
+
 import type { Question } from "./client";
 
 // Step 2: the follow-up questions, like on a call (Phase 3b B5.1). Each one

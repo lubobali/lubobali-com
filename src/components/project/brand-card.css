@@ -97,30 +97,6 @@
   text-shadow: 0 2px 30px rgb(0 0 0 / 0.4);
   text-wrap: balance;
 }
-.bc-sign {
-  display: flex;
-  align-items: baseline;
-  gap: 0.6rem;
-  font-family: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
-  font-weight: 600;
-  font-size: 1.05rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #cfd6e2;
-}
-.bc-dash {
-  align-self: center;
-  width: 2.25rem;
-  height: 1px;
-  background: #cfd6e2;
-}
-.bc-site {
-  font-weight: 500;
-  font-size: 0.8rem;
-  letter-spacing: 0.02em;
-  text-transform: none;
-  color: var(--muted);
-}
 .bc-foot {
   display: flex;
   justify-content: space-between;

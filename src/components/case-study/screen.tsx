@@ -1,3 +1,5 @@
+import "./case-study.css";
+import "./story.css";
 import { Picture } from "@/components/picture";
 import type { Shot } from "@/lib/case-studies/types";
 

@@ -1,3 +1,9 @@
+import "./brand-card.css";
+import "./brand-kit-2.css";
+import "./brand-kit-3.css";
+import "./brand-kit-4.css";
+import "./brand-kit.css";
+import "./project.css";
 import { ANATOMY, type Anatomy, type Project, proofItems } from "@/lib/projects/model";
 
 // Three ways a project proves it, not claims it (Phase 5, Lubo after the

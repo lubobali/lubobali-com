@@ -87,7 +87,8 @@ jobs:
             exit 1
           fi
 
-      # Phone Lighthouse on the live pages, median of 3 runs (~1 min).
+      # Phone Lighthouse on the live pages, median of 3 runs; a page that
+      # breaks a budget gets 2 more and is judged on the median of 5.
       # Hard budgets on indexable pages: LCP, CLS, TBT, requests,
       # accessibility, best practices, SEO. Speed score = warning only.
       - name: Lighthouse gate (auto-rollback on failure)

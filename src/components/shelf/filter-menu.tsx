@@ -1,5 +1,7 @@
 "use client";
 
+import "./shelf.css";
+
 import type { Lens } from "@/lib/projects/shelf";
 
 export type FilterGroup = {

@@ -1,5 +1,11 @@
 "use client";
 
+import "./blueprint-flow.css";
+import "./blueprint.css";
+import "./copy.css";
+import "./examples.css";
+import "./tool.css";
+
 import { useEffect, useState } from "react";
 
 // The waiting moment (Phase 3b B5.1): the AI takes ~8 s for questions and

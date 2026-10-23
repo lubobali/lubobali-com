@@ -1,3 +1,5 @@
+import "./case-study.css";
+import "./story.css";
 import { FlowDiagram } from "@/components/blueprint/diagram";
 import { QuoteCard } from "@/components/home/testimonials";
 import { testimonials } from "@/lib/testimonials";

@@ -1,3 +1,4 @@
+import "./about.css";
 import type { SecurityIcon } from "@/lib/about";
 
 // Line icons for the /about Security list (Phase 6). Inline SVG: 0

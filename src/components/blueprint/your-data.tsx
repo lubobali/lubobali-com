@@ -1,3 +1,8 @@
+import "./blueprint-flow.css";
+import "./blueprint.css";
+import "./copy.css";
+import "./examples.css";
+import "./tool.css";
 // "Your data" on /blueprint (Phase 3b B9.5). Every line matches the code:
 // store.py (blueprint 90 days only on Book a call, browser code 365 days,
 // IP code ~7 days), nginx logs rotate after 14 days, llm.py sends

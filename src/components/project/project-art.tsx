@@ -1,3 +1,9 @@
+import "./brand-card.css";
+import "./brand-kit-2.css";
+import "./brand-kit-3.css";
+import "./brand-kit-4.css";
+import "./brand-kit.css";
+import "./project.css";
 import { Screen } from "@/components/case-study/screen";
 import type { Chapter, ProjectPicture } from "@/lib/projects/model";
 import { BrandCard } from "./brand-card";

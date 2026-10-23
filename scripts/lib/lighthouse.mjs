@@ -78,6 +78,15 @@ export function gatePage(summary, { indexable }) {
   return { fails: [], warns: [...fails, ...warns].map((w) => `${w} (noindex page, not gated)`) };
 }
 
+// One page's LCP swings about ±300 ms run to run on the shared box
+// (2026-10-23: /work/lubot 2252 ms, then 2558 ms with no change). A page
+// that breaks a budget on 3 runs gets 2 more and is judged on the median of
+// 5: the same budgets, less luck. A page that is really slow still fails.
+export const CONFIRM_RUNS = 5;
+export function confirmRuns(done, failCount) {
+  return failCount > 0 && done < CONFIRM_RUNS ? CONFIRM_RUNS - done : 0;
+}
+
 // Lighthouse itself sometimes fails to record a page load ("Runtime error
 // encountered ... (NO_NAVSTART)", CI 2026-10-21). That is a broken
 // measurement, not a slow page: the caller retries the run. Any other error
