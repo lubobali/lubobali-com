@@ -1,4 +1,5 @@
 import { DataRain } from "@/components/ambient/data-rain";
+import { AskLubo } from "@/components/ask-lubo";
 import { BlueprintSection } from "@/components/home/blueprint-section";
 import { BuiltWith } from "@/components/home/built-with";
 import { FinalCta } from "@/components/home/final-cta";
@@ -37,6 +38,10 @@ export default function Home() {
         <Testimonials />
         <BuiltWith />
         <HowItWorks />
+        {/* "Questions CEOs ask me" (Phase 6 P6.8), right before the finish line. */}
+        <div className="relative mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 lg:py-24">
+          <AskLubo />
+        </div>
         <FinalCta />
       </div>
     </main>

@@ -33,6 +33,9 @@ const PHOTOS = {
   // (shown at 64 px, so 240 covers 3x screens). Used with his OK.
   "zach-wilson.png": "zach-wilson",
   "matthew-hamann.png": "matthew-hamann", // same, from his LinkedIn photo
+  // "Ask Lubo" chat avatar (Phase 6 P6.8): head and shoulders cropped to
+  // 240 px from lubo-about-navy.jpg (shown at ~44 px).
+  "lubo-avatar.png": "lubo-bali-avatar",
   // LuBot case study (Phase 4): real lubot.ai screens, demo data, taken
   // 2026-10-20 at 2x as a visitor (no browser bar, no trial badge).
   "lubot-stock-chart.png": "lubot-stock-chart",

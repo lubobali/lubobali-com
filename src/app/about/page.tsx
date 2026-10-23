@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AskLubo } from "@/components/ask-lubo";
 import { AboutHero, AboutPerson, AboutProof, AboutQuote, AboutSecurity, AboutThink } from "@/components/about/about-sections";
 import { FinalCta } from "@/components/home/final-cta";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -36,6 +37,7 @@ export default function AboutPage() {
         <AboutProof />
         <AboutPerson />
         <AboutQuote />
+        <AskLubo />
       </div>
       <FinalCta />
     </main>

@@ -6,6 +6,7 @@
 @import "../components/explore/explore.css";
 @import "../components/ui/edge-card.css";
 @import "../components/ui/shared.css";
+@import "../components/ui/ask-lubo.css";
 
 /* Dark only: `dark:` styles always apply (layout.tsx sets class="dark"),
    not just when the visitor's OS is in dark mode. */
@@ -108,6 +109,11 @@
   --journey-5: oklch(0.27 0.08 264);
   --card-text-soft: oklch(0.88 0.035 255); /* #cdd9ec-ish */
   --tone-violet: oklch(0.72 0.14 292); /* #9f8ef4-ish */
+  /* "Ask Lubo" chat bubbles (P6.8): bright faces with dark ink, so they pop
+     off the dark card: the CEO's question violet, Lubo's answer ice. */
+  --bubble-q: oklch(0.86 0.075 292);
+  --bubble-a: oklch(0.9 0.06 228);
+  --bubble-ink: oklch(0.2 0.045 268);
   --tone-ice: oklch(0.8 0.1 228); /* #8ccaf0-ish */
   /* The 3 chapter colours (Phase 5, Lubo 2026-10-22, from colour research):
      the same worlds as the brand cards (brand-card.css), a little lighter

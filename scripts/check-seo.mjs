@@ -48,6 +48,9 @@ const PAGE_TEXT = {
     "One client desk for the firm", // law firm example
   ],
   "/": [
+    "Questions CEOs ask me", // P6.8 chat: every answer is in the HTML
+    "Will AI replace my people?",
+    "Not in my systems. Real code calculates every number from your data.",
     "Senior AI & Data Platform Engineer",
     "I build AI that works on your real data, in production.", // hero headline (Phase 3 H1)
     "Available for new AI projects now.",

@@ -248,6 +248,32 @@ html.explore-open {
   padding-block: 0.6rem;
   background: color-mix(in oklch, var(--card) 50%, transparent);
 }
+/* Each page its own colour (Lubo 2026-10-24: "not all pages blurred, make
+   every page a different colour so it's easy to spot"): a tinted face, a
+   bright edge on the left and its arrow in the same tone. Free AI
+   blueprint is amber, the warmest, so it pulls the click. */
+.explore-hit[data-tone="amber"] { --g: var(--chapter-ai); }
+.explore-hit[data-tone="violet"] { --g: var(--bubble-q); }
+.explore-hit[data-tone="sky"] { --g: var(--sky); }
+.explore-hit[data-tone="green"] { --g: var(--success); }
+.explore-hit[data-tone="teal"] { --g: var(--chapter-analytics); }
+.explore-hit[data-tone="ice"] { --g: var(--tone-ice); }
+.explore-hit[data-tone="brand"] { --g: var(--brand-light); }
+.explore-section .explore-hit[data-tone] {
+  border-color: color-mix(in oklch, var(--g) 45%, var(--border));
+  background: linear-gradient(160deg, color-mix(in oklch, var(--g) 30%, var(--card)), color-mix(in oklch, var(--g) 10%, var(--background)));
+  box-shadow: inset 4px 0 0 var(--g);
+}
+.explore-section .explore-hit[data-tone] .explore-arrow,
+.explore-section .explore-hit[data-tone] .font-semibold {
+  color: var(--g);
+}
+.explore-section a.explore-hit[data-tone]:hover,
+.explore-section a.explore-hit[data-tone]:focus-visible {
+  border-color: var(--g);
+  background: linear-gradient(160deg, color-mix(in oklch, var(--g) 40%, var(--card)), color-mix(in oklch, var(--g) 14%, var(--background)));
+  box-shadow: inset 4px 0 0 var(--g), 0 10px 30px -14px var(--g);
+}
 /* Nothing found: the same "not built yet" card as /projects. */
 .explore-none {
   --from: var(--journey-2);

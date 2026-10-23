@@ -8,7 +8,7 @@ import type { SiteEntry } from "@/lib/search/site-index";
 // one big "All projects" card, tiles with a number (stories, projects),
 // quiet rows for the rest. Styles: explore.css.
 
-export type Tile = { item: Pick<SiteEntry, "title" | "subtitle" | "href" | "number" | "group">; matched: readonly string[] };
+export type Tile = { item: Pick<SiteEntry, "title" | "subtitle" | "href" | "number" | "group" | "tone">; matched: readonly string[] };
 
 type HitProps = { hit: Tile; onPick: () => void; onKey: (e: React.KeyboardEvent, el: HTMLElement) => void };
 
@@ -68,9 +68,9 @@ export function Hit({ hit: { item, matched }, onPick, onKey }: HitProps) {
     </>
   );
   const cls = "explore-hit flex h-full items-start justify-between gap-3 rounded-xl px-3.5 py-3";
-  if (!item.href) return <div className={cls}>{body}</div>;
+  if (!item.href) return <div className={cls} data-tone={item.tone}>{body}</div>;
   return (
-    <a data-hit href={item.href} onClick={onPick} onKeyDown={(e) => onKey(e, e.currentTarget)} className={cls}>
+    <a data-hit data-tone={item.tone} href={item.href} onClick={onPick} onKeyDown={(e) => onKey(e, e.currentTarget)} className={cls}>
       {body}
     </a>
   );

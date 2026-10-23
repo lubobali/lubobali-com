@@ -1,4 +1,5 @@
 import { caseStudies, storyPath } from "@/lib/case-studies";
+import { ceoQuestions } from "@/lib/ceo-questions";
 import { createSearch } from "@/lib/search/engine";
 import { synonyms } from "@/lib/search/synonyms";
 import { site } from "@/lib/site";
@@ -20,7 +21,7 @@ export const exploreGroups = [
   { id: "featured", label: "All projects" },
   { id: "stories", label: "Stories" },
   { id: "projects", label: "Projects" }, // whole-site search only (P5.5)
-  { id: "start", label: "About me" },
+  { id: "start", label: "Get to know me" }, // not "About me": the About page card has that name
   { id: "pages", label: "On this site" },
 ] as const;
 
@@ -32,6 +33,9 @@ export type ExploreItem = {
   keywords: readonly string[]; // shown as "matched: ..." when a word hits
   text: string; // searched too, never shown
   number?: { value: string; label: string }; // a story's headline number
+  // Pages (Lubo 2026-10-24: "every page a different colour so it's easy to
+  // spot"): each row gets its own tone (explore.css [data-tone]).
+  tone?: "amber" | "violet" | "sky" | "green" | "teal" | "ice" | "brand";
 };
 
 const projects: ExploreItem[] = work.map((w) => {
@@ -50,6 +54,7 @@ const projects: ExploreItem[] = work.map((w) => {
 const pages: ExploreItem[] = [
   {
     group: "pages",
+    tone: "amber",
     title: "Free AI blueprint",
     subtitle: "Describe a problem, get a first plan in a minute",
     href: "/blueprint",
@@ -58,6 +63,7 @@ const pages: ExploreItem[] = [
   },
   {
     group: "pages",
+    tone: "ice",
     title: "How it works",
     subtitle: "Steps, terms, what happens after the call",
     href: "/#how-it-works",
@@ -66,6 +72,7 @@ const pages: ExploreItem[] = [
   },
   {
     group: "pages",
+    tone: "teal",
     title: "Built with",
     subtitle: "The tools behind the work",
     href: "/#stack",
@@ -74,6 +81,7 @@ const pages: ExploreItem[] = [
   },
   {
     group: "pages",
+    tone: "brand",
     title: "Contact",
     subtitle: "Book a call or write an email",
     href: "/#contact",
@@ -89,8 +97,20 @@ const pages: ExploreItem[] = [
     keywords: ["projects", "portfolio", "GitHub", "SQL", "Tableau", "R"],
     text: "data engineering analytics dashboards pipelines AI agents",
   },
+  // P6.8 (Lubo: "make it visible and openable from Explore"): first in
+  // "Get to know me", every question searchable ("data safe", "cost"...).
   {
     group: "start",
+    tone: "violet",
+    title: "Questions CEOs ask me",
+    subtitle: "Straight answers: cost, data safety, AI bills, who owns the code",
+    href: "/#questions",
+    keywords: ["questions", "FAQ", "price", "cost", "data safety", "AI bills", "trust"],
+    text: ceoQuestions.map((q) => q.q).join(" "),
+  },
+  {
+    group: "start",
+    tone: "sky",
     title: "About me",
     subtitle: "How I think, how I keep your data safe, and who I am",
     href: "/about",
@@ -99,9 +119,11 @@ const pages: ExploreItem[] = [
   },
   {
     group: "start",
+    tone: "green",
     title: "Resume",
-    subtitle: "Experience and skills, with a PDF",
-    keywords: ["resume", "CV", "experience", "skills", "PDF"],
+    subtitle: "Paste your job post: see what I've already proven. PDF too.",
+    href: "/resume",
+    keywords: ["resume", "CV", "experience", "skills", "PDF", "job post", "fit"],
     text: "jobs work history",
   },
 ];

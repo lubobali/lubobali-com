@@ -52,6 +52,10 @@ const PAIRS = [
   ["link", "card", TEXT],
   ["success", "card", UI],
   ...["journey-2", "journey-3", "journey-4", "journey-5"].map((bg) => ["award", bg, TEXT]),
+  // "Ask Lubo" chat (P6.8): dark ink on the bright bubbles + the lit pill;
+  // pills and proof links in platinum on the chat card (journey-3 -> -5).
+  ["bubble-ink", "bubble-q", MAIN],
+  ["bubble-ink", "bubble-a", MAIN],
   // /about Security pill: red text on the vault card (journey-3 -> -5).
   ...["journey-3", "journey-4", "journey-5"].map((bg) => ["alert", bg, TEXT]),
   ["tone-ice", "card", UI],

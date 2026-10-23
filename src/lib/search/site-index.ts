@@ -1,4 +1,4 @@
-import { exploreItems } from "@/lib/explore";
+import { type ExploreItem, exploreItems } from "@/lib/explore";
 import { projects, projectSearchDoc } from "@/lib/projects";
 import { createSearch, type SearchDoc } from "./engine";
 import { synonyms } from "./synonyms";
@@ -15,6 +15,7 @@ export type SiteEntry = SearchDoc & {
   subtitle: string;
   href?: string; // none until the page is built
   number?: { value: string; label: string };
+  tone?: ExploreItem["tone"]; // pages: their own colour in Explore
 };
 
 const idOf = (href: string | undefined, title: string) => (href ? href.replace(/^\//, "") : `soon:${title}`);
@@ -29,6 +30,7 @@ export const siteDocs: readonly SiteEntry[] = [
     subtitle: it.subtitle,
     href: it.href,
     number: it.number,
+    tone: it.tone,
   })),
   ...projects.map((p) => ({
     ...projectSearchDoc(p),
