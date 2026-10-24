@@ -6,7 +6,7 @@ import { DataRain } from "@/components/ambient/data-rain";
 import { Picture } from "@/components/picture";
 
 const photos = [
-  { name: "lubo-bali-portrait", use: "home hero", alt: "Lubo Bali, AI and Data Platform Engineer, in a dark suit" },
+  { name: "lubo-bali-portrait", use: "home hero", alt: "Lubo Bali, Data and AI Platform Engineer, in a dark suit" },
   { name: "lubo-bali-about", use: "about", alt: "Lubo Bali in a gray suit, arms crossed" },
   { name: "lubo-bali-basketball", use: "about: who I was", alt: "Lubo Bali in a white shirt and tie, a basketball under his arm, pointing at the camera" },
   { name: "lubo-bali-headshot", use: "contact", alt: "Headshot of Lubo Bali in a gray suit" },
@@ -171,7 +171,7 @@ export default function Styleguide() {
           {typeScale.map((t) => (
             <div key={t.name} className="flex flex-col gap-1">
               <span className="font-mono text-sm text-muted-foreground">{t.name}</span>
-              <span className={t.className}>AI & Data Platform Engineer</span>
+              <span className={t.className}>Data & AI Platform Engineer</span>
             </div>
           ))}
           <div className="flex flex-col gap-1">

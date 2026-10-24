@@ -6,10 +6,10 @@
 export const site = {
   url: "https://lubobali.com",
   name: "Lubo Bali",
-  jobTitle: "Senior AI & Data Platform Engineer",
+  jobTitle: "Senior Data & AI Platform Engineer",
   // Meta description + llms.txt summary. 50-160 chars (scripts/check-seo.mjs).
   description:
-    "Senior AI & Data Platform Engineer. Solo-built LuBot.ai, a production multi-tenant AI SaaS featured by Neon (Databricks). Available for AI projects.",
+    "Senior Data & AI Platform Engineer. Solo-built LuBot.ai, a production multi-tenant AI SaaS featured by Neon (Databricks). Available for AI projects.",
   locale: "en_US",
   // Projects only (Lubo, 2026-10-18; replaces D2 "full-time also open").
   // Shown near every Book-a-call button. Lubo updates the month by hand

@@ -28,6 +28,18 @@ test("LuBot numbers on the resume = the numbers on the site", () => {
   }
 });
 
+// Lubo 2026-10-24: one title, the one on his LinkedIn. The share image is
+// a picture, so its HTML source is checked (re-render with render.mjs).
+test("one job title everywhere: resume = site = share image", () => {
+  assert.equal(resume.title, "Senior Data & AI Platform Engineer");
+  const site = readFileSync(join(repo, "src/lib/site.ts"), "utf8");
+  assert.ok(site.includes(`jobTitle: "${resume.title}"`), "site.ts jobTitle differs from the resume title");
+  const og = readFileSync(join(repo, "scripts/brand/og.html"), "utf8")
+    .replace(/<br>/g, " ")
+    .replace(/&amp;/g, "&");
+  assert.ok(og.includes(resume.title), "og.html (public/og.png) shows another title");
+});
+
 test("the phone number is never in the site's source (PDF only)", () => {
   const digits = PHONE.replace(/\D/g, "");
   const hits = [];

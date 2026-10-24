@@ -15,7 +15,7 @@ import {
 } from "../lib/seo.mjs";
 
 const GOOD_HEAD = `<head><title>Lubo Bali</title>
-<meta name="description" content="Senior AI &amp; Data Platform Engineer. Solo-built LuBot.ai, featured by Neon."/>
+<meta name="description" content="Senior Data &amp; AI Platform Engineer. Solo-built LuBot.ai, featured by Neon."/>
 <link rel="canonical" href="https://lubobali.com/"/>
 <meta property="og:title" content="Lubo Bali"/>
 <meta property="og:description" content="x"/>
@@ -29,7 +29,7 @@ const person = {
   "@id": "https://lubobali.com/#person",
   name: "Lubo Bali",
   url: "https://lubobali.com/",
-  jobTitle: "AI & Data Platform Engineer",
+  jobTitle: "Data & AI Platform Engineer",
   description: "x",
   image: "https://lubobali.com/img/a.webp",
   knowsAbout: ["RAG"],
@@ -43,7 +43,7 @@ test("parsePage reads title, metas, links, JSON-LD and decodes &amp;", () => {
     GOOD_HEAD + `<script type="application/ld+json">{"a":1}</script>`,
   );
   assert.equal(page.title, "Lubo Bali");
-  assert.match(page.metas.description, /AI & Data/);
+  assert.match(page.metas.description, /Data & AI/);
   assert.equal(page.links.canonical, "https://lubobali.com/");
   assert.deepEqual(page.jsonLd, ['{"a":1}']);
 });
@@ -157,9 +157,9 @@ test("pngSize reads the IHDR size, rejects non-PNG", () => {
 });
 
 test("checkBotText: name, one h1 and <main> in raw HTML pass", () => {
-  const html = `<body><main><h1>Lubo Bali</h1><p>Senior AI &amp; Data Platform Engineer</p></main></body>`;
+  const html = `<body><main><h1>Lubo Bali</h1><p>Senior Data &amp; AI Platform Engineer</p></main></body>`;
   assert.deepEqual(checkBotText(html, ["Lubo Bali"]), []);
-  assert.deepEqual(checkBotText(html, ["Lubo Bali", "Senior AI & Data Platform Engineer"]), []);
+  assert.deepEqual(checkBotText(html, ["Lubo Bali", "Senior Data & AI Platform Engineer"]), []);
 });
 
 test("checkBotText: HTML entities are decoded like a bot reads them", () => {
