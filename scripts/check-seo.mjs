@@ -13,6 +13,7 @@ import {
   checkJsonLd,
   checkLlmsTxt,
   hasPhone,
+  checkShareImage,
   assetPath,
   checkPage,
   checkRobots,
@@ -102,6 +103,7 @@ for (const file of files) {
   }
   if (path === "/") home = page;
   fail(path, checkPage(page, path));
+  fail(path, checkShareImage(page, path));
   // Phone number: only in the resume PDF, never in a page (bots scrape them).
   if (hasPhone(html, PHONE)) fail(path, ["the phone number is in the page (PDF only)"]);
   // The share image must be in the build, or the LinkedIn preview breaks.

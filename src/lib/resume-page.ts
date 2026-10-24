@@ -1,4 +1,4 @@
-import { lubotNumbers } from "@/lib/resume";
+import { lubotNumbers, resumeShare } from "@/lib/resume";
 
 // /resume page words (Phase 6, P6.7). Plan v2 (Lubo 2026-10-24): the top of
 // the page is the fit box ("check my resume against your job post"), then
@@ -10,7 +10,7 @@ export const resumePage = {
   description:
     "Lubo Bali's resume: paste your project or job post and see which needs are already proven in real projects. PDF download, experience, skills.",
   eyebrow: "Resume",
-  heading: "Does Lubo fit your project?",
+  heading: resumeShare.hook, // the share card says the same
   sub: "Paste your project or job post. In a second you see which needs I've already proven in real projects, with links to the work.",
   tryLabel: "Try:",
   tries: ["AI agents for retail?", "Healthcare dashboards?", "Snowflake and dbt?"],

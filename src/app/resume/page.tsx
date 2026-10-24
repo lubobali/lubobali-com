@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { FinalCta } from "@/components/home/final-cta";
 import { ResumeFullText, ResumeHero, ResumeJourney, ResumeSkillsEducation } from "@/components/resume/resume-sections";
 import { JsonLd } from "@/components/seo/json-ld";
+import { resumeShare } from "@/lib/resume";
 import { resumePage } from "@/lib/resume-page";
 import { resumeGraph } from "@/lib/schema";
 import { site } from "@/lib/site";
@@ -9,6 +10,9 @@ import { site } from "@/lib/site";
 // /resume (Phase 6, P6.7, plan v2 agreed with Lubo 2026-10-24): the fit box
 // first ("check my resume against your job post"), then the PDF, the
 // experience, education and skills, and the same finish line as home.
+
+// Its own card when the link is shared (P6.9), not the site photo card.
+const shareImage = { url: resumeShare.path, width: 1200, height: 630, alt: `${resumeShare.hook} ${resumeShare.sub}` };
 
 export const metadata: Metadata = {
   title: resumePage.title,
@@ -21,8 +25,9 @@ export const metadata: Metadata = {
     locale: site.locale,
     title: `${resumePage.title} — ${site.name}`,
     description: resumePage.description,
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: `${site.name}, ${site.jobTitle}` }],
+    images: [shareImage],
   },
+  twitter: { card: "summary_large_image", creator: "@Lubo_Bali", images: [shareImage] },
 };
 
 export default function ResumePage() {

@@ -7,6 +7,7 @@ import {
   checkJsonLd,
   checkLlmsTxt,
   hasPhone,
+  checkShareImage,
   checkPage,
   checkRobots,
   checkSitemap,
@@ -196,4 +197,11 @@ test("assetPath maps a share image URL on our origin to its file in the build", 
   assert.equal(assetPath("https://lubobali.com/share/mergeai.jpg"), "share/mergeai.jpg");
   assert.equal(assetPath("https://lubobali.com/og.png?v=2"), "og.png");
   assert.equal(assetPath("https://example.com/x.png"), null);
+});
+
+test("checkShareImage: /resume must use its own card on LinkedIn and X", () => {
+  const card = "https://lubobali.com/share/resume.jpg";
+  assert.deepEqual(checkShareImage({ metas: { "og:image": card, "twitter:image": card } }, "/resume"), []);
+  assert.equal(checkShareImage({ metas: { "og:image": "https://lubobali.com/og.png" } }, "/resume").length, 2);
+  assert.deepEqual(checkShareImage({ metas: {} }, "/about"), []);
 });

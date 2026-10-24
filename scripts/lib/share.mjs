@@ -40,5 +40,11 @@ export function shareCard(p) {
   };
 }
 
+/** The /resume card (resumeShare in src/lib/resume.ts): no big number,
+ * a short line under the hook instead. */
+export function resumeCard(share) {
+  return { slug: "resume", chapter: "resume", kicker: share.kicker, name: share.name, hook: share.hook, value: "", label: "", sub: share.sub };
+}
+
 /** Changes whenever anything on the card changes (then re-render). */
 export const cardHash = (card) => createHash("sha256").update(JSON.stringify(card)).digest("hex").slice(0, 16);

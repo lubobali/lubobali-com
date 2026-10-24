@@ -157,5 +157,16 @@ export const resume = {
   ],
 } as const;
 
+/** The /resume share card (P6.9, Lubo 2026-10-24: site blue + the fit
+ * ring): what LinkedIn, Slack or email show when the link is shared. The
+ * page heading uses the same hook. Rendered by scripts/brand/share-images.mjs. */
+export const resumeShare = {
+  path: "/share/resume.jpg",
+  kicker: "Resume",
+  hook: "Does Lubo fit your project?",
+  sub: "Paste your job post. See the proof in a second.",
+  name: "Checked against real work",
+} as const;
+
 /** The PDF's public path (the /resume page links it). */
 export const resumePdfPath = "/lubo-bali-resume.pdf";

@@ -161,6 +161,18 @@ export function checkLlmsTxt(txt) {
   return p;
 }
 
+/** Pages with their own share card (else the site card, /og.png). */
+export const OWN_SHARE_IMAGE = { "/resume": "/share/resume.jpg" };
+
+/** The page's og:image and twitter:image are its own card. */
+export function checkShareImage(page, path) {
+  const want = OWN_SHARE_IMAGE[path];
+  if (!want) return [];
+  return ["og:image", "twitter:image"]
+    .filter((k) => page.metas[k] !== ORIGIN + want)
+    .map((k) => `${k} is ${page.metas[k] ?? "missing"}, want ${ORIGIN + want}`);
+}
+
 /** True when the phone number ("555-123-4567") is in the text, in any
  * spacing ("(555) 123 4567", "5551234567"). It belongs in the PDF only. */
 export function hasPhone(text, phone) {

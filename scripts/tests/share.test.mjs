@@ -5,7 +5,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
-import { cardHash, loadProjects, shareCard } from "../lib/share.mjs";
+import { cardHash, loadProjects, resumeCard, shareCard } from "../lib/share.mjs";
+import { loadResume } from "../lib/resume.mjs";
 
 const repo = new URL("../../", import.meta.url).pathname;
 
@@ -31,4 +32,21 @@ test("the big number is left out when the hook already says it (no repeats)", ()
   const base = { slug: "x", chapter: "ai", name: "X", oneLine: "o", number: { value: "12,000×", label: "cheaper" } };
   assert.equal(shareCard({ ...base, picture: { kind: "drops", title: "The same agents, 12,000× cheaper" } }).value, "");
   assert.equal(shareCard({ ...base, picture: { kind: "drops", title: "Cheaper agents" } }).value, "12,000×");
+});
+
+// P6.9: /resume has its own card (Lubo 2026-10-24: site blue, the fit ring).
+test("the /resume card exists and matches its words today", async () => {
+  const { resumeShare } = await loadResume(repo);
+  const manifest = JSON.parse(readFileSync(`${repo}public/share/manifest.json`, "utf8"));
+  assert.ok(existsSync(`${repo}public${resumeShare.path}`), "no /resume card (run scripts/brand/share-images.mjs)");
+  assert.equal(manifest.resume, cardHash(resumeCard(resumeShare)), "/resume card is stale (run scripts/brand/share-images.mjs)");
+});
+
+test("the /resume card says what the page says", async () => {
+  const { resumeShare } = await loadResume(repo);
+  const card = resumeCard(resumeShare);
+  assert.equal(card.slug, "resume");
+  assert.equal(card.hook, "Does Lubo fit your project?");
+  const page = readFileSync(`${repo}src/lib/resume-page.ts`, "utf8");
+  assert.match(page, /heading: resumeShare\.hook/, "the /resume heading must come from resumeShare.hook");
 });
