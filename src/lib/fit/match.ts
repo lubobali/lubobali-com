@@ -211,11 +211,12 @@ export function findTerms(text: string, terms: readonly FitTerm[]): Found[] {
 function asTyped(raw: string, word: string): string {
   const pattern = word
     .split(" ")
-    .map((w) => w.replace(/[^a-z0-9]/g, ""))
+    .map((w) => w.replace(/[^a-z0-9]/gi, ""))
     .filter(Boolean)
     .join("[^A-Za-z0-9]+");
-  const m = pattern ? new RegExp(pattern, "i").exec(raw) : null;
-  const found = m ? m[0] : word;
+  // Whole words only: "Spark" not "park", "Jenkins" not "jenkin" (no lookbehind, old Safari).
+  const m = pattern ? new RegExp(`(?:^|[^A-Za-z0-9])(${pattern}[A-Za-z0-9]*)`, "i").exec(raw) : null;
+  const found = m ? m[1] : word;
   return found.charAt(0).toUpperCase() + found.slice(1);
 }
 

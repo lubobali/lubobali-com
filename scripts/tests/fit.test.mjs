@@ -117,3 +117,14 @@ test("every skill bar link opens with its own skill proven", () => {
     assert.ok(run(q).needs.some((n) => n.id === t.id), `${t.id}: "${q}" doesn't find itself`);
   }
 });
+
+test("the visitor's own word is shown whole, as typed (2026-10-24 live: 'Spark,' showed 'Park')", () => {
+  const word = (raw, shown) => new RegExp(`(^|[^A-Za-z0-9])${shown.replace(/[^A-Za-z0-9]+/g, "[^A-Za-z0-9]+")}($|[^A-Za-z0-9])`, "i").test(raw);
+  const texts = ["Python and SQL, Airflow, dbt, Spark. AWS (S3, Lambda).", "Spark, Airflow, dbt.", "Tools: Pinecone, Weaviate."];
+  for (const raw of [...texts, ...[...JOBS, ...HOLDOUT, ...QUESTIONS].map((c) => c.text)]) {
+    for (const n of run(raw).needs) {
+      if (n.shown !== n.label) assert.ok(word(raw, n.shown), `${n.id}: "${n.shown}" is not a whole word in the text`);
+    }
+  }
+  assert.equal(run(texts[0]).needs.find((n) => n.id === "spark").shown, "Spark");
+});
