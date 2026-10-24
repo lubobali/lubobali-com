@@ -40,7 +40,7 @@
         "properties": {
           "name": { "$ref": "#/$defs/name" },
           "kind": { "$ref": "#/$defs/kind" },
-          "what": { "type": "string", "minLength": 1, "maxLength": 90 },
+          "what": { "type": "string", "minLength": 1, "maxLength": 120 },
           "weekUpdates": { "$ref": "#/$defs/count" },
           "weeks": { "type": "array", "minItems": 8, "maxItems": 8, "items": { "$ref": "#/$defs/count" } }
         }

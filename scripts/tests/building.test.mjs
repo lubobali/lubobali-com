@@ -40,7 +40,7 @@ for (const [path, value] of [
   [["milestones"], Array(7).fill(sample.milestones[0])],
   [["ci", "last60"], ["ok", "maybe"]],
   [["uptime", "pct"], 101],
-  [["building", 0, "what"], "x".repeat(91)],
+  [["building", 0, "what"], "x".repeat(121)],
   [["extra"], "not allowed"],
 ]) {
   test(`rejects ${path.join(".")} = ${JSON.stringify(value)?.slice(0, 30)}`, () => {
