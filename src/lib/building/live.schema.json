@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lubobali-live/v1",
+  "title": "live.json v1: data for lubobali.com/building",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "sample", "generatedAt", "lastShipped", "year", "building", "tests", "ci", "uptime", "milestones", "codeMix", "tools"],
+  "$defs": {
+    "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "count": { "type": "integer", "minimum": 0 },
+    "pct": { "type": "number", "minimum": 0, "maximum": 100 },
+    "name": { "type": "string", "minLength": 1, "maxLength": 40 },
+    "kind": { "enum": ["public", "client"] }
+  },
+  "properties": {
+    "version": { "const": 1 },
+    "sample": { "type": "boolean" },
+    "generatedAt": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$" },
+    "lastShipped": { "$ref": "#/$defs/date" },
+    "year": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "days", "total", "activeDays", "longestStreak", "projects"],
+      "properties": {
+        "start": { "$ref": "#/$defs/date" },
+        "days": { "type": "array", "maxItems": 400, "items": { "$ref": "#/$defs/count" } },
+        "total": { "$ref": "#/$defs/count" },
+        "activeDays": { "$ref": "#/$defs/count" },
+        "longestStreak": { "$ref": "#/$defs/count" },
+        "projects": { "$ref": "#/$defs/count" }
+      }
+    },
+    "building": {
+      "type": "array",
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "kind", "what", "weekUpdates", "weeks"],
+        "properties": {
+          "name": { "$ref": "#/$defs/name" },
+          "kind": { "$ref": "#/$defs/kind" },
+          "what": { "type": "string", "minLength": 1, "maxLength": 90 },
+          "weekUpdates": { "$ref": "#/$defs/count" },
+          "weeks": { "type": "array", "minItems": 8, "maxItems": 8, "items": { "$ref": "#/$defs/count" } }
+        }
+      }
+    },
+    "tests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "failing", "projects"],
+      "properties": {
+        "total": { "$ref": "#/$defs/count" },
+        "failing": { "const": 0 },
+        "projects": {
+          "type": "array",
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "count"],
+            "properties": { "name": { "$ref": "#/$defs/name" }, "count": { "$ref": "#/$defs/count" } }
+          }
+        }
+      }
+    },
+    "ci": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["since", "runs", "green", "stopped", "last30", "last60"],
+      "properties": {
+        "since": { "$ref": "#/$defs/date" },
+        "runs": { "$ref": "#/$defs/count" },
+        "green": { "$ref": "#/$defs/count" },
+        "stopped": { "$ref": "#/$defs/count" },
+        "last30": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["runs", "passed"],
+          "properties": { "runs": { "$ref": "#/$defs/count" }, "passed": { "$ref": "#/$defs/count" } }
+        },
+        "last60": { "type": "array", "maxItems": 60, "items": { "enum": ["ok", "fail"] } }
+      }
+    },
+    "uptime": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["pct", "checkEverySeconds", "days"],
+          "properties": {
+            "pct": { "$ref": "#/$defs/pct" },
+            "checkEverySeconds": { "type": "integer", "minimum": 1 },
+            "days": {
+              "type": "array",
+              "maxItems": 90,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["date", "pct"],
+                "properties": { "date": { "$ref": "#/$defs/date" }, "pct": { "$ref": "#/$defs/pct" } }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "milestones": {
+      "type": "array",
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["date", "project", "text"],
+        "properties": {
+          "date": { "$ref": "#/$defs/date" },
+          "project": { "$ref": "#/$defs/name" },
+          "text": { "type": "string", "minLength": 1, "maxLength": 100 }
+        }
+      }
+    },
+    "codeMix": {
+      "type": "array",
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label", "pct"],
+        "properties": { "label": { "$ref": "#/$defs/name" }, "pct": { "$ref": "#/$defs/pct" } }
+      }
+    },
+    "tools": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "isNew"],
+        "properties": { "name": { "$ref": "#/$defs/name" }, "isNew": { "type": "boolean" } }
+      }
+    }
+  }
+}
