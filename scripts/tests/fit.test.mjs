@@ -6,7 +6,7 @@ import "../lib/ts-paths.mjs";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { HOLDOUT, JOBS, NOT_TECH, QUESTIONS, REVIEW_TECH } from "./fixtures/fit-jobs.mjs";
+import { HOLDOUT, JOBS, NOT_TECH, QUESTIONS, REVIEW_TECH, TYPOS } from "./fixtures/fit-jobs.mjs";
 
 const repo = new URL("../../", import.meta.url).pathname;
 const { FIT_TERMS } = await import("../../src/lib/fit/terms.ts");
@@ -17,7 +17,7 @@ const { fitCopy } = await import("../../src/lib/fit/copy.ts");
 const run = (text) => matchFit(text, FIT_TERMS, fitSources);
 const ids = (r, status) => r.needs.filter((n) => n.status === status).map((n) => n.id).sort();
 
-for (const c of [...JOBS, ...HOLDOUT, ...QUESTIONS, ...NOT_TECH, ...REVIEW_TECH]) {
+for (const c of [...JOBS, ...HOLDOUT, ...QUESTIONS, ...NOT_TECH, ...REVIEW_TECH, ...TYPOS]) {
   test(`finds what ${c.id} asks for`, () => {
     const r = run(c.text);
     assert.deepEqual({ yes: ids(r, "yes"), new: ids(r, "new") }, { yes: [...c.yes].sort(), new: [...c.new].sort() });

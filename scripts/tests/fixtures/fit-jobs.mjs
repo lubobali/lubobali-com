@@ -264,3 +264,17 @@ export const REVIEW_TECH = [
   { id: "q-startup", yes: ["founding"], new: [], text: "Have you worked at a startup?" },
   { id: "q-rate", yes: [], new: [], topics: ["rate", "availability"], text: "How much do you charge and are you available full-time?" },
 ];
+
+// Typos (Lubo 2026-10-24: "people make small mistakes"). Tool names of 6+
+// letters, 1 letter off (2 for 9+), only in a tech text or a short list.
+export const TYPOS = [
+  { id: "typo-list", yes: ["python", "snowflake", "databricks", "tableau", "postgres"], new: ["kubernetes"], text: "Pyhton, Snowflak, Kubernets, Databrick, Tablaeu, postgress" },
+  { id: "typo-post", yes: ["pipelines", "airflow", "python", "terraform"], new: [], text: "Data engineer to build ETL pipelines with Airflwo and Pythn, infrastructure in Terrafrom." },
+  { id: "typo-question", yes: ["snowflake"], new: [], text: "Do you know snoflake?" },
+  { id: "typo-short", yes: ["python"], new: [], text: "pahton" }, // Lubo's own test: 2 letters off, short question
+  { id: "words-not-typos", yes: [], new: [], text: "patron" },
+  { id: "words-not-typos-2", yes: [], new: [], text: "docket" },
+  { id: "words-not-typos-3", yes: [], new: [], text: "person" },
+  // Real words one letter from a tool name stay words.
+  { id: "not-typos", yes: [], new: [], text: "Paralegal: manage the court docket, file motions with the clerk and keep the tableaux of evidence in order for the partners." },
+];

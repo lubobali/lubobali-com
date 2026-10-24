@@ -57,7 +57,7 @@ export const searchKey = (s: string) => words(s).join(" ");
 
 // Typo distance (optimal string alignment: a swap counts as one edit),
 // stopped early once it is over the limit.
-function typoDistance(a: string, b: string, limit: number): number {
+export function typoDistance(a: string, b: string, limit: number): number {
   if (Math.abs(a.length - b.length) > limit) return limit + 1;
   let prev2: number[] = [];
   let prev = Array.from({ length: b.length + 1 }, (_, j) => j);

@@ -1,7 +1,7 @@
 // "Does Lubo fit your project?" (Phase 6, P6.6): reads a pasted job post or
 // a short question and lists each need it names, with the real work that
-// proves it. Pure and dependency-free (types only), so Node runs the tests on
-// it directly; it runs in the visitor's browser, nothing is sent anywhere.
+// proves it. Pure (its one import, the site search's typo distance, has no
+// imports either); it runs in the visitor's browser, nothing is sent anywhere.
 //
 // Rules (Lubo 2026-10-24):
 // - a need is "yes" (✓) only when real work proves it, with links: a claim
@@ -9,6 +9,7 @@
 // - otherwise it is "new": a new tool for the same job, said positively,
 //   with the closest real work (copy.ts), never "can't" or "not qualified";
 // - no percentage score; years of experience are not judged.
+import { typoDistance } from "../search/engine";
 import type { FitKind, FitTerm } from "./terms";
 
 /** One piece of work that can prove a skill. */
@@ -64,6 +65,23 @@ const NOISE = [
   "sales agent", "travel agent", "user agent", "free agent", "leasing agent", "listing agent", "booking agent",
   "agent of change",
 ];
+
+const TYPO_KINDS = new Set<FitKind>(["ai", "data", "cloud", "app", "analytics"]);
+// Real words one letter from a tool name: never a typo ("docket" ≠ Docker).
+const REAL_WORDS = new Set(["docket", "docked", "dockers", "panda", "kafkaesque", "pythons", "airflows", "spanner", "tableaux", "lookers"]);
+
+// Letters of `a` with no partner in `b`, order ignored ("pahton" vs
+// "python": 1, the a; "patron" vs "python": 2).
+function lettersOff(a: string, b: string): number {
+  const left = [...b];
+  let off = 0;
+  for (const ch of a) {
+    const i = left.indexOf(ch);
+    if (i === -1) off++;
+    else left.splice(i, 1);
+  }
+  return off;
+}
 
 // Weak words (terms.ts `weak`) count only when the text is about tech.
 const TECH_CONTEXT = [
@@ -153,6 +171,27 @@ export function findTerms(text: string, terms: readonly FitTerm[]): Found[] {
       keep(term.id, i / len, phrase);
       hay = hay.slice(0, i + 1) + mask(phrase) + hay.slice(i + 1 + phrase.length);
       i = hay.indexOf(needle);
+    }
+  }
+  // Small typos (Lubo 2026-10-24: "Pyhton", "Snowflak"): a word left over,
+  // one letter off a tool name of 6+ letters (two off for 9+). Only in a
+  // tech text or a short question/list, so "docket" in a legal post stays
+  // a docket. Same spelling distance as the site search (search/engine.ts).
+  if (tech || hay.split(" ").filter(Boolean).length <= 12) {
+    const tools = terms
+      .filter((t) => TYPO_KINDS.has(t.kind) && !first.has(t.id))
+      .flatMap((t) => t.aliases.map(key).filter((a) => !a.includes(" ") && a.length >= 6).map((a) => ({ t, a })));
+    let at = 0;
+    for (const w of hay.split(" ")) {
+      if (w.length >= 5 && /^[a-z]+$/.test(w) && !REAL_WORDS.has(w)) {
+        // A short question gets 2 letters of slack when it is the same
+        // letters mixed up ("pahton" = python, a swap + one slip), never a
+        // different word ("patron", "docket").
+        const limit = (a: string) => (a.length >= 9 || (isShort && w[0] === a[0] && lettersOff(w, a) <= 1) ? 2 : 1);
+        const hit = tools.find(({ t, a }) => !first.has(t.id) && typoDistance(w, a, limit(a)) <= limit(a));
+        if (hit) keep(hit.t.id, at / len, hit.a);
+      }
+      at += w.length + 1;
     }
   }
   // Tool names that are also English words: the pattern's group 1 is the
