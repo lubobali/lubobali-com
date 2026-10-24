@@ -35,7 +35,7 @@ for (const [path, value] of [
   [["year", "total"], -1],
   [["year", "total"], 1.5],
   [["year"], undefined],
-  [["tests", "failing"], 3],
+  [["tests", "allGreen"], "yes"],
   [["building"], [...sample.building, ...sample.building]],
   [["milestones"], Array(7).fill(sample.milestones[0])],
   [["ci", "last60"], ["ok", "maybe"]],

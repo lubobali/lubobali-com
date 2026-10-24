@@ -11,7 +11,7 @@ export type LiveData = {
   lastShipped: string; // "YYYY-MM-DD", Chicago time
   year: { start: string; days: number[]; total: number; activeDays: number; longestStreak: number; projects: number };
   building: { name: string; kind: "public" | "client"; what: string; weekUpdates: number; weeks: number[] }[];
-  tests: { total: number; failing: 0; projects: { name: string; count: number }[] };
+  tests: { total: number; allGreen: boolean; projects: { name: string; count: number }[] };
   ci: { since: string; runs: number; green: number; stopped: number; last30: { runs: number; passed: number }; last60: ("ok" | "fail")[] };
   uptime: { pct: number; checkEverySeconds: number; days: { date: string; pct: number }[] } | null;
   milestones: { date: string; project: string; text: string }[];

@@ -286,7 +286,7 @@
  ],
  "tests": {
   "total": 1234,
-  "failing": 0,
+  "allGreen": true,
   "projects": [
    {
     "name": "Sample project A",

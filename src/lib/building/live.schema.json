@@ -49,10 +49,10 @@
     "tests": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["total", "failing", "projects"],
+      "required": ["total", "allGreen", "projects"],
       "properties": {
         "total": { "$ref": "#/$defs/count" },
-        "failing": { "const": 0 },
+        "allGreen": { "type": "boolean", "description": "every project worked on in the last 30 days: latest CI run green" },
         "projects": {
           "type": "array",
           "maxItems": 12,
