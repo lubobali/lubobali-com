@@ -43,7 +43,8 @@ export const metadata: Metadata = {
 
 export default function BuildingPage() {
   return (
-    <main className="flex flex-1 flex-col">
+    // data-live: deploy.sh refuses to publish a /building built from the sample (P7.9).
+    <main className="flex flex-1 flex-col" data-live={data.sample ? "sample" : "real"}>
       {data.sample && <SampleBanner />}
       <BuildingHero data={data} />
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-20 px-4 pb-16 sm:px-6 lg:gap-28 lg:pb-24">

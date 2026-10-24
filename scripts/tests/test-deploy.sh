@@ -95,4 +95,42 @@ dperm="$(stat -c '%a' "$(readlink -f "$ROOT/current")")"
 [[ "$dperm" == 755 ]] || fail "release dir perm $dperm"
 ok "files 644 / dirs 755 (readable by caddy)"
 
-echo "PASS: $PASS/11"
+# 12. /building built from the sample data is refused (P7.9): fake numbers
+#     must never reach visitors, staging or production.
+make_build "$TMP/sample" "sample"
+echo '<main data-live="sample">sample numbers</main>' > "$TMP/sample/building.html"
+if "$DEPLOY" "$TMP/sample" "$ROOT" sample >/dev/null 2>&1; then fail "sample /building refused"; fi
+[[ "$(live)" == "<html>v8</html>" ]] || fail "live untouched after sample"
+make_build "$TMP/real" "real"
+echo '<main data-live="real">real numbers</main>' > "$TMP/real/building.html"
+"$DEPLOY" "$TMP/real" "$ROOT" real >/dev/null || fail "real /building deploys"
+[[ "$(live)" == "<html>real</html>" ]] || fail "real is live"
+ok "sample /building refused, real /building deploys"
+
+# 13. a /building page with no data marker at all is refused too
+make_build "$TMP/nomark" "nomark"
+echo '<main>who knows</main>' > "$TMP/nomark/building.html"
+if "$DEPLOY" "$TMP/nomark" "$ROOT" nomark >/dev/null 2>&1; then fail "unmarked /building refused"; fi
+ok "/building without a data marker refused"
+
+# 14. a second deploy WAITS for the lock (CI + the daily job), then runs
+make_build "$TMP/wait" "wait"
+( exec 8>"$ROOT/.deploy.lock"; flock 8; sleep 2 ) &
+holder=$!
+sleep 0.3
+DEPLOY_LOCK_WAIT=10 "$DEPLOY" "$TMP/wait" "$ROOT" wait >/dev/null || fail "deploy waits for the lock"
+wait "$holder"
+[[ "$(live)" == "<html>wait</html>" ]] || fail "waited deploy is live"
+ok "deploy waits for a running deploy, then goes live"
+
+# 15. ... but not forever: a stuck lock fails clearly, live untouched
+make_build "$TMP/stuck" "stuck"
+( exec 8>"$ROOT/.deploy.lock"; flock 8; sleep 4 ) &
+holder=$!
+sleep 0.3
+if DEPLOY_LOCK_WAIT=1 "$DEPLOY" "$TMP/stuck" "$ROOT" stuck >/dev/null 2>&1; then fail "stuck lock times out"; fi
+wait "$holder"
+[[ "$(live)" == "<html>wait</html>" ]] || fail "live untouched after lock timeout"
+ok "stuck lock times out, live untouched"
+
+echo "PASS: $PASS/15"

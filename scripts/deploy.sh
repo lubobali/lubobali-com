@@ -37,12 +37,19 @@ done
 leaks="$(find "$build" \( -name '.env*' -o -name '*.map' -o -name 'node_modules' \
           -o -name '.git' -o -name '*.pem' -o -name '*.key' \) -print | head -5)"
 [[ -z "$leaks" ]] || die "build contains files that must never be public:\n$leaks"
+# /building must be built from the daily job's real data (P7.9): the sample
+# fixture (fake numbers) or a page with no data marker never goes live.
+if [[ -f "$build/building.html" ]]; then
+  grep -q 'data-live="real"' "$build/building.html" \
+    || die "/building was built without real data (LIVE_DATA_FILE not set?): refusing"
+fi
 
 mkdir -p "$root/releases"
 
-# One deploy at a time (CI runner capacity is 1, this guards manual runs too).
+# One deploy at a time: CI and the daily /building job (P7.9) may meet, so
+# wait for the other one (bounded), never fail at once and never overlap.
 exec 9>"$root/.deploy.lock"
-flock -n 9 || die "another deploy is running"
+flock -w "${DEPLOY_LOCK_WAIT:-900}" 9 || die "another deploy held the lock for ${DEPLOY_LOCK_WAIT:-900}s"
 
 id="$(date -u +%Y%m%dT%H%M%SZ)-$label"
 tmp="$root/releases/.$id.tmp"

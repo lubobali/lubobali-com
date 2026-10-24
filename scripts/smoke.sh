@@ -12,6 +12,7 @@
 #      robots.txt: staging = "Disallow: /" (nginx), prod = the built file
 #   5. one URL style: "/page/" -> 301 "/page"
 #   6. good bots get the same homepage as people (no blocking, no cloaking)
+#   7. /building is the new build, made from real data (P7.9)
 # Never requests scanner paths (/.env etc.): CI traffic would feed our own
 # fail2ban jail. Exit 0 = healthy, 1 = broken (caller rolls back).
 set -euo pipefail
@@ -94,5 +95,12 @@ for bot in "Googlebot/2.1; +http://www.google.com/bot.html" "GPTBot/1.3; +https:
   [[ "$got" == "$want" ]] || die "${bot%%;*} does not get the built homepage"
 done
 echo "smoke: ok  Googlebot, GPTBot, ClaudeBot, PerplexityBot get the same homepage"
+
+# 7. /building (P7.9): served exactly as built, from real data (never the sample)
+if [[ -f "$build/building.html" ]]; then
+  same_as_build /building building.html
+  grep -q 'data-live="real"' "$build/building.html" || die "/building was built from the sample data"
+  echo "smoke: ok  /building = new build, real data"
+fi
 
 echo "smoke: PASS $url"

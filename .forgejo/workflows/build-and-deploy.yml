@@ -67,6 +67,10 @@ jobs:
           # Reuse pictures already made for the live release (same name =
           # same bytes); only new ones are encoded. Saves ~30 s per run.
           IMAGE_CACHE: /srv/lubobali-www/staging/current/img
+          # /building's real numbers (P7.9): written every morning by the
+          # private daily job, next to the releases, never served. Missing
+          # or broken file = the build fails (src/lib/building/load.ts).
+          LIVE_DATA_FILE: /srv/lubobali-www/staging/data/live.json
 
       - name: SEO, AI-bot + CSP check (raw HTML, robots, sitemap, llms.txt, JSON-LD, script hashes)
         run: |
