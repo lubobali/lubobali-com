@@ -63,3 +63,37 @@ test("errors name the field, so the job's alert says what broke", () => {
   const errors = checkLive(schema, edit(["ci", "runs"], "many"));
   assert.ok(errors.some((e) => e.startsWith("ci.runs")), errors.join("\n"));
 });
+
+// --- loadLive(): the page's only way in ----------------------------------------
+const { loadLive } = await import("../../src/lib/building/load.ts");
+const { mkdtempSync, writeFileSync } = await import("node:fs");
+const { tmpdir } = await import("node:os");
+const { join } = await import("node:path");
+
+test("loadLive reads the job's file when LIVE_DATA_FILE names it", () => {
+  const dir = mkdtempSync(join(tmpdir(), "live-"));
+  const file = join(dir, "live.json");
+  writeFileSync(file, JSON.stringify({ ...sample, sample: false }));
+  assert.equal(loadLive(file).sample, false);
+});
+
+test("loadLive falls back to the sample (marked sample) when no file is set", () => {
+  const saved = process.env.LIVE_DATA_FILE; // CI sets it for real builds
+  delete process.env.LIVE_DATA_FILE;
+  try {
+    assert.equal(loadLive().sample, true);
+  } finally {
+    if (saved !== undefined) process.env.LIVE_DATA_FILE = saved;
+  }
+});
+
+test("a broken data file fails the build, naming the field", () => {
+  const dir = mkdtempSync(join(tmpdir(), "live-"));
+  const file = join(dir, "live.json");
+  writeFileSync(file, JSON.stringify({ ...sample, tests: { ...sample.tests, total: -1 } }));
+  assert.throws(() => loadLive(file), /tests\.total/);
+});
+
+test("a missing data file fails the build (never a silent sample)", () => {
+  assert.throws(() => loadLive("/nope/live.json"), /live\.json/);
+});

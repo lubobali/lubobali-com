@@ -837,6 +837,15 @@ body {
   background: var(--soon);
   box-shadow: 0 0 8px color-mix(in oklch, var(--soon) 60%, transparent);
 }
+/* "Building now", quiet (Phase 7): no ship in 2+ days. Still and grey, so the
+   green ping always means "shipped in the last 2 days". */
+.quiet-dot {
+  flex: none;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 9999px;
+  background: var(--muted-foreground);
+}
 /* "Now": green dot with a soft ping. */
 .now-dot {
   position: relative;

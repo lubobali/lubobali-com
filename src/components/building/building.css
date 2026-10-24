@@ -1,0 +1,441 @@
+/* /building (Phase 7). Built on the site's beam card (edge-card.css), lighter
+   at the top of the page, darker going down (Lubo: "lighter to darker").
+   Big numbers in the brand serif (Fraunces), like /about. Pure CSS: the year
+   map, bars and strips are plain elements, no client JavaScript. */
+
+.building-year {
+  --from: var(--journey-1);
+  --to: var(--journey-3);
+}
+.building-now-card {
+  --from: var(--journey-2);
+  --to: var(--journey-4);
+}
+.building-now-card.is-second {
+  --from: var(--journey-3);
+  --to: var(--journey-5);
+}
+.building-tests {
+  --from: var(--journey-3);
+  --to: var(--journey-5);
+}
+.building-panel {
+  --from: var(--journey-4);
+  --to: var(--journey-5);
+}
+.building-tools {
+  --from: var(--journey-4);
+  --to: var(--journey-5);
+}
+
+.building-figure {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: clamp(2rem, 1.5rem + 1.6vw, 2.75rem);
+  line-height: 1;
+  white-space: nowrap;
+  background: linear-gradient(100deg, var(--foreground) 35%, var(--sky));
+  background-clip: text;
+  color: transparent;
+}
+.building-hero-figure {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: clamp(3.25rem, 2rem + 5vw, 5.5rem);
+  line-height: 0.95;
+  background: linear-gradient(100deg, var(--foreground) 35%, var(--sky));
+  background-clip: text;
+  color: transparent;
+}
+
+/* Sample build (no real data): loud on purpose, never deployed (P7.9). */
+.building-sample {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  text-align: center;
+  font-weight: 600;
+  color: var(--background);
+  background: var(--soon);
+}
+
+/* Year map: one square per day, Monday..Sunday down, weeks across. Row 1
+   holds the month names. Phones show the last 20 weeks (data-old hides the
+   rest, whole columns, so the grid never shifts). */
+.building-heat {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(var(--weeks-phone), minmax(0, 1fr));
+  grid-template-rows: auto repeat(7, auto);
+  gap: 3px;
+}
+.building-heat [data-old] {
+  display: none;
+}
+/* Phones: the first shown week gets its month name (its real label sits on
+   an older, hidden week). */
+.building-heat .phone-only {
+  display: inline;
+}
+@media (min-width: 768px) {
+  .building-heat {
+    grid-template-columns: repeat(var(--weeks), minmax(0, 1fr));
+    gap: 4px;
+  }
+  .building-heat [data-old] {
+    display: revert;
+  }
+  .building-heat .phone-only {
+    display: none;
+  }
+}
+.building-heat-month {
+  height: 1.25rem;
+  width: 0;
+  overflow: visible;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  color: var(--card-text-soft);
+}
+.building-heat i,
+.building-legend i {
+  display: block;
+  aspect-ratio: 1;
+  border-radius: 22%;
+  /* A day without work: a quiet dark well, so worked days stand out. */
+  background: oklch(0.166 0.026 269.4 / 0.38);
+}
+.building-heat i.pad {
+  background: transparent;
+}
+.building-heat i[data-l="1"],
+.building-legend i[data-l="1"] {
+  background: oklch(0.47 0.14 262);
+}
+.building-heat i[data-l="2"],
+.building-legend i[data-l="2"] {
+  background: var(--brand-deep);
+}
+.building-heat i[data-l="3"],
+.building-legend i[data-l="3"] {
+  background: var(--brand-light);
+}
+.building-heat i[data-l="4"],
+.building-legend i[data-l="4"] {
+  background: var(--sky);
+  box-shadow: 0 0 8px var(--glow-sky);
+}
+.building-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.building-legend i {
+  width: 0.8rem;
+}
+.building-legend i:first-of-type {
+  margin-left: 0.35rem;
+}
+.building-legend i:last-of-type {
+  margin-right: 0.35rem;
+}
+
+/* Chips: public / client / all green. */
+.building-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.building-chip.is-public {
+  color: var(--sky);
+  background: color-mix(in oklch, var(--sky) 14%, transparent);
+  border: 1px solid color-mix(in oklch, var(--sky) 35%, transparent);
+}
+.building-chip.is-client {
+  color: var(--award);
+  background: color-mix(in oklch, var(--award) 10%, transparent);
+  border: 1px solid color-mix(in oklch, var(--award) 30%, transparent);
+}
+.building-chip.is-green {
+  color: var(--success);
+  background: color-mix(in oklch, var(--success) 13%, transparent);
+  border: 1px solid color-mix(in oklch, var(--success) 35%, transparent);
+}
+.building-client {
+  margin: 0;
+  color: var(--card-text-soft);
+  font-style: italic;
+}
+
+/* 8 weekly bars on each "building now" card, newest on the right. */
+.building-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 3rem;
+}
+.building-bars i {
+  width: 0.6rem;
+  height: var(--h);
+  border-radius: 3px;
+  background: oklch(0.906 0.031 265.3 / 0.14);
+}
+.building-bars i[data-on] {
+  background: linear-gradient(180deg, var(--sky), var(--brand-deep));
+}
+
+/* Tests per project: name, bar, number. */
+.building-testbar {
+  display: grid;
+  grid-template-columns: minmax(0, 10rem) 1fr 4.5rem;
+  align-items: center;
+  gap: 0.9rem;
+  font-size: 0.95rem;
+  color: var(--card-text-soft);
+}
+@media (max-width: 479px) {
+  .building-testbar {
+    grid-template-columns: minmax(0, 7rem) 1fr 3.75rem;
+    font-size: 0.85rem;
+  }
+}
+.building-testbar b {
+  text-align: right;
+  color: var(--foreground);
+  font-weight: 600;
+}
+.building-testbar-track {
+  height: 0.7rem;
+  border-radius: 9999px;
+  overflow: hidden;
+  background: oklch(0.166 0.026 269.4 / 0.45);
+}
+.building-testbar-track i {
+  display: block;
+  height: 100%;
+  width: var(--w);
+  min-width: 4px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--brand), var(--sky));
+}
+
+.building-story {
+  display: grid;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 1.1rem 1.3rem;
+  border-radius: 1.1rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+}
+.building-story small {
+  color: var(--award);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.building-story span {
+  color: var(--card-text-soft);
+}
+
+/* The TDD loop: 4 quiet tiles; "Check" is the green one. */
+.building-loop {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+@media (min-width: 640px) {
+  .building-loop {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1024px) {
+  .building-loop {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+.building-loop li {
+  counter-increment: step;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1.1rem 1.2rem;
+  border-radius: 1.1rem;
+  background: color-mix(in oklch, var(--brand) 8%, transparent);
+  border: 1px solid color-mix(in oklch, var(--brand-light) 22%, transparent);
+}
+.building-loop li::before {
+  content: counter(step);
+  display: grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 9999px;
+  background: var(--brand);
+  color: var(--foreground);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.building-loop li:nth-child(3)::before {
+  background: var(--success);
+  color: var(--background);
+}
+.building-loop b {
+  font-size: 1.05rem;
+}
+.building-loop span {
+  color: var(--muted-foreground);
+  font-size: 0.93rem;
+}
+.building-why {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  border-radius: 1rem;
+  border-left: 3px solid var(--success);
+  background: color-mix(in oklch, var(--success) 7%, transparent);
+  color: var(--card-text-soft);
+}
+.building-why b {
+  color: var(--foreground);
+}
+
+/* Last 60 CI runs: green / red squares. Red also differs in shape (taller)
+   so colour is never the only signal. */
+.building-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.building-strip i {
+  width: 0.6rem;
+  height: 1.3rem;
+  border-radius: 3px;
+  background: var(--success);
+  opacity: 0.85;
+}
+.building-strip i[data-fail] {
+  background: var(--alert);
+  opacity: 1;
+  outline: 1px solid color-mix(in oklch, var(--alert) 60%, transparent);
+  outline-offset: 1px;
+}
+
+/* Uptime: one bar per day. 99.9%+ = green, 99-99.9% = amber, below = red. */
+.building-uptime {
+  display: flex;
+  gap: 3px;
+  height: 1.6rem;
+}
+.building-uptime i {
+  flex: 1;
+  border-radius: 2px;
+  background: var(--success);
+  opacity: 0.85;
+}
+.building-uptime i[data-s="dip"] {
+  background: var(--soon);
+  opacity: 1;
+}
+.building-uptime i[data-s="down"] {
+  background: var(--alert);
+  opacity: 1;
+}
+
+/* Shipped lately: date, project, what. */
+.building-timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--border);
+}
+.building-timeline li {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr;
+  gap: 0.25rem 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.building-timeline time {
+  color: var(--award);
+  font-weight: 600;
+}
+.building-timeline-project {
+  color: var(--link);
+  font-size: 0.92rem;
+}
+.building-timeline li > span:last-child {
+  grid-column: 2;
+}
+@media (min-width: 768px) {
+  .building-timeline li {
+    grid-template-columns: 6rem 13rem 1fr;
+    align-items: baseline;
+  }
+  .building-timeline li > span:last-child {
+    grid-column: auto;
+  }
+}
+
+/* Code mix: one stacked bar + legend. */
+.building-mix {
+  display: flex;
+  height: 1rem;
+  overflow: hidden;
+  border-radius: 9999px;
+  gap: 2px;
+}
+.building-mix i {
+  width: var(--w);
+  background: var(--c);
+}
+.building-mix-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.4rem;
+  margin: 0;
+  color: var(--card-text-soft);
+  font-size: 0.95rem;
+}
+.building-mix-legend span::before {
+  content: "";
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  margin-right: 0.45rem;
+  border-radius: 3px;
+  background: var(--c);
+  vertical-align: -1px;
+}
+.building-mix-legend b {
+  color: var(--foreground);
+  font-weight: 600;
+}
+.building-tool-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.building-tool-chips li {
+  border-radius: 9999px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.92rem;
+  color: var(--award);
+  background: color-mix(in oklch, var(--brand-light) 12%, transparent);
+  border: 1px solid color-mix(in oklch, var(--brand-light) 25%, transparent);
+}
+.building-tool-chips b {
+  margin-left: 0.4rem;
+  color: var(--sky);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
