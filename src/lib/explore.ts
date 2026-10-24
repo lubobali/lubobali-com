@@ -35,7 +35,10 @@ export type ExploreItem = {
   number?: { value: string; label: string }; // a story's headline number
   // Pages (Lubo 2026-10-24: "every page a different colour so it's easy to
   // spot"): each row gets its own tone (explore.css [data-tone]).
-  tone?: "amber" | "violet" | "sky" | "green" | "teal" | "ice" | "brand";
+  tone?: "amber" | "violet" | "sky" | "green" | "teal" | "ice" | "brand" | "lime";
+  // Phase 7: a live card. Its dot and subtitle come from the daily data
+  // (header -> Explore props), the subtitle below is the plain fallback.
+  live?: boolean;
 };
 
 const projects: ExploreItem[] = work.map((w) => {
@@ -107,6 +110,17 @@ const pages: ExploreItem[] = [
     href: "/#questions",
     keywords: ["questions", "FAQ", "price", "cost", "data safety", "AI bills", "trust"],
     text: ceoQuestions.map((q) => q.q).join(" "),
+  },
+  // Phase 7 (Lubo 2026-10-24: "put it in Get to know me", with a live sign).
+  {
+    group: "start",
+    tone: "lime",
+    live: true,
+    title: "Building now",
+    subtitle: "What I'm shipping this week, proven by real numbers",
+    href: "/building",
+    keywords: ["building", "now", "active", "current projects", "working on", "tests", "TDD", "CI", "uptime", "commits"],
+    text: "live activity what are you working on right now this week shipped updates automated tests test-first CI runs LuBot uptime milestones",
   },
   {
     group: "start",

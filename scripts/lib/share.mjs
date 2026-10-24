@@ -48,3 +48,9 @@ export function resumeCard(share) {
 
 /** Changes whenever anything on the card changes (then re-render). */
 export const cardHash = (card) => createHash("sha256").update(JSON.stringify(card)).digest("hex").slice(0, 16);
+
+/** The /building card (building.share in src/lib/building/copy.ts), like
+ * the /resume one: words only, so it never shows a stale number. */
+export function buildingCard(share) {
+  return { slug: "building", chapter: "building", kicker: share.kicker, name: share.name, hook: share.hook, value: "", label: "", sub: share.sub };
+}

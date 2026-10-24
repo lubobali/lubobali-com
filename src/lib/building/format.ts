@@ -62,3 +62,11 @@ export function heatLevels(days: readonly number[]): (count: number) => number {
   const [q1, q2, q3] = [at(0.25), at(0.5), at(0.75)];
   return (count) => (count <= 0 ? 0 : count <= q1 ? 1 : count <= q2 ? 2 : count <= q3 ? 3 : 4);
 }
+
+/** The one live line every link to /building shows (Explore, footer, home). */
+export function liveSummary(data: { lastShipped: string; generatedAt: string; tests: { total: number } }) {
+  return {
+    active: isActive(data.lastShipped, data.generatedAt),
+    line: `${shippedLabel(data.lastShipped, data.generatedAt)} · ${data.tests.total.toLocaleString("en-US")} tests`,
+  };
+}

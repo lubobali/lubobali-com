@@ -1,5 +1,5 @@
 // Renders one share card per project (P5.7): public/share/<slug>.jpg,
-// plus public/share/resume.jpg for /resume (P6.9)
+// plus public/share/resume.jpg for /resume (P6.9) and building.jpg (P7.8)
 // (1200x630, what LinkedIn and X show for a shared project link) and
 // public/share/manifest.json (a hash of what each card shows, checked by
 // scripts/tests/share.test.mjs so a card can never go stale). Output is
@@ -13,7 +13,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { chromium } from "playwright";
-import { cardHash, loadProjects, resumeCard, shareCard } from "../lib/share.mjs";
+import { buildingCard, cardHash, loadProjects, resumeCard, shareCard } from "../lib/share.mjs";
 
 const repo = process.argv[2] ?? process.cwd();
 const outDir = join(repo, "public/share");
@@ -25,6 +25,15 @@ const RESUME_MOTIF =
   `<circle cx="230" cy="190" r="120" stroke="currentColor" stroke-width="10" stroke-linecap="round" stroke-dasharray="${RING * 0.8} ${RING}" transform="rotate(-90 230 190)" opacity="0.8"/>` +
   `<circle cx="230" cy="190" r="170" stroke="currentColor" opacity="0.18"/>` +
   `<path d="M180 192 l34 34 l68 -72" stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>`;
+
+// /building: a corner of the year map, the busier days brighter (a fixed
+// pattern: the card never shows real numbers).
+const BUILDING_MOTIF = Array.from({ length: 12 * 7 }, (_, i) => {
+  const w = Math.floor(i / 7);
+  const d = i % 7;
+  const level = [0.12, 0.3, 0.5, 0.75, 0.95][(w * 7 + d * 3 + ((w * d) % 4)) % 5];
+  return `<rect x="${w * 34}" y="${d * 34}" width="28" height="28" rx="6" fill="currentColor" opacity="${level}"/>`;
+}).join("");
 
 // The faint motif of each world, the same shapes as brand-card.tsx.
 const trail = Array.from({ length: 16 }, (_, i) => ({ x: 40 + i * 16, y: 390 - i * 11, r: 1.5 + i * 0.45 }));
@@ -48,7 +57,12 @@ await page.goto(`file://${join(repo, "scripts/brand/share.html")}`);
 await page.evaluate(() => document.fonts.ready);
 
 const { resumeShare } = await import(pathToFileURL(join(repo, "src/lib/resume.ts")).href);
-const cards = [...(await loadProjects(repo)).map((p) => [shareCard(p), MOTIF[p.chapter]]), [resumeCard(resumeShare), RESUME_MOTIF]];
+const { building } = await import(pathToFileURL(join(repo, "src/lib/building/copy.ts")).href);
+const cards = [
+  ...(await loadProjects(repo)).map((p) => [shareCard(p), MOTIF[p.chapter]]),
+  [resumeCard(resumeShare), RESUME_MOTIF],
+  [buildingCard(building.share), BUILDING_MOTIF],
+];
 
 const manifest = {};
 for (const [card, motif] of cards) {

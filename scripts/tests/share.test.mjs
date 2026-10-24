@@ -5,7 +5,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
-import { cardHash, loadProjects, resumeCard, shareCard } from "../lib/share.mjs";
+import { buildingCard, cardHash, loadProjects, resumeCard, shareCard } from "../lib/share.mjs";
 import { loadResume } from "../lib/resume.mjs";
 
 const repo = new URL("../../", import.meta.url).pathname;
@@ -49,4 +49,19 @@ test("the /resume card says what the page says", async () => {
   assert.equal(card.hook, "Does Lubo fit your project?");
   const page = readFileSync(`${repo}src/lib/resume-page.ts`, "utf8");
   assert.match(page, /heading: resumeShare\.hook/, "the /resume heading must come from resumeShare.hook");
+});
+
+// P7.8: /building has its own card: words only, no numbers, so a shared
+// link never shows yesterday's count (the page itself changes daily).
+test("the /building card exists, matches its words today and has no numbers", async () => {
+  const { building } = await import(`${repo}src/lib/building/copy.ts`);
+  const manifest = JSON.parse(readFileSync(`${repo}public/share/manifest.json`, "utf8"));
+  const card = buildingCard(building.share);
+  assert.equal(card.slug, "building");
+  assert.equal(card.hook, building.hero.headline);
+  assert.doesNotMatch(JSON.stringify(card), /\d/, "a number on the card would go stale");
+  assert.ok(existsSync(`${repo}public${building.share.path}`), "no /building card (run scripts/brand/share-images.mjs)");
+  assert.equal(manifest.building, cardHash(card), "/building card is stale (run scripts/brand/share-images.mjs)");
+  const page = readFileSync(`${repo}src/app/building/page.tsx`, "utf8");
+  assert.match(page, /building\.share\.path/, "/building must use its own share card");
 });

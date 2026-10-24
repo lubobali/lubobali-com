@@ -1,3 +1,5 @@
+import { liveSummary } from "@/lib/building/format";
+import { loadLive } from "@/lib/building/load";
 import { storyPath } from "@/lib/case-studies";
 import { intro } from "@/lib/intro";
 import { now, steps, terms } from "@/lib/process";
@@ -23,6 +25,8 @@ const links = (w: (typeof work)[number]) => {
 // Plain text: drop the invisible "keep on one line" characters used on the page.
 const plain = (t: string) => t.replace(/\u2060/g, "").replace(/\u00a0/g, " ");
 
+const live = liveSummary(loadLive());
+
 const body = `# ${site.name}
 
 > ${site.description}
@@ -47,6 +51,13 @@ ${site.url}/resume
 
 - [PDF resume (1 page)](${site.url}${resumePdfPath})
 ${resume.jobs.map((j) => `- ${j.company}: ${j.title} (${j.dates})`).join("\n")}
+
+## Building now
+
+What I'm building right now, proven by real numbers refreshed every
+morning from git, my CI server and LuBot's monitor (commits, automated
+tests, CI runs, uptime, milestones). ${live.line}.
+${site.url}/building
 
 ## Contact
 

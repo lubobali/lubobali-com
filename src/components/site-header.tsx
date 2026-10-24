@@ -2,6 +2,8 @@ import Link from "next/link";
 import { BlueprintLink } from "@/components/blueprint-link";
 import { BookCall } from "@/components/book-call";
 import { ExploreButton } from "@/components/explore/explore-button";
+import { liveSummary } from "@/lib/building/format";
+import { loadLive } from "@/lib/building/load";
 import { site } from "@/lib/site";
 
 // Sticky top bar: name (home link) + Explore (search the work) + the AI
@@ -33,7 +35,8 @@ export function SiteHeader() {
             <span className="whitespace-nowrap max-[359px]:sr-only">{site.name}</span>
           </Link>
           {/* Explore (Phase 4 C6): search across the work, next to the logo. */}
-          <ExploreButton />
+          {/* Live line for the "Building now" card (Phase 7), read at build. */}
+          <ExploreButton live={liveSummary(loadLive())} />
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
           {/* The tool: on home and /blueprint in place, else the home card. */}

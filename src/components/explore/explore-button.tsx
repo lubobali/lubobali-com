@@ -1,6 +1,7 @@
 "use client";
 
 import { lazy, Suspense, useEffect, useState } from "react";
+import { LiveContext, type LiveLine } from "./live-context";
 
 // "Explore" next to the logo (Phase 4 C6, Lubo: keep the header clean, the
 // two buttons stay the main actions). Quiet text, not a pill. The panel and
@@ -9,7 +10,7 @@ import { lazy, Suspense, useEffect, useState } from "react";
 // likes the look).
 const ExplorePanel = lazy(() => import("./explore-panel"));
 
-export function ExploreButton() {
+export function ExploreButton({ live = null }: { live?: LiveLine | null }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -41,7 +42,9 @@ export function ExploreButton() {
       </button>
       {open && (
         <Suspense fallback={null}>
-          <ExplorePanel onClose={() => setOpen(false)} />
+          <LiveContext value={live}>
+            <ExplorePanel onClose={() => setOpen(false)} />
+          </LiveContext>
         </Suspense>
       )}
     </>

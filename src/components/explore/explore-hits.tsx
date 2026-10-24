@@ -1,4 +1,6 @@
+import { useContext } from "react";
 import { BookCall } from "@/components/book-call";
+import { LiveDot } from "@/components/live-dot";
 import { buttonVariants } from "@/components/ui/button";
 import { CHAPTER_ORDER, CHAPTERS } from "@/lib/projects/model";
 import type { SiteEntry } from "@/lib/search/site-index";
@@ -8,7 +10,9 @@ import type { SiteEntry } from "@/lib/search/site-index";
 // one big "All projects" card, tiles with a number (stories, projects),
 // quiet rows for the rest. Styles: explore.css.
 
-export type Tile = { item: Pick<SiteEntry, "title" | "subtitle" | "href" | "number" | "group" | "tone">; matched: readonly string[] };
+import { LiveContext } from "./live-context";
+
+export type Tile = { item: Pick<SiteEntry, "title" | "subtitle" | "href" | "number" | "group" | "tone" | "live">; matched: readonly string[] };
 
 type HitProps = { hit: Tile; onPick: () => void; onKey: (e: React.KeyboardEvent, el: HTMLElement) => void };
 
@@ -47,11 +51,17 @@ export function Featured({ hit: { item, matched }, onPick, onKey }: HitProps) {
 // page that is not built yet is plain text, not a link. Stories show their
 // headline number.
 export function Hit({ hit: { item, matched }, onPick, onKey }: HitProps) {
+  // Phase 7: the /building card shows the live dot + today's line.
+  const liveLine = useContext(LiveContext);
+  const live = item.live && liveLine;
   const body = (
     <>
       <span className="flex min-w-0 flex-col gap-1">
-        <span className="font-semibold">{item.title}</span>
-        <span className="text-sm text-muted-foreground">{item.subtitle}</span>
+        <span className="flex items-center gap-2 font-semibold">
+          {live && <LiveDot active={live.active} />}
+          {item.title}
+        </span>
+        <span className="text-sm text-muted-foreground">{live ? live.line : item.subtitle}</span>
         {item.number && (
           <span className="flex items-baseline gap-2 pt-1">
             <span className="explore-number text-2xl font-semibold tabular-nums">{item.number.value}</span>

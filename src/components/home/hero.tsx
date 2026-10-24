@@ -2,7 +2,11 @@ import { DataRain } from "@/components/ambient/data-rain";
 import { BookCall } from "@/components/book-call";
 import { Picture } from "@/components/picture";
 import { buttonVariants } from "@/components/ui/button";
+import { LiveDot } from "@/components/live-dot";
 import { StatusDot } from "@/components/status-dot";
+import { building } from "@/lib/building/copy";
+import { liveSummary } from "@/lib/building/format";
+import { loadLive } from "@/lib/building/load";
 import { site } from "@/lib/site";
 
 // Home hero (Phase 3 H3). Copy approved by Lubo 2026-10-17
@@ -38,6 +42,22 @@ function SubLine({ className = "" }: { className?: string }) {
   );
 }
 
+// Phase 7: proof he is active, one quiet line under the buttons (the hero
+// stays as approved). Today's line from the daily data, links to /building.
+function BuildingLine() {
+  const live = liveSummary(loadLive());
+  return (
+    <a href="/building" className="hero-building group inline-flex w-fit flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+      <LiveDot active={live.active} />
+      <span className="tabular-nums">{live.line}</span>
+      <span aria-hidden="true">·</span>
+      <span className="text-link underline decoration-link/40 underline-offset-4 transition-colors group-hover:decoration-link">
+        {building.home}
+      </span>
+    </a>
+  );
+}
+
 const PHOTO_ALT = "Lubo Bali, AI and data platform engineer, in a dark suit";
 
 /** Text left, photo right blending into the navy (like the share image).
@@ -56,6 +76,7 @@ function HeroContent() {
             See my work
           </a>
         </div>
+        <BuildingLine />
       </div>
       <div className="relative mx-auto aspect-[4/5] w-full max-w-sm lg:max-w-none">
         <div aria-hidden="true" className="hero-photo-backdrop absolute inset-0 bg-background" />

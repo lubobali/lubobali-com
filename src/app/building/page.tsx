@@ -21,6 +21,8 @@ import { site } from "@/lib/site";
 
 const data = loadLive();
 const description = building.description(roundedDown(data.tests.total, 1000));
+// Its own card when the link is shared (P7.8), words only: never stale.
+const shareImage = { url: building.share.path, width: 1200, height: 630, alt: `${building.share.hook} ${building.share.sub}` };
 
 export const metadata: Metadata = {
   title: building.title,
@@ -34,8 +36,9 @@ export const metadata: Metadata = {
     locale: site.locale,
     title: `${building.title} — ${site.name}`,
     description,
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: `${site.name}, ${site.jobTitle}` }],
+    images: [shareImage],
   },
+  twitter: { card: "summary_large_image", creator: "@Lubo_Bali", images: [shareImage] },
 };
 
 export default function BuildingPage() {

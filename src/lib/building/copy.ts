@@ -7,6 +7,7 @@ export const building = {
   description: (tests: string) =>
     `Live proof of work: what Lubo Bali shipped this year, the builds in progress, ${tests} automated tests and LuBot's uptime, refreshed every morning.`,
   nav: "Building now",
+  home: "See what I'm building", // the line under the home hero buttons
   hero: {
     headline: "What I'm building, right now.",
     sub: "Real numbers from my own servers, counted by code every morning. No screenshots, no claims.",
@@ -82,4 +83,13 @@ export const building = {
   footer:
     "Every number here is read each morning from git, my CI server and LuBot's monitor. Client work counts in the totals and stays private.",
   sample: "Sample data: this build has no real numbers yet.",
+  // Its own share card (P7.8), rendered by scripts/brand/share-images.mjs.
+  // Words only: the page changes every day, a number here would go stale.
+  share: {
+    path: "/share/building.jpg",
+    kicker: "Building now",
+    hook: "What I'm building, right now.",
+    sub: "Real numbers from my own servers, refreshed every morning.",
+    name: "Proof of work, not claims",
+  },
 } as const;

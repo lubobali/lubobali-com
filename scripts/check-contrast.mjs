@@ -59,6 +59,15 @@ const PAIRS = [
   // /about Security pill: red text on the vault card (journey-3 -> -5).
   ...["journey-3", "journey-4", "journey-5"].map((bg) => ["alert", bg, TEXT]),
   ["tone-ice", "card", UI],
+  // /building (P7.7/P7.8): Explore's lime "Building now" title; chips (sky
+  // public, platinum client, green "0 failing"/"Live") and soft text on the
+  // journey cards; the milestone list on the page background.
+  ["tone-live", "card", TEXT],
+  ...["journey-2", "journey-3", "journey-4"].map((bg) => ["tone-ice", bg, TEXT]),
+  ...["journey-3", "journey-4", "journey-5"].map((bg) => ["success", bg, TEXT]),
+  ...["journey-1", "journey-3", "journey-4", "journey-5"].map((bg) => ["card-text-soft", bg, TEXT]),
+  ["link", "background", TEXT],
+  ["award", "background", TEXT],
   ["foreground", "card-blue", MAIN], // blue card faces (services + work)
   ["muted-foreground", "card-blue", TEXT],
   ["link", "card-blue", TEXT],

@@ -148,7 +148,7 @@
   letter-spacing: 0.02em;
 }
 .building-chip.is-public {
-  color: var(--sky);
+  color: var(--tone-ice); /* lighter than --sky: 4.5:1 on the lightest card */
   background: color-mix(in oklch, var(--sky) 14%, transparent);
   border: 1px solid color-mix(in oklch, var(--sky) 35%, transparent);
 }

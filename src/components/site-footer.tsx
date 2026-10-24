@@ -1,4 +1,8 @@
+import { LiveDot } from "@/components/live-dot";
 import { StatusDot } from "@/components/status-dot";
+import { building } from "@/lib/building/copy";
+import { liveSummary } from "@/lib/building/format";
+import { loadLive } from "@/lib/building/load";
 import { publishedCaseStudies } from "@/lib/case-studies";
 import { site } from "@/lib/site";
 
@@ -30,6 +34,7 @@ const PROFILES = [
 // Home sections (ids in src/components/home/*). "/#id" works from any page.
 const LINKS = [
   { label: "About", href: "/about" },
+  { label: building.nav, href: "/building" }, // Phase 7: with the live dot
   { label: "FAQ", href: "/#questions" },
   { label: "Resume", href: "/resume" },
   { label: "All projects", href: "/projects" },
@@ -42,6 +47,7 @@ const LINKS = [
 const heading = "text-xs font-semibold tracking-wide text-award uppercase";
 
 export function SiteFooter() {
+  const live = liveSummary(loadLive());
   return (
     <footer className="site-footer relative mt-auto">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 pt-14 pb-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.6fr_1fr_1fr_auto]">
@@ -64,7 +70,8 @@ export function SiteFooter() {
           <ul className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm lg:grid-cols-1">
             {LINKS.map((l) => (
               <li key={l.href}>
-                <a href={l.href} className="text-muted-foreground transition-colors hover:text-foreground">
+                <a href={l.href} className="inline-flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground">
+                  {l.href === "/building" && <LiveDot active={live.active} />}
                   {l.label}
                 </a>
               </li>

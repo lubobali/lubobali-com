@@ -16,6 +16,7 @@ export type SiteEntry = SearchDoc & {
   href?: string; // none until the page is built
   number?: { value: string; label: string };
   tone?: ExploreItem["tone"]; // pages: their own colour in Explore
+  live?: boolean; // Phase 7: shows the live dot + daily line in Explore
 };
 
 const idOf = (href: string | undefined, title: string) => (href ? href.replace(/^\//, "") : `soon:${title}`);
@@ -31,6 +32,7 @@ export const siteDocs: readonly SiteEntry[] = [
     href: it.href,
     number: it.number,
     tone: it.tone,
+    live: it.live,
   })),
   ...projects.map((p) => ({
     ...projectSearchDoc(p),

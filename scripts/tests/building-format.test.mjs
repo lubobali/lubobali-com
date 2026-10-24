@@ -61,3 +61,11 @@ test("heat levels: one very busy day doesn't wash out the rest", () => {
   assert.equal(levels(200), 4);
   assert.ok(levels(4) >= 3, "a normal busy day still looks busy");
 });
+
+test("live summary: one line + dot state for Explore, footer and home", async () => {
+  const { liveSummary } = await import("../../src/lib/building/format.ts");
+  const data = { lastShipped: "2026-10-24", generatedAt: "2026-10-24T10:00:00Z", tests: { total: 18957 } };
+  assert.deepEqual(liveSummary(data), { active: true, line: "Shipped today · 18,957 tests" });
+  const quiet = { ...data, lastShipped: "2026-10-10" };
+  assert.deepEqual(liveSummary(quiet), { active: false, line: "Last shipped Oct 10 · 18,957 tests" });
+});
