@@ -247,7 +247,7 @@
   ],
   "total": 476,
   "activeDays": 190,
-  "longestStreak": 12,
+  "longestStreak": 4,
   "projects": 5
  },
  "building": [
@@ -302,7 +302,7 @@
   "since": "2026-03-05",
   "runs": 500,
   "green": 450,
-  "stopped": 40,
+  "stopped": 50,
   "last30": {
    "runs": 60,
    "passed": 55
