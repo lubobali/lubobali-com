@@ -6,6 +6,7 @@ import {
   checkBotText,
   checkJsonLd,
   checkLlmsTxt,
+  hasPhone,
   checkPage,
   checkRobots,
   checkSitemap,
@@ -116,17 +117,30 @@ test("checkSitemap: must list exactly the indexable pages", () => {
 });
 
 const LLMS_OK =
-  "# Lubo Bali\n\n> Engineer.\n\n## Contact\n\n- https://calendly.com/x\n\n## What I do\n\n- a\n\n## Selected work\n\n- b\n\n## How it works\n\n1. c\n\n- https://lubobali.com/\n";
+  "# Lubo Bali\n\n> Engineer.\n\n## Contact\n\n- https://calendly.com/x\n\n## What I do\n\n- a\n\n## Selected work\n\n- b\n\n## How it works\n\n1. c\n\n## Resume\n\n- https://lubobali.com/resume\n- https://lubobali.com/lubo-bali-resume.pdf\n\n- https://lubobali.com/\n";
 
 test("checkLlmsTxt: needs H1, summary, site link, hire sections, booking link", () => {
   assert.deepEqual(checkLlmsTxt(LLMS_OK), []);
-  assert.equal(checkLlmsTxt("hello").length, 8);
+  assert.equal(checkLlmsTxt("hello").length, 10);
 });
 
 test("checkLlmsTxt: names the missing section and the missing booking link", () => {
   const p = checkLlmsTxt(LLMS_OK.replace("## Selected work\n", "").replace("https://calendly.com/x", "x"));
   assert.ok(p.some((m) => m.includes("'## Selected work'")));
   assert.ok(p.some((m) => m.includes("booking link")));
+});
+
+test("checkLlmsTxt: needs the Resume section with the page and the PDF (P6.9)", () => {
+  const p = checkLlmsTxt(LLMS_OK.replace("## Resume\n", "").replace("/lubo-bali-resume.pdf", "/x.pdf"));
+  assert.ok(p.some((m) => m.includes("'## Resume'")));
+  assert.ok(p.some((m) => m.includes("resume PDF")));
+});
+
+test("hasPhone: finds the number in any spacing, not other digits", () => {
+  assert.equal(hasPhone("call 555-123-4567", "555-123-4567"), true);
+  assert.equal(hasPhone("(555) 123 4567", "555-123-4567"), true);
+  assert.equal(hasPhone("5551234567", "555-123-4567"), true);
+  assert.equal(hasPhone("12,000+ tests, 260,000+ lines", "555-123-4567"), false);
 });
 
 test("checkLlmsTxt: rejects invisible layout characters", () => {

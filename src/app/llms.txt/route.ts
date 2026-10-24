@@ -2,6 +2,7 @@ import { storyPath } from "@/lib/case-studies";
 import { intro } from "@/lib/intro";
 import { now, steps, terms } from "@/lib/process";
 import { projectsIn } from "@/lib/projects";
+import { resume, resumePdfPath } from "@/lib/resume";
 import { CHAPTERS } from "@/lib/projects/model";
 import { services } from "@/lib/services";
 import { site } from "@/lib/site";
@@ -37,6 +38,15 @@ ${site.availability}
 How I think, how I keep your data safe (encrypted, in your own cloud,
 never used to train AI, read-only by default) and who I am:
 ${site.url}/about
+
+## Resume
+
+Experience, skills and verified credentials, plus a box that checks a job
+post or project against real, linked work (it runs in the visitor's browser):
+${site.url}/resume
+
+- [PDF resume (1 page)](${site.url}${resumePdfPath})
+${resume.jobs.map((j) => `- ${j.company}: ${j.title} (${j.dates})`).join("\n")}
 
 ## Contact
 

@@ -12,6 +12,7 @@ import {
   checkBotText,
   checkJsonLd,
   checkLlmsTxt,
+  hasPhone,
   assetPath,
   checkPage,
   checkRobots,
@@ -102,8 +103,7 @@ for (const file of files) {
   if (path === "/") home = page;
   fail(path, checkPage(page, path));
   // Phone number: only in the resume PDF, never in a page (bots scrape them).
-  const [a3, b3, c4] = PHONE.split("-");
-  if (new RegExp(`${a3}\\D{0,3}${b3}\\D{0,3}${c4}`).test(html)) fail(path, ["the phone number is in the page (PDF only)"]);
+  if (hasPhone(html, PHONE)) fail(path, ["the phone number is in the page (PDF only)"]);
   // The share image must be in the build, or the LinkedIn preview breaks.
   const img = assetPath(page.metas["og:image"]);
   if (img && !existsSync(join(out, img))) fail(path, [`og:image file missing in the build: ${img}`]);
@@ -132,7 +132,7 @@ else fail("robots.txt", checkRobots(robots));
 if (sitemap === null) fail("sitemap.xml", ["missing"]);
 else fail("sitemap.xml", checkSitemap(sitemap, indexable));
 if (llms === null) fail("llms.txt", ["missing"]);
-else fail("llms.txt", checkLlmsTxt(llms));
+else fail("llms.txt", [...checkLlmsTxt(llms), ...(hasPhone(llms, PHONE) ? ["the phone number is in llms.txt (PDF only)"] : [])]);
 
 if (problems.length) {
   problems.forEach((p) => console.log(`FAIL  ${p}`));

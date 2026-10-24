@@ -154,8 +154,18 @@ export function checkLlmsTxt(txt) {
     if (!txt.includes(`\n${h}\n`)) p.push(`llms.txt has no '${h}' section`);
   }
   if (!/https:\/\/calendly\.com\//.test(txt)) p.push("llms.txt has no booking link");
+  // P6.9: assistants can send a recruiter to the resume and its PDF.
+  if (!txt.includes("\n## Resume\n")) p.push("llms.txt has no '## Resume' section");
+  if (!txt.includes(`${ORIGIN}/lubo-bali-resume.pdf`)) p.push("llms.txt has no resume PDF link");
   if (/[⁠ ]/.test(txt)) p.push("llms.txt has invisible layout characters");
   return p;
+}
+
+/** True when the phone number ("555-123-4567") is in the text, in any
+ * spacing ("(555) 123 4567", "5551234567"). It belongs in the PDF only. */
+export function hasPhone(text, phone) {
+  const [a, b, c] = phone.split("-");
+  return new RegExp(`${a}\\D{0,3}${b}\\D{0,3}${c}`).test(text);
 }
 
 /** PNG width/height from the IHDR header. */
