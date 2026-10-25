@@ -124,3 +124,12 @@ export function pictureKind(html) {
   if (brand) return screen ? "brand+screen" : "brand";
   return screen ? "screen" : undefined;
 }
+
+/** Phase 8 L2.4: "host:port:ip" (SITE_RESOLVE, the same value curl's
+ * --resolve takes in smoke.sh) -> a Chrome flag that sends `host` to `ip`.
+ * Used before the DNS switch, when lubobali.com still points elsewhere.
+ * Strict shape (plain host, port, IPv4) or no flag at all. */
+export function resolverFlag(resolve) {
+  const m = /^([a-z0-9.-]+):(\d{1,5}):(\d{1,3}(?:\.\d{1,3}){3})$/.exec(resolve ?? "");
+  return m ? `--host-resolver-rules="MAP ${m[1]} ${m[3]}"` : "";
+}

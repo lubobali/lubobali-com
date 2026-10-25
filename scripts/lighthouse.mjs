@@ -15,7 +15,7 @@ import { mkdtemp, readdir, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
-import { confirmRuns, gatePage, isFlake, medianSummary, pictureKind, samplePages, summarize } from "./lib/lighthouse.mjs";
+import { confirmRuns, gatePage, isFlake, medianSummary, pictureKind, resolverFlag, samplePages, summarize } from "./lib/lighthouse.mjs";
 
 const [url, build, env = "staging", runsArg = "3"] = process.argv.slice(2);
 if (!url || !build) {
@@ -45,7 +45,10 @@ if (pages.length < all.length) console.log(`lighthouse: ${pages.length} of ${all
 
 // Chrome runs as root in a locked-down container (no user namespaces):
 // --no-sandbox is required. It only ever loads our own site.
-const CHROME_FLAGS = "--headless=new --no-sandbox --disable-dev-shm-usage --disable-gpu";
+// SITE_RESOLVE (prod, before the DNS switch): reach the box directly.
+const CHROME_FLAGS = ["--headless=new --no-sandbox --disable-dev-shm-usage --disable-gpu", resolverFlag(process.env.SITE_RESOLVE)]
+  .filter(Boolean)
+  .join(" ");
 const run = promisify(execFile);
 const tmp = await mkdtemp(join(tmpdir(), "lighthouse-"));
 

@@ -133,3 +133,15 @@ test("confirmRuns: a page that fails on 3 runs gets 2 more, judged on the median
   assert.equal(confirmRuns(3, 0), 0); // passed: done
   assert.equal(confirmRuns(5, 1), 0); // already confirmed: a real failure
 });
+
+// Phase 8 L2.4: before the DNS switch, prod checks reach the hidden prod
+// site on the box (SITE_RESOLVE="host:443:ip", set in the private runner
+// config). Chrome gets the same mapping curl gets in smoke.sh.
+test("resolverFlag: host:port:ip -> Chrome host-resolver rule; anything else -> none", async () => {
+  const { resolverFlag } = await import("../lib/lighthouse.mjs");
+  assert.equal(resolverFlag("lubobali.com:443:203.0.113.7"), '--host-resolver-rules="MAP lubobali.com 203.0.113.7"');
+  assert.equal(resolverFlag(""), "");
+  assert.equal(resolverFlag(undefined), "");
+  assert.equal(resolverFlag("lubobali.com 203.0.113.7"), "");
+  assert.equal(resolverFlag('x:443:1.2.3.4" --evil'), "");
+});

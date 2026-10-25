@@ -25,7 +25,12 @@ build="${2%/}"
 env="${3:-staging}"
 [[ -s "$build/index.html" ]] || die "no $build/index.html to compare against"
 
-get() { curl -sS --max-time 10 --retry 3 --retry-delay 2 --retry-all-errors "$@"; }
+# SITE_RESOLVE="host:443:ip" (prod before the DNS switch, from the private
+# runner config): curl reaches the box directly; the request is otherwise
+# exactly what a visitor sends (same Host, same TLS name).
+resolve=()
+[[ -n "${SITE_RESOLVE:-}" ]] && resolve=(--resolve "$SITE_RESOLVE")
+get() { curl -sS --max-time 10 --retry 3 --retry-delay 2 --retry-all-errors "${resolve[@]}" "$@"; }
 
 # 1. new release is live (retry: allow a moment for the link switch)
 want="$(sha256sum < "$build/index.html" | cut -d' ' -f1)"
