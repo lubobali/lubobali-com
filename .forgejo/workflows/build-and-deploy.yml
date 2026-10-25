@@ -1,5 +1,6 @@
 # lubobali.com — CI/CD for staging (Gate 7 S7).
-# Every push to develop: check -> build -> deploy -> smoke test -> Lighthouse.
+# Every push to develop (and the daily /building refresh): check -> build ->
+# deploy -> smoke test -> Lighthouse.
 # Any failing check = nothing deployed. Failing smoke test or Lighthouse
 # budget = auto-rollback.
 # Design + security notes live in a private planning repo.
@@ -13,6 +14,9 @@ name: build-and-deploy
 on:
   push:
     branches: [develop]
+  # The private daily /building job (P7.10) starts this after it writes new
+  # numbers, so they pass the same gates as code. Same branch, same steps.
+  workflow_dispatch:
 
 permissions:
   contents: read
