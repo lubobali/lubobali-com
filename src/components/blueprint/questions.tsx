@@ -63,6 +63,7 @@ export function Questions({
               <input
                 type="text"
                 className="bpt-own"
+                data-track-box="blueprint answer"
                 maxLength={300}
                 placeholder="Or in your own words…"
                 aria-label={`Your own answer: ${q.question}`}

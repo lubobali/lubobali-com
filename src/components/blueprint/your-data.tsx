@@ -8,10 +8,13 @@ import "./tool.css";
 // IP code ~7 days), nginx logs rotate after 14 days, llm.py sends
 // data_collection "deny". Change the code, change this text. The home
 // page only links here (Lubo: the full text is too much for the home).
+// Phase 8 T3 (Lubo 2026-10-25): the visit tracker (scripts/lib/track.js)
+// saves visits, clicks and typed text, masked, without cookies; LuBot's
+// services/site_tracking.py removes emails and phone numbers.
 const LINES: [string, string][] = [
   [
     "Your story",
-    "goes to the AI only to write your blueprint, and only to AI providers that don't keep it or train on it. I don't store it.",
+    "goes to the AI only to write your blueprint, and only to AI providers that don't keep it or train on it. I also save it, without your name, emails or phone numbers, to learn what people need.",
   ],
   [
     "Your blueprint",
@@ -23,7 +26,11 @@ const LINES: [string, string][] = [
   ],
   [
     "To stop abuse,",
-    "I keep a scrambled code of your browser for 12 months and of your IP for about a week. My server logs keep IP addresses for 14 days. No cookies, no ads, no tracking.",
+    "I keep a scrambled code of your browser for 12 months and of your IP for about a week. My server logs keep IP addresses for 14 days. No cookies, no ads.",
+  ],
+  [
+    "Visits",
+    "I count page visits, clicks and what you type, without cookies and without your name, to see what people look for. If your browser sends Do Not Track, nothing is counted.",
   ],
 ];
 

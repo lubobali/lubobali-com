@@ -53,6 +53,7 @@ export function StartForm({
         <span className="bpt-hint">2–3 sentences: how it works today, what is slow or painful, what you want instead.</span>
         <textarea
           className="bpt-story"
+          data-track-box="blueprint story"
           rows={5}
           maxLength={MAX_STORY}
           required
@@ -105,8 +106,8 @@ export function StartForm({
       <input ref={trapRef} type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="bpt-trap" />
 
       <p className="bpt-privacy">
-        Please describe it in general terms: no customer data or passwords. Your story is used only to make your
-        blueprint and is not stored.{" "}
+        Please describe it in general terms: no customer data or passwords. What you type is saved without your name,
+        so I can learn what people need. Emails and phone numbers are removed.{" "}
         <Link href="/blueprint#your-data" className="underline underline-offset-4">
           How I handle your data <span aria-hidden="true">→</span>
         </Link>

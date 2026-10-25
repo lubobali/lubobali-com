@@ -127,6 +127,7 @@ export function FitBox(props: {
         <textarea
           id="fit-text"
           className="fit-text"
+          data-track-box="fit box"
           rows={4}
           maxLength={20_000}
           placeholder={fitCopy.placeholder}

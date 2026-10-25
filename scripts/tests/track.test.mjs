@@ -316,3 +316,29 @@ test("the shipped tracker has no comments and stays small", () => {
   assert.doesNotMatch(SOURCE, /^\s*\/\//m);
   assert.ok(SOURCE.length < 6000, `${SOURCE.length} bytes`);
 });
+
+// --- the site says what it saves (Lubo 2026-10-25, choice B) ------------------------------
+
+import { readFileSync } from "node:fs";
+
+const src = (path) => readFileSync(new URL(`../../${path}`, import.meta.url), "utf8");
+
+test("every box that sends its text says so next to it, and no page says the opposite", () => {
+  const story = src("src/components/blueprint/start-form.tsx");
+  const answers = src("src/components/blueprint/questions.tsx");
+  const fitBox = src("src/components/resume/fit-box.tsx");
+  const fitWords = src("src/lib/fit/copy.ts");
+  const yourData = src("src/components/blueprint/your-data.tsx");
+  assert.match(story, /data-track-box="blueprint story"/);
+  assert.match(answers, /data-track-box="blueprint answer"/);
+  assert.match(fitBox, /data-track-box="fit box"/);
+  assert.match(story, /What you type is saved without your name/);
+  assert.match(fitWords, /privacy: "Runs in your browser\. What you type is saved without your name/);
+  assert.match(yourData, /"Visits"/);
+  for (const [file, text] of [["start-form", story], ["fit copy", fitWords], ["your-data", yourData]])
+    assert.doesNotMatch(text, /is not stored|Nothing you type is sent or saved|I don't store it|no tracking/, file);
+});
+
+test("the email box for the PDF copy is never marked", () => {
+  assert.doesNotMatch(src("src/components/blueprint/copy-form.tsx"), /data-track-box/);
+});

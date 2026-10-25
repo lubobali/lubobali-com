@@ -16,7 +16,7 @@ export const fitCopy = {
   title: "Does Lubo fit your project?",
   placeholder: "Paste a project or job post, or ask: “AI agents for retail?”",
   button: "Check my fit",
-  privacy: "Runs in your browser. Nothing you type is sent or saved.",
+  privacy: "Runs in your browser. What you type is saved without your name, so I can learn what people need.",
   limits: "It reads skills, tools and industries. Years and degrees are for our call.",
 
   // Names what isn't proven yet (Lubo: "the other 2" was vague).
