@@ -20,7 +20,7 @@ const interTight = localFont({
 // page had mono text inside a paragraph (late swap = CLS). The real home
 // page has no mono text at all (no font-mono, no <code>), and the preload
 // made every phone download 40 KB of it before the hero text (the LCP)
-// could paint. Pages that use it (styleguide) still load it on demand.
+// could paint. What uses it (the ⌘K hint, brand chart proofs) loads it on demand.
 const jetbrainsMono = localFont({
   src: "./fonts/JetBrainsMono-latin-wght.woff2",
   weight: "100 800",
