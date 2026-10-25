@@ -81,6 +81,7 @@ export default function ExplorePanel({ onClose }: { onClose: () => void }) {
             <input
               type="search"
               autoFocus
+              data-track-box="explore search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => {

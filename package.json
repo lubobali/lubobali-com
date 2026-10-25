@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "node scripts/build-images.mjs && next dev",
-    "build": "node scripts/build-images.mjs && node scripts/build-rain.mjs && node scripts/build-videos.mjs && next build && node scripts/csp.mjs inject out",
+    "build": "node scripts/build-images.mjs && node scripts/build-rain.mjs && node scripts/build-videos.mjs && next build && node scripts/track.mjs out && node scripts/csp.mjs inject out",
     "start": "next start",
     "lint": "eslint",
     "images": "node scripts/build-images.mjs"

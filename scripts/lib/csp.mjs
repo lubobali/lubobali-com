@@ -14,11 +14,23 @@ const sha256 = (text) => `'sha256-${createHash("sha256").update(text, "utf8").di
 const INLINE_SCRIPT = /<script(?![^>]*\bsrc=)(?![^>]*application\/ld\+json)[^>]*>([\s\S]*?)<\/script>/g;
 const STYLE_ELEMENT = /<style[^>]*>([\s\S]*?)<\/style>/g;
 const META = /<meta http-equiv="Content-Security-Policy" content="([^"]*)"\/>/;
+// The visit tracker (Phase 8 T3, scripts/lib/track.mjs) names where it sends.
+const TRACKER = /<script id="lubo-track" data-endpoint="([^"]+)"/;
 
 /** sha256 sources for every inline script and <style> element, in order, once each. */
 export function inlineHashes(html) {
   const hashes = (re) => [...new Set([...html.matchAll(re)].map((m) => sha256(m[1])))];
   return { scripts: hashes(INLINE_SCRIPT), styles: hashes(STYLE_ELEMENT) };
+}
+
+/** connect-src: same origin, plus the tracker's endpoint origin when the
+ * page has the tracker. Only https is accepted. */
+export function connectSources(html) {
+  const endpoint = html.match(TRACKER)?.[1];
+  if (!endpoint) return "'self'";
+  const url = new URL(endpoint);
+  if (url.protocol !== "https:") throw new Error(`tracker endpoint must be https: ${endpoint}`);
+  return `'self' ${url.origin}`;
 }
 
 export function buildPolicy(html) {
@@ -33,8 +45,9 @@ export function buildPolicy(html) {
     "style-src-attr 'unsafe-inline'",
     "img-src 'self' data:",
     "font-src 'self'",
-    // Same-origin only — also what the parked Phase 8 /api/ tool needs.
-    "connect-src 'self'",
+    // Same origin (the /api/ Blueprint tool) + the visit tracker's one
+    // LuBot origin when the page has it (Phase 8 T3).
+    `connect-src ${connectSources(html)}`,
     "base-uri 'self'",
     "form-action 'self'",
     "object-src 'none'",
@@ -64,6 +77,8 @@ export function checkPage(html) {
   if (/unsafe-inline|unsafe-eval|\*/.test(scriptSrc)) p.push(`script-src is not strict: ${scriptSrc.trim()}`);
   const { scripts, styles } = inlineHashes(html);
   for (const h of scripts) if (!scriptSrc.includes(h)) p.push(`inline script ${h} is not allowed by the policy`);
+  const connectSrc = (policy.match(/connect-src ([^;]*)/)?.[1] ?? "").trim();
+  if (connectSrc !== connectSources(html)) p.push(`connect-src is "${connectSrc}", the page needs "${connectSources(html)}"`);
   const styleSrc = policy.match(/style-src ([^;]*)/)?.[1] ?? "";
   for (const h of styles) if (!styleSrc.includes(h)) p.push(`<style> ${h} is not allowed by the policy`);
   return p;

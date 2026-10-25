@@ -54,3 +54,27 @@ test("checkPage: no policy, a changed script, or late meta all fail", () => {
   const late = page().replace("</head>", `<meta http-equiv="Content-Security-Policy" content="${buildPolicy(page())}"/></head>`);
   assert.match(checkPage(late).join(), /must come before/);
 });
+
+// Phase 8 T3: the visit tracker may send to exactly one more origin.
+const TRACKER = '<script id="lubo-track" data-endpoint="https://staging.lubot.ai/api/track-click">(function(){})()</script>';
+
+test("buildPolicy: no tracker = connect-src 'self' only", () => {
+  assert.match(buildPolicy(page()), /connect-src 'self';/);
+});
+
+test("buildPolicy: the tracker's endpoint origin, and nothing more, joins connect-src", () => {
+  assert.match(buildPolicy(page("", TRACKER)), /connect-src 'self' https:\/\/staging\.lubot\.ai;/);
+});
+
+test("checkPage: connect-src must match the tracker on the page", () => {
+  const good = injectPolicy(page("", TRACKER));
+  assert.deepEqual(checkPage(good), []);
+  const widened = good.replace("connect-src 'self' https://staging.lubot.ai", "connect-src 'self' https://staging.lubot.ai https://evil.example");
+  assert.match(checkPage(widened).join(), /connect-src/);
+  const stale = injectPolicy(page()).replace("</body>", `${TRACKER}</body>`);
+  assert.match(checkPage(stale).join(), /connect-src/);
+});
+
+test("a tracker endpoint that is not https is refused", () => {
+  assert.throws(() => buildPolicy(page("", TRACKER.replace("https://", "http://"))), /tracker/);
+});

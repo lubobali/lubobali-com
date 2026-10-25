@@ -75,6 +75,9 @@ jobs:
           # private daily job, next to the releases, never served. Missing
           # or broken file = the build fails (src/lib/building/load.ts).
           LIVE_DATA_FILE: /srv/lubobali-www/staging/data/live.json
+          # Visit tracker (Phase 8 T3): staging site -> staging LuBot only.
+          # scripts/csp.mjs adds exactly this origin to connect-src.
+          TRACK_URL: https://staging.lubot.ai/api/track-click
 
       - name: SEO, AI-bot + CSP check (raw HTML, robots, sitemap, llms.txt, JSON-LD, script hashes)
         run: |

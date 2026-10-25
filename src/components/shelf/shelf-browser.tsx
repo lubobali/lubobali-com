@@ -106,6 +106,7 @@ export function ShelfBrowser(props: {
               onChange={(e) => update({ ...state, q: e.target.value }, false)}
               placeholder="Your problem, industry or tool…"
               aria-label="Search projects"
+              data-track-box="projects search"
               className="h-14 min-w-0 flex-1 bg-transparent text-lg outline-none"
             />
           </div>
