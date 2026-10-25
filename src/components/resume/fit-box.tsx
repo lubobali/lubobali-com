@@ -216,7 +216,7 @@ export function FitBox(props: {
                           </span>
                         </span>
                       )}
-                      <a href={bookUrl} target="_blank" rel="noopener" className="fit-ask">
+                      <a href={bookUrl} target="_blank" rel="noopener" data-track={fitCopy.ask(n.miss, shortName(n.shown))} className="fit-ask">
                         {fitCopy.ask(n.miss, shortName(n.shown))} →<span className="sr-only"> (opens Calendly in a new tab)</span>
                       </a>
                     </>

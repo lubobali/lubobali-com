@@ -57,7 +57,7 @@ export function AskLubo({ id = "questions" }: { id?: string }) {
                     </a>
                   )}
                   {q.book && (
-                    <a href={site.bookCall.url} target="_blank" rel="noopener" className="ask-proof">
+                    <a href={site.bookCall.url} target="_blank" rel="noopener" data-track={site.bookCall.label} className="ask-proof">
                       {site.bookCall.label} →<span className="sr-only"> (opens Calendly in a new tab)</span>
                     </a>
                   )}

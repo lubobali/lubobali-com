@@ -39,6 +39,7 @@ export function BookWithCode({ bp, className }: { bp: Blueprint & { code: string
       target="_blank"
       rel="noopener"
       onClick={save}
+      data-track={site.bookCall.label}
       className={cn(buttonVariants({ size: "xl" }), className)}
     >
       {site.bookCall.label}

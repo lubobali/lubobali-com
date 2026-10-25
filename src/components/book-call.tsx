@@ -22,6 +22,10 @@ export function BookCall({
       href={url}
       target="_blank"
       rel="noopener"
+      // Phase 8: one clean name for every Book a call click (the tracker
+      // reads data-track first; the text holds both the phone + desktop
+      // labels and the screen-reader note).
+      data-track={label}
       className={cn(buttonVariants({ size }), className)}
     >
       {compact ? (
