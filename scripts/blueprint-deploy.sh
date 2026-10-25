@@ -1,17 +1,23 @@
 #!/usr/bin/env bash
-# Build + (re)start the Blueprint API container (Phase 3b B4).
-#   scripts/blueprint-deploy.sh [staging]        build HEAD, swap, health-check
-#   scripts/blueprint-deploy.sh rollback <tag>   run an older image again
+# Build + (re)start the Blueprint API container (Phase 3b B4; prod Phase 8 L4).
+#   scripts/blueprint-deploy.sh [staging|prod]          build HEAD, swap, health-check
+#   scripts/blueprint-deploy.sh rollback <tag> [staging|prod]   run an older image again
+# staging: 127.0.0.1:8095, data/, blueprint.env
+# prod:    127.0.0.1:8096, data-prod/, blueprint-prod.env (own SQLite = own
+#          memory, limits and budget breaker; own salt + signing key)
 # Never touches lubot-* / graphguard-* containers. Secrets: env file on the
 # server only. Reachable only from this machine (127.0.0.1:PORT, nginx in front).
 set -euo pipefail
 
-ENV_NAME=staging
+if [[ "${1:-}" == "rollback" ]]; then ENV_NAME=${3:-staging}; else ENV_NAME=${1:-staging}; fi
+case "$ENV_NAME" in
+  staging) PORT=8095; SECRETS=/srv/lubobali-secrets/blueprint.env;      DATA=/srv/lubobali-blueprint/data ;;
+  prod)    PORT=8096; SECRETS=/srv/lubobali-secrets/blueprint-prod.env; DATA=/srv/lubobali-blueprint/data-prod ;;
+  *) echo "usage: blueprint-deploy.sh [staging|prod] | rollback <tag> [staging|prod]"; exit 2 ;;
+esac
 NAME=lubobali-blueprint-$ENV_NAME
 NET=lubobali-blueprint-net
-PORT=8095
-SECRETS=/srv/lubobali-secrets/blueprint.env
-DATA=/srv/lubobali-blueprint/data
+[[ -s "$SECRETS" && -d "$DATA" ]] || { echo "blueprint: missing $SECRETS or $DATA"; exit 1; }
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 
 run() {
@@ -41,7 +47,7 @@ run() {
 }
 
 if [[ "${1:-}" == "rollback" ]]; then
-  run "${2:?usage: rollback <tag>}"; exit
+  run "${2:?usage: rollback <tag> [staging|prod]}"; exit
 fi
 
 tag=$(git -C "$REPO" log -1 --format=%h -- blueprint-api)
