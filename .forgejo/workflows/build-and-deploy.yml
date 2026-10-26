@@ -118,3 +118,10 @@ jobs:
             ./scripts/rollback.sh "$DEPLOY_ROOT" || echo "rollback: nothing older to roll back to"
             exit 1
           fi
+
+      # Production only, after every gate is green: tell IndexNow (Bing ->
+      # ChatGPT search, Yandex) which pages are new or changed. Not sent =
+      # a warning, never a failed deploy; the next deploy sends it again.
+      - name: IndexNow (prod only, never fails the deploy)
+        if: env.SITE_ENV == 'prod'
+        run: node scripts/indexnow.mjs out "$DEPLOY_ROOT/indexnow-sent.json" "$SITE_URL" || echo "::warning::IndexNow not sent"
