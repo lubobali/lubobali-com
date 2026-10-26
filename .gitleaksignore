@@ -1,0 +1,5 @@
+# Known false alarms (gitleaks fingerprints). Each one checked by hand.
+# 2026-10-26 d9c0abe: a made-up 32-hex IndexNow key in a unit test (no real
+# key; the real one is public by design in public/<key>.txt). Test rewritten.
+d9c0abed96b091aaa8552c8d87211e5f6d9176da:scripts/tests/indexnow.test.mjs:generic-api-key:60
+d9c0abed96b091aaa8552c8d87211e5f6d9176da:scripts/tests/indexnow.test.mjs:generic-api-key:72

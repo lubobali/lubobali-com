@@ -57,7 +57,7 @@ test("only pages that are new or changed since the last send are sent", () => {
 });
 
 test("the key file is found by its shape; none or two is an error", () => {
-  const key = "0123456789abcdef0123456789abcdef";
+  const key = "ab".repeat(16); // a made-up key, 32 hex characters
   assert.equal(findKey([`${key}.txt`, "llms.txt", "og.png"]), key);
   assert.throws(() => findKey(["llms.txt"]), /no IndexNow key file/);
   assert.throws(() => findKey([`${key}.txt`, `${"f".repeat(32)}.txt`]), /2 IndexNow key files/);
@@ -69,7 +69,7 @@ test("the site carries exactly one key file, and it holds its own name", () => {
 });
 
 test("the message names the host, the key and where the key lives", () => {
-  const key = "0123456789abcdef0123456789abcdef";
+  const key = "ab".repeat(16); // a made-up key, 32 hex characters
   assert.match(INDEXNOW_ENDPOINT, /^https:\/\/api\.indexnow\.org\/indexnow$/);
   assert.deepEqual(payload("https://lubobali.com", key, ["https://lubobali.com/about"]), {
     host: "lubobali.com",
