@@ -20,7 +20,11 @@ export const metadata: Metadata = {
     locale: site.locale,
     title: `${copy.title} — ${site.name}`,
     description: copy.description,
+    // The site card until notes get their own (P9.7). A page that sets
+    // openGraph must repeat images (layout.tsx note).
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: `${site.name}, ${site.jobTitle}` }],
   },
+  twitter: { card: "summary_large_image", creator: "@Lubo_Bali" },
 };
 
 export default function NotesPage() {

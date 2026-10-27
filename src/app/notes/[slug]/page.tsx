@@ -39,7 +39,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: note.description,
       publishedTime: note.date,
       ...(note.updated ? { modifiedTime: note.updated } : {}),
+      // The site card until notes get their own (P9.7). A page that sets
+      // openGraph must repeat images (layout.tsx note).
+      images: [{ url: "/og.png", width: 1200, height: 630, alt: `${site.name}, ${site.jobTitle}` }],
     },
+    twitter: { card: "summary_large_image", creator: "@Lubo_Bali" },
   };
 }
 
