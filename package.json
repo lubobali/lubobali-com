@@ -13,14 +13,17 @@
     "@base-ui/react": "1.8.0",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
+    "markdown-it": "15.0.3",
     "motion": "^14.0.0",
     "next": "16.4.1",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "tailwind-merge": "3.7.0"
+    "tailwind-merge": "3.7.0",
+    "yaml": "2.9.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/markdown-it": "14.2.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
