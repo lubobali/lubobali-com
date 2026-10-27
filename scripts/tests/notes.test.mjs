@@ -141,11 +141,13 @@ test("broken YAML is a clear error, not a crash", () => {
 });
 
 // ---- loader: every note in content/notes, any problem fails the build ----
-import { mkdtempSync, writeFileSync, rmSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 const { loadNotes } = await import("../../src/lib/notes/load.ts");
+// Tests never see the real public/ folder (the real note has real audio there).
+const load = (dir) => loadNotes(dir, join(dir, "no-public"));
 
 const withDir = (files, fn) => {
   const dir = mkdtempSync(join(tmpdir(), "notes-"));
@@ -165,7 +167,7 @@ test("notes come newest first; other files are ignored", () => {
   const older = raw({ ...FRONT, date: "2026-10-26" });
   const notes = withDir(
     { [FILE]: raw(), "2026-10-26-older-one.md": older, "README.txt": "not a note" },
-    (dir) => loadNotes(dir),
+    (dir) => load(dir),
   );
   assert.deepEqual(notes.map((n) => n.slug), ["shipped-or-hype", "older-one"]);
 });
@@ -173,14 +175,123 @@ test("notes come newest first; other files are ignored", () => {
 test("one bad note fails the whole build, naming the file and every problem", () => {
   const bad = raw({ ...FRONT, date: "2026-10-26", hero: { value: "9x", label: "faster" } }, `${BODY}\n\n[x](javascript:1)`);
   assert.throws(
-    () => withDir({ [FILE]: raw(), "2026-10-26-bad.md": bad }, (dir) => loadNotes(dir)),
+    () => withDir({ [FILE]: raw(), "2026-10-26-bad.md": bad }, (dir) => load(dir)),
     (err) => /2026-10-26-bad\.md/.test(err.message) && /hero\.source/.test(err.message) && /link/.test(err.message),
   );
 });
 
 test("two notes can't share a slug", () => {
   assert.throws(
-    () => withDir({ [FILE]: raw(), "2026-10-26-shipped-or-hype.md": raw({ ...FRONT, date: "2026-10-26" }) }, (d) => loadNotes(d)),
+    () => withDir({ [FILE]: raw(), "2026-10-26-shipped-or-hype.md": raw({ ...FRONT, date: "2026-10-26" }) }, (d) => load(d)),
     /slug/,
   );
+});
+
+// ---- visual blocks (P9.5 v2): ```stats / flow / cards / claims / timeline / bars / callout ----
+const fence = (type, yaml) => `\n\n\`\`\`${type}\n${yaml}\n\`\`\`\n`;
+const htmlOf = (body) => parseNote(FILE, raw(FRONT, `${BODY}${body}`));
+
+test("a stats block renders tiles, values escaped", () => {
+  const { note, errors } = htmlOf(fence("stats", '- { value: "12", label: "feeds" }\n- { value: "<b>83</b>", label: "tests" }'));
+  assert.deepEqual(errors, []);
+  assert.match(note.html, /class="nb-stats"/);
+  assert.ok(note.html.includes("&lt;b&gt;83&lt;/b&gt;") && !note.html.includes("<b>83</b>"));
+});
+
+test("flow, cards, timeline and callout render", () => {
+  const body =
+    fence("flow", '- { label: "12 feeds", detail: "RSS + APIs" }\n- { label: "Email", detail: "Sunday" }') +
+    fence("cards", '- { title: "Links", text: "Python adds them." }\n- { title: "Quotes", text: "Must be in the transcript." }') +
+    fence("timeline", '- { time: "20:50", title: "Bug", text: "Fixed." }') +
+    fence("callout", '{ title: "The rule", text: "The model never writes a link." }');
+  const { note, errors } = htmlOf(body);
+  assert.deepEqual(errors, []);
+  for (const cls of ["nb-flow", "nb-cards", "nb-timeline", "nb-callout"]) assert.match(note.html, new RegExp(`class="${cls}`));
+});
+
+test("bars are drawn to scale from the numbers given", () => {
+  const yaml = 'title: "Cost per call"\nunit: "$"\nrows:\n  - { label: "a", value: 0.1 }\n  - { label: "b", value: 0.05 }';
+  const { note, errors } = htmlOf(fence("bars", yaml));
+  assert.deepEqual(errors, []);
+  assert.match(note.html, /--w:100%/);
+  assert.match(note.html, /--w:50%/);
+  assert.ok(has(htmlOf(fence("bars", 'title: "x"\nrows:\n  - { label: "a", value: "lots" }')).errors, "bars"));
+});
+
+test("claims use only the four real labels", () => {
+  const ok = '- { label: "UNVERIFIED", claim: "AGI is here.", quote: "I do think that we have achieved AGI.", verdict: "No source tests it." }';
+  const { note, errors } = htmlOf(fence("claims", ok));
+  assert.deepEqual(errors, []);
+  assert.match(note.html, /nb-pill--unverified/);
+  assert.ok(has(htmlOf(fence("claims", ok.replace("UNVERIFIED", "TRUE"))).errors, "claims"));
+});
+
+test("a broken block fails the build with its name", () => {
+  assert.ok(has(htmlOf(fence("stats", "- [unclosed")).errors, "stats"));
+  assert.ok(has(htmlOf(fence("stats", '- { value: "1" }')).errors, "stats"));
+  assert.ok(has(htmlOf(fence("cards", "[]")).errors, "cards"));
+});
+
+test("block text counts as words and goes through the privacy guard", () => {
+  const before = parseNote(FILE, raw()).note.words;
+  assert.ok(htmlOf(fence("callout", '{ title: "One two", text: "three four five" }')).note.words === before + 5);
+  assert.ok(has(htmlOf(fence("callout", '{ title: "x", text: "ssh to 10.1.2.3" }')).errors, "privacy"));
+});
+
+test("a normal code block is still code", () => {
+  const { note } = htmlOf(fence("python", "x = 1"));
+  assert.match(note.html, /<pre><code class="language-python">x = 1/);
+});
+
+// ---- Listen (P9.5/P9.8): the narration is built from the note itself ----
+test("narration: title, then the short version, then each section; no code, no URLs", () => {
+  const body = `## Why\n\nI read [the docs](https://example.com/x) every week.\n\n\`\`\`python\nsecret = 1\n\`\`\`\n\n${BODY}`;
+  const { note } = parseNote(FILE, raw(FRONT, body));
+  assert.ok(note.narration.startsWith(`${FRONT.title}.`));
+  assert.ok(note.narration.includes("In short: I built a weekly AI news email"));
+  assert.ok(note.narration.includes("Why.") && note.narration.includes("I read the docs every week."));
+  assert.ok(!note.narration.includes("https://") && !note.narration.includes("secret = 1"));
+});
+
+test("narration speaks the blocks and says money the way people do", () => {
+  const body = `${BODY}${fence("stats", '- { value: "12", label: "feeds read" }\n- { value: "$0.24", label: "per run" }')}${fence(
+    "bars",
+    'title: "Cost"\nunit: "$"\nrows:\n  - { label: "Episode 1 → claims", value: 0.096 }',
+  )}${fence("claims", '- { label: "UNVERIFIED", claim: "AGI is here.", verdict: "No source tests it." }')}`;
+  const { note, errors } = parseNote(FILE, raw(FRONT, body));
+  assert.deepEqual(errors, []);
+  assert.ok(note.narration.includes("12 feeds read."));
+  assert.ok(note.narration.includes("24 cents per run."));
+  assert.ok(note.narration.includes("Episode 1 to claims: 9.6 cents."));
+  assert.ok(note.narration.includes("Unverified: AGI is here. What the evidence says: No source tests it."));
+});
+
+test("the narration hash changes when the words change", () => {
+  const a = parseNote(FILE, raw()).note.narrationHash;
+  const b = parseNote(FILE, raw(FRONT, `${BODY}\n\nOne more line.`)).note.narrationHash;
+  assert.match(a, /^[a-f0-9]{16}$/);
+  assert.notEqual(a, b);
+});
+
+test("audio must match the words: a stale or missing file fails the build", () => {
+  const note = parseNote(FILE, raw()).note;
+  const withAudio = (manifest, mp3 = true) =>
+    withDir({ [FILE]: raw() }, (dir) => {
+      const pub = mkdtempSync(join(tmpdir(), "pub-"));
+      try {
+        if (mp3) {
+          mkdirSync(join(pub, "notes", note.slug), { recursive: true });
+          writeFileSync(join(pub, "notes", note.slug, "listen.mp3"), "x");
+        }
+        writeFileSync(join(dir, "audio.json"), JSON.stringify(manifest));
+        return loadNotes(dir, pub);
+      } finally {
+        rmSync(pub, { recursive: true, force: true });
+      }
+    });
+  const good = { [note.slug]: { hash: note.narrationHash, seconds: 190 } };
+  assert.deepEqual(withAudio(good)[0].audio, { src: `/notes/${note.slug}/listen.mp3`, seconds: 190 });
+  assert.throws(() => withAudio({ [note.slug]: { hash: "0000000000000000", seconds: 190 } }), /audio is out of date/);
+  assert.throws(() => withAudio(good, false), /listen\.mp3 is missing/);
+  assert.equal(withDir({ [FILE]: raw() }, (dir) => load(dir))[0].audio, undefined); // no audio = no pill
 });

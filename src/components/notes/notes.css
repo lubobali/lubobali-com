@@ -1,0 +1,844 @@
+/* /notes and /notes/<slug> (Phase 9). Long reading, phone first: one calm
+   column (~68 characters), short paragraphs, real subheads. Midnight tokens
+   only; the serif (Fraunces) is for the big number, like /building. */
+
+.note-eyebrow {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.note-figure {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: clamp(2.75rem, 2rem + 3vw, 4rem);
+  line-height: 1;
+  background: linear-gradient(100deg, var(--foreground) 35%, var(--sky));
+  background-clip: text;
+  color: transparent;
+}
+
+.note-tldr {
+  border-left: 3px solid var(--link);
+  background: color-mix(in oklch, var(--card) 80%, transparent);
+}
+
+.note-chip {
+  border: 1px solid var(--border);
+  background: color-mix(in oklch, var(--card) 70%, transparent);
+}
+
+/* The note body: HTML from Markdown (raw HTML is off, see lib/notes/note.ts). */
+.note-prose {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--card-text-soft);
+  max-width: 68ch;
+  overflow-wrap: anywhere;
+}
+.note-prose > * + * {
+  margin-top: 1.15em;
+}
+.note-prose h2 {
+  margin-top: 2.2em;
+  font-size: 1.5rem;
+  line-height: 1.25;
+  font-weight: 600;
+  color: var(--foreground);
+  text-wrap: balance;
+  scroll-margin-top: 6rem;
+}
+.note-prose h3 {
+  margin-top: 1.8em;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+.note-prose strong {
+  color: var(--foreground);
+  font-weight: 600;
+}
+.note-prose a {
+  color: var(--link);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklch, var(--link) 50%, transparent);
+  text-underline-offset: 4px;
+}
+.note-prose a:hover {
+  text-decoration-color: var(--link);
+}
+/* Plain Markdown lists only (blocks are lists too, with their own class). */
+.note-prose ul:not([class]),
+.note-prose ol:not([class]) {
+  padding-left: 1.4em;
+}
+.note-prose ul:not([class]) {
+  list-style: disc;
+}
+.note-prose ol:not([class]) {
+  list-style: decimal;
+}
+.note-prose :is(ul, ol):not([class]) > li + li {
+  margin-top: 0.45em;
+}
+.note-prose li::marker {
+  color: var(--muted-foreground);
+}
+.note-prose code {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 0.875em;
+}
+.note-prose :not(pre) > code {
+  padding: 0.1em 0.35em;
+  border-radius: 0.35rem;
+  background: var(--card);
+  color: var(--foreground);
+}
+.note-prose pre {
+  overflow-x: auto;
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  background: var(--card);
+  line-height: 1.6;
+  color: var(--foreground);
+}
+.note-prose blockquote {
+  border-left: 3px solid var(--border);
+  padding-left: 1rem;
+  color: var(--muted-foreground);
+}
+/* Tables scroll inside themselves on a phone, never the page. */
+.note-prose table {
+  display: block;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.note-prose th,
+.note-prose td {
+  padding: 0.5rem 1.25rem 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+.note-prose td:first-child {
+  white-space: nowrap;
+}
+.note-prose td:last-child {
+  color: var(--foreground);
+  font-weight: 600;
+}
+.note-prose thead th:empty {
+  padding: 0;
+  border: 0;
+}
+.note-prose hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+/* /notes list: one row per note, the newest first. */
+.note-row {
+  border: 1px solid var(--border);
+  background: color-mix(in oklch, var(--card) 70%, transparent);
+  transition: border-color 0.2s;
+}
+.note-row:hover,
+.note-row:focus-within {
+  border-color: color-mix(in oklch, var(--link) 55%, var(--border));
+}
+
+/* ===== Spec Sheet look (P9.5 v2, Lubo: "more attractive, from the future").
+   Engineering-drawing feel: a faint blueprint grid, mono labels, corner
+   ticks, numbered sections, data drawn to scale. Motion only where it
+   means something (the flow pulse), and none for reduced motion. ===== */
+
+.note-page {
+  position: relative;
+  isolation: isolate;
+}
+.note-page::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 70rem;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(color-mix(in oklch, var(--link) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklch, var(--link) 7%, transparent) 1px, transparent 1px);
+  background-size: 2rem 2rem;
+  mask-image: radial-gradient(ellipse 80% 60% at 30% 0%, black, transparent 75%);
+}
+
+/* Title block: meta cells like a drawing's title block. */
+.note-sheet {
+  position: relative;
+  border: 1px solid color-mix(in oklch, var(--link) 28%, var(--border));
+  border-radius: 1.5rem;
+  background: color-mix(in oklch, var(--background) 70%, transparent);
+  backdrop-filter: blur(2px);
+}
+.note-sheet-meta {
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: 1px solid color-mix(in oklch, var(--link) 22%, var(--border));
+}
+.note-sheet-meta > * {
+  padding: 0.6rem 1rem;
+  border-right: 1px solid color-mix(in oklch, var(--link) 22%, var(--border));
+}
+.note-sheet-meta > *:last-child {
+  border-right: 0;
+}
+.note-dim {
+  /* A dimension line under the big number: |<------>| */
+  position: relative;
+  height: 0.75rem;
+  border-left: 1px solid var(--sky);
+  border-right: 1px solid var(--sky);
+}
+.note-dim::before {
+  content: "";
+  position: absolute;
+  inset: 50% 0 auto;
+  border-top: 1px dashed color-mix(in oklch, var(--sky) 70%, transparent);
+}
+
+/* Wide blocks break out of the reading column; text stays ~68 characters. */
+.note-prose {
+  max-width: none;
+  counter-reset: note-section;
+}
+.note-prose > p,
+.note-prose > ul:not([class]),
+.note-prose > ol:not([class]),
+.note-prose > pre,
+.note-prose > table,
+.note-prose > blockquote {
+  max-width: 68ch;
+}
+.note-prose h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  max-width: none;
+}
+.note-prose h2::before {
+  counter-increment: note-section;
+  content: counter(note-section, decimal-leading-zero);
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--link);
+}
+.note-prose h2::after {
+  content: "";
+  flex: 1;
+  align-self: center;
+  border-top: 1px solid var(--border);
+}
+.note-prose > .nb-stats,
+.note-prose > .nb-flow,
+.note-prose > .nb-cards,
+.note-prose > .nb-claims,
+.note-prose > .nb-timeline,
+.note-prose > .nb-bars,
+.note-prose > .nb-callout {
+  margin-top: 1.75rem;
+}
+
+/* Corner ticks: the blueprint mark on tiles and cards. */
+.nb-stat,
+.nb-card {
+  position: relative;
+}
+.nb-stat::before,
+.nb-stat::after,
+.nb-card::before,
+.nb-card::after {
+  content: "";
+  position: absolute;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-color: var(--link);
+  border-style: solid;
+  opacity: 0.8;
+}
+.nb-stat::before,
+.nb-card::before {
+  top: -1px;
+  left: -1px;
+  border-width: 1px 0 0 1px;
+  border-top-left-radius: 0.5rem;
+}
+.nb-stat::after,
+.nb-card::after {
+  right: -1px;
+  bottom: -1px;
+  border-width: 0 1px 1px 0;
+  border-bottom-right-radius: 0.5rem;
+}
+
+.nb-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: 0.75rem;
+}
+.nb-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  background: color-mix(in oklch, var(--card) 75%, transparent);
+}
+.nb-stat-value {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: clamp(2.2rem, 1.8rem + 1.5vw, 3rem);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  background: linear-gradient(100deg, var(--foreground) 35%, var(--sky));
+  background-clip: text;
+  color: transparent;
+}
+.nb-stat-label,
+.nb-flow-n,
+.nb-card-n,
+.nb-tl-time,
+.nb-bars-title,
+.nb-callout-title {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+/* Flow: steps on a line with one slow pulse travelling along it. */
+.nb-flow {
+  position: relative;
+  display: grid;
+  gap: 0.75rem;
+  padding-left: 1.4rem;
+  list-style: none;
+}
+.nb-flow::before {
+  content: "";
+  position: absolute;
+  top: 0.6rem;
+  bottom: 0.6rem;
+  left: 0.35rem;
+  border-left: 1px solid color-mix(in oklch, var(--link) 45%, transparent);
+}
+/* The pulse: a strip as long as the line with a glowing dot at its start;
+   moving the strip by 100% of its own size moves the dot exactly to the end. */
+.nb-flow::after {
+  content: "";
+  position: absolute;
+  top: 0.6rem;
+  bottom: 0.6rem;
+  left: calc(0.35rem - 4px);
+  width: 9px;
+  background: radial-gradient(circle at 50% 4.5px, var(--sky) 2.5px, color-mix(in oklch, var(--sky) 35%, transparent) 4.5px, transparent 5px) no-repeat;
+  opacity: 0;
+  pointer-events: none;
+}
+.nb-flow-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.8rem;
+  background: color-mix(in oklch, var(--card) 80%, transparent);
+}
+.nb-flow-step::before {
+  content: "";
+  position: absolute;
+  top: 1.15rem;
+  left: calc(-1.05rem - 4px);
+  width: 9px;
+  height: 9px;
+  border: 1px solid var(--link);
+  border-radius: 50%;
+  background: var(--background);
+}
+.nb-flow-label {
+  font-weight: 600;
+  color: var(--foreground);
+}
+.nb-flow-detail {
+  font-size: 0.9rem;
+  color: var(--muted-foreground);
+}
+@media (min-width: 900px) {
+  .nb-flow {
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    padding: 1.4rem 0 0;
+  }
+  .nb-flow::before {
+    inset: 0.35rem 0.5rem auto;
+    border-left: 0;
+    border-top: 1px solid color-mix(in oklch, var(--link) 45%, transparent);
+  }
+  .nb-flow::after {
+    inset: calc(0.35rem - 4px) 0.5rem auto;
+    width: auto;
+    height: 9px;
+    background-position: 0 0;
+    background-image: radial-gradient(circle at 4.5px 50%, var(--sky) 2.5px, color-mix(in oklch, var(--sky) 35%, transparent) 4.5px, transparent 5px);
+  }
+  .nb-flow-step::before {
+    top: calc(-1.05rem - 4px);
+    left: 1rem;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .nb-flow::after {
+    animation: nb-pulse-down 6s ease-in-out infinite;
+  }
+  @media (min-width: 900px) {
+    .nb-flow::after {
+      animation-name: nb-pulse-across;
+    }
+  }
+}
+@keyframes nb-pulse-down {
+  0% { transform: translateY(0); opacity: 0; }
+  10%, 90% { opacity: 1; }
+  100% { transform: translateY(100%); opacity: 0; }
+}
+@keyframes nb-pulse-across {
+  0% { transform: translateX(0); opacity: 0; }
+  10%, 90% { opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+.nb-cards {
+  display: grid;
+  gap: 0.9rem;
+  list-style: none;
+  padding: 0;
+}
+@media (min-width: 640px) {
+  .nb-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.nb-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1.2rem 1.3rem;
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  background:
+    radial-gradient(ellipse at 0% 0%, color-mix(in oklch, var(--link) 10%, transparent), transparent 60%),
+    color-mix(in oklch, var(--card) 85%, transparent);
+}
+.nb-card-n {
+  color: var(--link);
+}
+.nb-card-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+.nb-card-text {
+  color: var(--card-text-soft);
+  line-height: 1.6;
+}
+
+/* A real email excerpt, framed like a mail window. */
+.nb-claims {
+  max-width: 52rem;
+  border: 1px solid color-mix(in oklch, var(--link) 30%, var(--border));
+  border-radius: 1rem;
+  background: color-mix(in oklch, var(--card) 90%, transparent);
+  overflow: hidden;
+  box-shadow: 0 30px 80px -50px color-mix(in oklch, var(--link) 70%, transparent);
+}
+.nb-claims-head {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  background: color-mix(in oklch, var(--secondary) 60%, transparent);
+}
+.nb-claims-head::before {
+  content: "";
+  width: 0.55rem;
+  height: 0.55rem;
+  margin-right: 0.6rem;
+  border-radius: 50%;
+  background: var(--muted-foreground);
+  box-shadow: 0.9rem 0 0 var(--muted-foreground), 1.8rem 0 0 var(--muted-foreground);
+  opacity: 0.5;
+  margin-right: 2.4rem;
+}
+.nb-claim {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 1.2rem 1.25rem;
+}
+.nb-claim + .nb-claim {
+  border-top: 1px solid var(--border);
+}
+.nb-pill {
+  align-self: flex-start;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  border: 1px solid currentColor;
+}
+.nb-pill--unverified {
+  color: var(--soon);
+  background: color-mix(in oklch, var(--soon) 12%, transparent);
+}
+.nb-pill--partly-backed {
+  color: var(--sky);
+  background: color-mix(in oklch, var(--sky) 12%, transparent);
+}
+.nb-pill--backed-by-a-source {
+  color: var(--success);
+  background: color-mix(in oklch, var(--success) 12%, transparent);
+}
+.nb-pill--sources-say-otherwise {
+  color: var(--alert);
+  background: color-mix(in oklch, var(--alert) 12%, transparent);
+}
+.nb-claim-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--foreground);
+  line-height: 1.45;
+}
+.nb-claim-quote {
+  padding-left: 0.8rem;
+  border-left: 2px solid var(--border);
+  font-style: italic;
+  color: var(--muted-foreground);
+}
+.nb-claim-verdict {
+  color: var(--card-text-soft);
+}
+.nb-claim-verdict span {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.nb-timeline {
+  position: relative;
+  display: grid;
+  gap: 1.4rem;
+  max-width: 68ch;
+  padding-left: 1.6rem;
+  list-style: none;
+}
+.nb-timeline::before {
+  content: "";
+  position: absolute;
+  top: 0.4rem;
+  bottom: 0.4rem;
+  left: 0.3rem;
+  border-left: 1px dashed color-mix(in oklch, var(--alert) 50%, var(--border));
+}
+.nb-tl-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.nb-tl-item::before {
+  content: "";
+  position: absolute;
+  top: 0.3rem;
+  left: calc(-1.3rem - 4px);
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--alert);
+  box-shadow: 0 0 10px color-mix(in oklch, var(--alert) 60%, transparent);
+}
+.nb-tl-time {
+  color: var(--alert);
+}
+.nb-tl-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+.nb-tl-text {
+  color: var(--card-text-soft);
+}
+
+.nb-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 52rem;
+  padding: 1.3rem 1.4rem;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background: color-mix(in oklch, var(--card) 80%, transparent);
+}
+.nb-bars-list {
+  display: grid;
+  gap: 0.8rem;
+  list-style: none;
+  padding: 0;
+}
+.nb-bar-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "label value" "track track";
+  gap: 0.35rem 1rem;
+  align-items: center;
+}
+@media (min-width: 640px) {
+  .nb-bar-row {
+    grid-template-columns: 13rem minmax(0, 1fr) 4.5rem;
+    grid-template-areas: "label track value";
+  }
+}
+.nb-bar-label {
+  grid-area: label;
+  color: var(--card-text-soft);
+}
+.nb-bar-track {
+  grid-area: track;
+  height: 0.7rem;
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--muted-foreground) 14%, transparent);
+  overflow: hidden;
+}
+.nb-bar {
+  display: block;
+  width: var(--w);
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--brand), var(--sky));
+  box-shadow: 0 0 14px var(--glow-sky);
+}
+.nb-bar-value {
+  grid-area: value;
+  text-align: right;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  color: var(--foreground);
+}
+.nb-bars-note {
+  font-size: 0.9rem;
+  color: var(--muted-foreground);
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .nb-bar {
+      animation: nb-grow linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 35%;
+      transform-origin: left;
+    }
+  }
+}
+@keyframes nb-grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+.nb-callout {
+  max-width: 52rem;
+  padding: 1.4rem 1.6rem;
+  border-radius: 1rem;
+  border: 1px solid color-mix(in oklch, var(--link) 40%, var(--border));
+  background:
+    radial-gradient(ellipse at 100% 0%, color-mix(in oklch, var(--sky) 14%, transparent), transparent 60%),
+    color-mix(in oklch, var(--card-blue) 70%, transparent);
+}
+.nb-callout-title {
+  color: var(--sky);
+}
+.nb-callout-text {
+  margin-top: 0.4rem;
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.1rem);
+  line-height: 1.2;
+  color: var(--foreground);
+  text-wrap: balance;
+}
+
+/* Phone: the title-block cells as a clean 2-column grid. */
+@media (max-width: 639px) {
+  .note-sheet-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 0;
+  }
+  .note-sheet-meta > * {
+    border-bottom: 1px solid color-mix(in oklch, var(--link) 22%, var(--border));
+  }
+  .note-sheet-meta > *:nth-child(2n) {
+    border-right: 0;
+  }
+  .note-sheet-meta > *:last-child:nth-child(odd) {
+    grid-column: span 2;
+    border-right: 0;
+  }
+}
+
+/* ===== Listen (Phase 9): the pill under the title + the bottom player bar. ===== */
+.listen-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  align-self: flex-start;
+  padding: 0.45rem 1.1rem 0.45rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklch, var(--sky) 45%, var(--border));
+  background:
+    radial-gradient(ellipse at 0% 50%, color-mix(in oklch, var(--sky) 16%, transparent), transparent 70%),
+    color-mix(in oklch, var(--card) 85%, transparent);
+  box-shadow: 0 10px 40px -20px color-mix(in oklch, var(--sky) 80%, transparent);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.listen-pill:hover {
+  border-color: var(--sky);
+  box-shadow: 0 10px 44px -14px color-mix(in oklch, var(--sky) 90%, transparent);
+}
+.listen-pill-play {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  color: var(--bubble-ink);
+  background: linear-gradient(135deg, var(--foreground), var(--sky));
+  box-shadow: 0 0 18px var(--glow-sky);
+}
+/* Four bars that dance only while it plays (and never for reduced motion). */
+.listen-eq {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 1rem;
+}
+.listen-eq i {
+  width: 3px;
+  height: 30%;
+  border-radius: 2px;
+  background: var(--sky);
+  opacity: 0.7;
+}
+.listen-eq i:nth-child(2) {
+  height: 70%;
+}
+.listen-eq i:nth-child(3) {
+  height: 45%;
+}
+.listen-eq i:nth-child(4) {
+  height: 85%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .listen-pill[data-playing] .listen-eq i {
+    animation: listen-eq 0.9s ease-in-out infinite alternate;
+  }
+  .listen-pill[data-playing] .listen-eq i:nth-child(2) {
+    animation-delay: -0.3s;
+  }
+  .listen-pill[data-playing] .listen-eq i:nth-child(3) {
+    animation-delay: -0.6s;
+  }
+  .listen-pill[data-playing] .listen-eq i:nth-child(4) {
+    animation-delay: -0.15s;
+  }
+}
+@keyframes listen-eq {
+  from {
+    transform: scaleY(0.3);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+.listen-eq i {
+  transform-origin: bottom;
+}
+
+.listen-bar {
+  position: fixed;
+  z-index: 40;
+  left: 50%;
+  bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: min(44rem, calc(100% - 1.5rem));
+  padding: 0.6rem 0.75rem;
+  border-radius: 1.25rem;
+  border: 1px solid color-mix(in oklch, var(--sky) 40%, var(--border));
+  background: color-mix(in oklch, var(--card) 97%, transparent);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 20px 60px -20px oklch(0 0 0 / 0.7), 0 0 40px -18px var(--glow-sky);
+}
+.listen-chip {
+  min-width: 2.5rem;
+  height: 2.5rem;
+  padding: 0 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 0.8rem;
+  color: var(--foreground);
+}
+.listen-chip:hover {
+  border-color: var(--sky);
+}
+.listen-range {
+  height: 1.25rem;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+.listen-range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--sky) var(--p, 0%), color-mix(in oklch, var(--muted-foreground) 25%, transparent) var(--p, 0%));
+}
+.listen-range::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--sky) var(--p, 0%), color-mix(in oklch, var(--muted-foreground) 25%, transparent) var(--p, 0%));
+}
+.listen-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  margin-top: -4px;
+  border-radius: 50%;
+  background: var(--foreground);
+  box-shadow: 0 0 8px var(--glow-sky);
+}
+.listen-range::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--foreground);
+}

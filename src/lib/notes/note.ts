@@ -7,8 +7,10 @@
 // Safety: raw HTML in the Markdown is printed as text (html: false). Links
 // may only be https, site-relative or #anchors; images only our own files.
 
+import { createHash } from "node:crypto";
 import MarkdownIt from "markdown-it";
 import { parse as parseYaml } from "yaml";
+import { isBlock, renderBlock, spoken } from "./blocks";
 
 export const CLUSTERS = ["agents", "rag", "mcp", "data-pipelines", "ai-cost"] as const;
 export type Cluster = (typeof CLUSTERS)[number];
@@ -33,7 +35,14 @@ export type Note = {
   html: string;
   words: number;
   readMinutes: number;
+  narration: string; // what the Listen audio says, built from the note itself
+  narrationHash: string; // the audio must have been made from exactly this
+  audio?: { src: string; seconds: number }; // set by load.ts when listen.mp3 matches
 };
+
+// Bump when the voice or its settings change: every note's audio then counts
+// as out of date (the build says so) and scripts/notes-audio.mjs remakes it.
+export const NARRATION_VERSION = "lubo-voice-clone, eleven_multilingual_v2, atempo 1.16, -16 LUFS, v1";
 
 const REQUIRED = ["title", "description", "date", "cluster", "stack", "tldr", "hero", "repo", "sources"];
 const OPTIONAL = ["updated"];
@@ -61,6 +70,10 @@ const PRIVATE: [RegExp, string][] = [
 
 const md = new MarkdownIt({ html: false, linkify: false, typographer: false });
 md.validateLink = () => true; // let every link through to OUR check, which fails the build
+// A visual block (```stats, ```bars...) was rendered and checked in checkBody.
+const codeFence = md.renderer.rules.fence!;
+md.renderer.rules.fence = (tokens, i, options, env, self) =>
+  typeof tokens[i].meta?.block === "string" ? tokens[i].meta.block : codeFence(tokens, i, options, env, self);
 
 const slugify = (text: string): string =>
   text
@@ -144,15 +157,30 @@ function checkFront(f: Record<string, unknown>, fileDate: string | undefined, er
   }
 }
 
-type BodyResult = { html: string; words: number };
+type BodyResult = { html: string; words: number; speech: string[] };
 
 function checkBody(body: string, errors: string[]): BodyResult {
   const tokens = md.parse(body, {});
   const ids = new Map<string, number>();
   let words = 0;
+  const speech: string[] = [];
+  let row: string[] | null = null; // table row being read out
   const countWords = (text: string) => (words += text.split(/\s+/).filter(Boolean).length);
 
   tokens.forEach((t, i) => {
+    if (t.type === "inline") {
+      // What the voice says: the words only (link text, never its URL).
+      const said = (t.children ?? [])
+        .map((c) => (c.type === "text" || c.type === "code_inline" ? c.content : c.type === "softbreak" ? " " : ""))
+        .join("");
+      if (row) row.push(said.trim());
+      else if (said.trim()) speech.push(spoken(said));
+    }
+    if (t.type === "tr_open") row = [];
+    if (t.type === "tr_close" && row) {
+      if (row.some(Boolean)) speech.push(spoken(row.filter(Boolean).join(": ")));
+      row = null;
+    }
     if (t.type === "heading_open") {
       if (t.tag === "h1") errors.push("h1: the note title is the only h1; start sections at ##");
       const base = slugify(tokens[i + 1]?.content ?? "") || "section";
@@ -160,7 +188,16 @@ function checkBody(body: string, errors: string[]): BodyResult {
       ids.set(base, n);
       t.attrSet("id", n === 1 ? base : `${base}-${n}`);
     }
-    if (t.type === "fence" || t.type === "code_block") checkPrivate("a code block", t.content, errors);
+    if (t.type === "fence" && isBlock(t.info.trim())) {
+      const block = renderBlock(t.info.trim() as Parameters<typeof renderBlock>[0], t.content);
+      errors.push(...block.errors);
+      for (const text of block.texts) {
+        countWords(text);
+        checkPrivate(`the ${t.info.trim()} block`, text, errors);
+      }
+      t.meta = { block: block.html };
+      speech.push(...block.speech);
+    } else if (t.type === "fence" || t.type === "code_block") checkPrivate("a code block", t.content, errors);
     for (const c of t.children ?? []) {
       if (c.type === "text" || c.type === "code_inline") {
         countWords(c.content);
@@ -178,7 +215,7 @@ function checkBody(body: string, errors: string[]): BodyResult {
     }
   });
   if (words < WORDS.min || words > WORDS.max) errors.push(`words: ${words} (keep it ${WORDS.min}–${WORDS.max})`);
-  return { html: md.renderer.render(tokens, md.options, {}), words };
+  return { html: md.renderer.render(tokens, md.options, {}), words, speech };
 }
 
 export function parseNote(file: string, raw: string): { note: Note | null; errors: string[] } {
@@ -203,7 +240,8 @@ export function parseNote(file: string, raw: string): { note: Note | null; error
   const hero = (f.hero ?? {}) as Partial<Hero>;
   checkPrivate("hero", `${hero.value ?? ""} ${hero.label ?? ""}`, errors);
 
-  const { html, words } = checkBody(parts.body, errors);
+  const { html, words, speech } = checkBody(parts.body, errors);
+  const narration = [spoken(String(f.title ?? "")), `In short: ${spoken(String(f.tldr ?? ""))}`, ...speech].join("\n\n");
   const note: Note = {
     slug: name?.[2] ?? "",
     file,
@@ -221,6 +259,8 @@ export function parseNote(file: string, raw: string): { note: Note | null; error
     html,
     words,
     readMinutes: Math.max(1, Math.round(words / WORDS_PER_MINUTE)),
+    narration,
+    narrationHash: createHash("sha256").update(`${NARRATION_VERSION}\n${narration}`).digest("hex").slice(0, 16),
   };
   return { note, errors };
 }
