@@ -56,6 +56,6 @@ export const fitCopy = {
   topics: {
     rate: "Price: a fixed price per project, agreed after a free 30-min call.",
     availability: (availability: string) => availability,
-    location: "Remote, based in Venice, Florida.",
+    location: "Remote across the US, based in Venice, FL (Sarasota / Tampa area).",
   },
 };
