@@ -28,11 +28,38 @@ type Field = { key: string; optional?: boolean; number?: boolean; list?: boolean
 export function spoken(text: string): string {
   const s = sayTerms(text)
     .replace(/\$(\d+(?:\.\d+)?)/g, (_, n: string) => spokenMoney(Number(n)))
+    // Big numbers written with thousands commas are said in words (Lubo:
+    // "142,617" came out unclear). Years and small numbers stay as digits.
+    .replace(/\b\d{1,3}(?:,\d{3})+\b(?![.,]\d)/g, (m) => numberWords(Number(m.replace(/,/g, ""))))
     .replace(/\s*→\s*/g, " to ")
     .replace(/\s+/g, " ")
     .trim();
   return !s || /[.!?:]$/.test(s) ? s : `${s}.`;
 }
+const ONES = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve",
+  "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
+const TENS = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+function under1000(n: number): string {
+  const h = Math.floor(n / 100);
+  const r = n % 100;
+  const rest = r < 20 ? ONES[r] : `${TENS[Math.floor(r / 10)]}${r % 10 ? `-${ONES[r % 10]}` : ""}`;
+  return [h ? `${ONES[h]} hundred` : "", rest].filter(Boolean).join(" ");
+}
+
+/** A whole number the way a person reads it: 142617 -> "one hundred forty-two thousand six hundred seventeen". */
+export function numberWords(n: number): string {
+  if (n === 0) return "zero";
+  const parts: string[] = [];
+  for (const [size, name] of [[1_000_000_000, "billion"], [1_000_000, "million"], [1_000, "thousand"]] as const) {
+    if (n >= size) {
+      parts.push(`${under1000(Math.floor(n / size))} ${name}`);
+      n %= size;
+    }
+  }
+  if (n) parts.push(under1000(n));
+  return parts.join(" ");
+}
+
 export function spokenMoney(v: number): string {
   if (v < 1) return `${Math.round(v * 1000) / 10} cents`;
   return `${Number.isInteger(v) ? v : v.toFixed(2)} dollars`;

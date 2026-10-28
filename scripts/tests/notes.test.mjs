@@ -407,3 +407,22 @@ test("terms only change the narration, never the page", () => {
   const n = parseNote(FILE, raw(FRONT, `${BODY}\n\nIt strips URLs.`)).note;
   assert.ok(n.html.includes("URLs"));
 });
+
+// ---- Big numbers in words (Lubo 2026-10-28: "142,617" came out unclear) ----
+const blocksMod = await import("../../src/lib/notes/blocks.ts");
+const { numberWords } = blocksMod;
+
+test("numberWords: the way a person reads a big number", () => {
+  assert.equal(numberWords(142617), "one hundred forty-two thousand six hundred seventeen");
+  assert.equal(numberWords(117700), "one hundred seventeen thousand seven hundred");
+  assert.equal(numberWords(4030), "four thousand thirty");
+  assert.equal(numberWords(97925), "ninety-seven thousand nine hundred twenty-five");
+  assert.equal(numberWords(1000000), "one million");
+  assert.equal(numberWords(2500000), "two million five hundred thousand");
+});
+
+test("spoken: numbers with thousands commas become words; small numbers and years stay", () => {
+  const { spoken } = blocksMod;
+  assert.equal(spoken("This week: 117,700 and 142,617 characters"), "This week: one hundred seventeen thousand seven hundred and one hundred forty-two thousand six hundred seventeen characters.");
+  assert.equal(spoken("12 feeds, 83 tests, in 2026"), "12 feeds, 83 tests, in 2026.");
+});
