@@ -3,8 +3,8 @@ import Link from "next/link";
 import { notesCopy as copy } from "@/lib/notes/copy";
 import type { Note } from "@/lib/notes/note";
 import { noteCard } from "@/lib/notes/card";
-import { fingerprint } from "@/lib/notes/fingerprint";
 import { Listen } from "./listen";
+import { NotePrint } from "./note-print";
 
 // /notes/<slug> (Phase 9 P9.5): header (number, title, TL;DR, the big
 // number with its proof), the story, sources, code, older/newer notes.
@@ -33,7 +33,7 @@ export function NoteHeader({ note, number }: { note: Note; number: number }) {
       </Link>
       {/* The title block of an engineering drawing: number, week, date, topic, time. */}
       <div className="note-sheet relative overflow-hidden">
-        <NotePrint note={note} number={number} />
+        <Print note={note} number={number} />
         <p className="note-sheet-meta note-eyebrow relative z-10">
           <span className="text-link">{copy.note.number(number)}</span>
           <span>{copy.note.week(note.week)}</span>
@@ -69,12 +69,10 @@ export function NoteHeader({ note, number }: { note: Note; number: number }) {
   );
 }
 
-// The note's own fingerprint behind the title block (P9.7, concept C):
-// the same drawing as its share card, inline (no extra download), decorative.
-function NotePrint({ note, number }: { note: Note; number: number }) {
+// Only the card's seed, colour and dot count go to the browser (note-print.tsx).
+function Print({ note, number }: { note: Note; number: number }) {
   const card = noteCard(note, number);
-  const svg = fingerprint(card.seed, { id: "cover", cx: 320, cy: 240, scale: 1.3, hue: card.hue, dots: card.dots, rings: 18, points: 30 });
-  return <svg aria-hidden="true" focusable="false" viewBox="0 0 640 480" className="note-print" dangerouslySetInnerHTML={{ __html: svg }} />;
+  return <NotePrint seed={card.seed} hue={card.hue} dots={card.dots} />;
 }
 
 export function NoteBody({ note }: { note: Note }) {
