@@ -31,7 +31,7 @@ export function ExploreButton({ live = null }: { live?: LiveLine | null }) {
         type="button"
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
-        className="explore-trigger flex items-center gap-2 rounded-full px-2.5 py-1.5 text-sm text-muted-foreground"
+        className="explore-trigger flex items-center gap-2 rounded-full px-1.5 py-1.5 text-sm text-muted-foreground min-[420px]:px-2.5"
       >
         <svg aria-hidden="true" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2">
           <circle cx="11" cy="11" r="7" />

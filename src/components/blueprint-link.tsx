@@ -12,7 +12,7 @@ export function BlueprintLink() {
   return (
     <a
       href={blueprintHref(usePathname())}
-      className={cn(buttonVariants({ variant: "outline", size: "lg" }), "header-blueprint px-3 sm:px-4")}
+      className={cn(buttonVariants({ variant: "outline", size: "lg" }), "header-blueprint px-2.5 min-[420px]:px-3 sm:px-4")}
     >
       <span className="sm:hidden">Blueprint</span>
       <span className="hidden sm:inline">Free AI blueprint</span>
