@@ -9,6 +9,7 @@
 // text is escaped (plain text only, no links), numbers are drawn to scale
 // in code. Pure: no "@/" imports, so Node tests run it directly.
 import { parse as parseYaml } from "yaml";
+import { sayTerms } from "./terms";
 
 export const BLOCK_TYPES = ["stats", "flow", "cards", "timeline", "callout", "bars", "claims"] as const;
 export type BlockType = (typeof BLOCK_TYPES)[number];
@@ -25,7 +26,7 @@ type Field = { key: string; optional?: boolean; number?: boolean; list?: boolean
 /** Say it the way people do: "$0.096" -> "9.6 cents", "$3" -> "3 dollars", "→" -> "to".
  *  Ends with a period, so the voice pauses. */
 export function spoken(text: string): string {
-  const s = text
+  const s = sayTerms(text)
     .replace(/\$(\d+(?:\.\d+)?)/g, (_, n: string) => spokenMoney(Number(n)))
     .replace(/\s*→\s*/g, " to ")
     .replace(/\s+/g, " ")

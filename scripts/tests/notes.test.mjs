@@ -393,3 +393,17 @@ test("every real note has a share card that matches what it shows today", () => 
   });
   assert.deepEqual(problems, []);
 });
+
+// ---- Pronunciation (P9.8): words the voice says wrong get a spoken spelling ----
+const { sayTerms } = await import("../../src/lib/notes/terms.ts");
+
+test("terms: whole words only, any case kept out of the page text", () => {
+  const terms = { URLs: "U R Ls", "S-1": "S one" };
+  assert.equal(sayTerms("Python deletes URLs and the S-1 filing.", terms), "Python deletes U R Ls and the S one filing.");
+  assert.equal(sayTerms("CURLs stay", terms), "CURLs stay");
+});
+
+test("terms only change the narration, never the page", () => {
+  const n = parseNote(FILE, raw(FRONT, `${BODY}\n\nIt strips URLs.`)).note;
+  assert.ok(n.html.includes("URLs"));
+});

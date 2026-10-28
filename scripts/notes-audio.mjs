@@ -9,11 +9,11 @@
 // and content/notes/audio.json records which words each file was made from:
 // the build fails when they no longer match (lib/notes/load.ts).
 import "./lib/ts-paths.mjs";
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { chunk } from "./lib/notes-audio.mjs";
+import { chunk, LOUDNORM_PASS1, loudnessOf, loudnessProblem, loudnormSecondPass, PEAK_LIMITER } from "./lib/notes-audio.mjs";
 
 const { parseNote } = await import("../src/lib/notes/note.ts");
 
@@ -71,14 +71,23 @@ for (const n of todo) {
     writeFileSync(join(tmp, "list.txt"), files.map((f) => `file '${f}'`).join("\n"));
     const out = join("public/notes", n.slug, "listen.mp3");
     mkdirSync(join("public/notes", n.slug), { recursive: true });
+    // Join + speed up into a lossless file, measure its loudness (pass 1),
+    // then make the mp3 with exactly that correction (pass 2): -16 LUFS.
+    const wav = join(tmp, "joined.wav");
+    ffmpeg(["-f", "concat", "-safe", "0", "-i", join(tmp, "list.txt"), "-af", `atempo=${TEMPO},${PEAK_LIMITER}`, "-ac", "1", "-ar", "44100", wav]);
+    const pass1 = spawnSync("ffmpeg", ["-hide_banner", "-i", wav, "-af", LOUDNORM_PASS1, "-f", "null", "-"], { encoding: "utf8" });
     ffmpeg([
-      "-f", "concat", "-safe", "0", "-i", join(tmp, "list.txt"),
-      "-af", `atempo=${TEMPO},loudnorm=I=-16:TP=-1.5:LRA=11`,
+      "-i", wav,
+      "-af", loudnormSecondPass(pass1.stderr),
       "-ac", "1", "-ar", "44100", "-b:a", "64k",
       "-metadata", `title=${n.title}`, "-metadata", "artist=Lubo Bali",
       "-metadata", "comment=AI version of Lubo's voice (ElevenLabs)",
       out,
     ]);
+    // Check the finished file, not the plan: a bad one is never saved as done.
+    const check = spawnSync("ffmpeg", ["-hide_banner", "-i", out, "-af", LOUDNORM_PASS1, "-f", "null", "-"], { encoding: "utf8" });
+    const problem = loudnessProblem(loudnessOf(check.stderr));
+    if (problem) throw new Error(`${n.slug}: ${problem}`);
     const seconds = Math.round(
       Number(execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", out]).toString()),
     );
