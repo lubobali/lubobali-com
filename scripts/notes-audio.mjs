@@ -20,7 +20,7 @@ const { parseNote } = await import("../src/lib/notes/note.ts");
 const DIR = "content/notes";
 const MANIFEST = join(DIR, "audio.json");
 const MODEL = "eleven_multilingual_v2";
-const TEMPO = "1.16";
+const TEMPO = "1.07"; // Lubo 2026-10-28: +7% over his raw clone (was +16%: too fast)
 const dry = process.argv.includes("--dry");
 
 const manifest = existsSync(MANIFEST) ? JSON.parse(readFileSync(MANIFEST, "utf8")) : {};

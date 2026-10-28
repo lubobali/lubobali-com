@@ -42,7 +42,7 @@ export type Note = {
 
 // Bump when the voice or its settings change: every note's audio then counts
 // as out of date (the build says so) and scripts/notes-audio.mjs remakes it.
-export const NARRATION_VERSION = "lubo-voice-clone, eleven_multilingual_v2, atempo 1.16, -16 LUFS, v1";
+export const NARRATION_VERSION = "lubo-voice-clone, eleven_multilingual_v2, atempo 1.07, -16 LUFS two-pass, v2";
 
 const REQUIRED = ["title", "description", "date", "cluster", "stack", "tldr", "hero", "repo", "sources"];
 const OPTIONAL = ["updated"];
