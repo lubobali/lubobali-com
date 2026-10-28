@@ -133,4 +133,22 @@ wait "$holder"
 [[ "$(live)" == "<html>wait</html>" ]] || fail "live untouched after lock timeout"
 ok "stuck lock times out, live untouched"
 
-echo "PASS: $PASS/15"
+# 16. a rollback never lands on a release that was itself rolled back
+#     (2026-10-28: two failed Lighthouse runs in a row sent staging back to
+#     the FIRST failed build, not the last good one)
+ROOT3="$TMP/www3"
+make_build "$TMP/g1" "good"; "$DEPLOY" "$TMP/g1" "$ROOT3" s1 >/dev/null
+make_build "$TMP/x2" "bad1"; "$DEPLOY" "$TMP/x2" "$ROOT3" s2 >/dev/null
+"$ROLLBACK" "$ROOT3" >/dev/null
+[[ "$(cat "$ROOT3/current/index.html")" == "<html>good</html>" ]] || fail "first rollback -> good"
+make_build "$TMP/x3" "bad2"; "$DEPLOY" "$TMP/x3" "$ROOT3" s3 >/dev/null
+"$ROLLBACK" "$ROOT3" >/dev/null
+[[ "$(cat "$ROOT3/current/index.html")" == "<html>good</html>" ]] || fail "second rollback skips bad1, lands on good"
+ok "rollback skips releases that were rolled back"
+
+# 17. the bad-release list lives outside every release (never served)
+[[ -s "$ROOT3/rolled-back.txt" ]] || fail "rolled-back.txt written"
+[[ -z "$(grep -rl "rolled" "$ROOT3/releases" 2>/dev/null)" ]] || fail "no marker inside a release"
+ok "bad-release list is outside the served folders"
+
+echo "PASS: $PASS/17"
