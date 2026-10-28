@@ -1,0 +1,41 @@
+<!doctype html>
+<!-- A note's share card (1200x630), Phase 9 P9.7, concept C (Lubo
+     2026-10-28): spec-sheet frame + title block + the note's own
+     fingerprint (src/lib/notes/fingerprint.ts). Rendered per note by
+     note-cards.mjs -> public/notes/<slug>/card.jpg. Text and drawing are
+     filled in by the script (data-slot elements, #print). -->
+<html><head><meta charset="utf-8"><style>
+@font-face { font-family: "Fraunces"; src: url("../../src/app/fonts/Fraunces-latin-400.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Inter Tight"; src: url("../../src/app/fonts/InterTight-latin-wght400-600.woff2") format("woff2"); font-weight: 400 600; }
+@font-face { font-family: "JetBrains Mono"; src: url("../../src/app/fonts/JetBrainsMono-latin-wght.woff2") format("woff2"); font-weight: 100 800; }
+* { margin: 0; box-sizing: border-box; }
+:root { --hue: #38bdf8; --line: #6b93f7; }
+body { width: 1200px; height: 630px; overflow: hidden; position: relative; color: #f8fafc; font-family: "Inter Tight", sans-serif;
+  background: radial-gradient(1100px 700px at 15% -10%, #142a5c 0%, #0a0e1a 55%, #05070d 100%); }
+svg { position: absolute; inset: 0; }
+.cell { position: absolute; top: 52px; font: 500 15px "JetBrains Mono", monospace; letter-spacing: 0.08em; text-transform: uppercase; color: #cdd9ec; white-space: nowrap; }
+.cell.first { color: var(--hue); }
+.title { position: absolute; left: 80px; top: 140px; width: 580px; font-weight: 600; font-size: 50px; line-height: 1.08; letter-spacing: -0.02em; }
+.title.long { font-size: 42px; }
+.num { position: absolute; left: 80px; top: 390px; font: 400 120px/0.9 "Fraunces", serif;
+  background: linear-gradient(100deg, #f8fafc 35%, var(--hue)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.sub { position: absolute; left: 80px; top: 556px; font-size: 17px; color: #94a3b8; }
+</style></head><body>
+<svg id="print" width="1200" height="630" viewBox="0 0 1200 630"></svg>
+<svg width="1200" height="630" viewBox="0 0 1200 630">
+  <defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#6b93f7" stroke-opacity=".06"/></pattern></defs>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <rect x="30" y="30" width="1140" height="570" fill="none" stroke="#6b93f7" stroke-opacity=".5"/>
+  <g stroke="#38bdf8" stroke-opacity=".8" fill="none"><path d="M18 60v-30h30M1182 60v-30h-30M18 570v30h30M1182 570v30h-30"/></g>
+  <g stroke="#38bdf8"><path d="M80 520v26M400 520v26"/><path d="M80 533H400" stroke-dasharray="6 5"/><path d="M80 533l12 -6v12zM400 533l-12 -6v12z" fill="#38bdf8"/></g>
+  <g stroke="#6b93f7" stroke-opacity=".5" fill="none"><path d="M30 92H1170"/><path d="M230 30V92M400 30V92M640 30V92M820 30V92"/></g>
+</svg>
+<div class="cell first" style="left:52px" data-slot="number"></div>
+<div class="cell" style="left:252px" data-slot="week"></div>
+<div class="cell" style="left:422px" data-slot="cluster"></div>
+<div class="cell" style="left:662px" data-slot="date"></div>
+<div class="cell" style="left:842px" data-slot="listen"></div>
+<div class="title" data-slot="title"></div>
+<div class="num" data-slot="value"></div>
+<div class="sub" data-slot="sub"></div>
+</body></html>

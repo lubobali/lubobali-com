@@ -2,6 +2,8 @@ import "./notes.css";
 import Link from "next/link";
 import { notesCopy as copy } from "@/lib/notes/copy";
 import type { Note } from "@/lib/notes/note";
+import { noteCard } from "@/lib/notes/card";
+import { fingerprint } from "@/lib/notes/fingerprint";
 import { Listen } from "./listen";
 
 // /notes/<slug> (Phase 9 P9.5): header (number, title, TL;DR, the big
@@ -30,8 +32,9 @@ export function NoteHeader({ note, number }: { note: Note; number: number }) {
         <span aria-hidden="true">←</span> {copy.note.back}
       </Link>
       {/* The title block of an engineering drawing: number, week, date, topic, time. */}
-      <div className="note-sheet overflow-hidden">
-        <p className="note-sheet-meta note-eyebrow">
+      <div className="note-sheet relative overflow-hidden">
+        <NotePrint note={note} number={number} />
+        <p className="note-sheet-meta note-eyebrow relative z-10">
           <span className="text-link">{copy.note.number(number)}</span>
           <span>{copy.note.week(note.week)}</span>
           <time dateTime={note.date}>{longDate(note.date)}</time>
@@ -43,7 +46,7 @@ export function NoteHeader({ note, number }: { note: Note; number: number }) {
             </span>
           )}
         </p>
-        <div className="grid gap-8 p-5 sm:p-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:gap-14">
+        <div className="relative z-10 grid gap-8 p-5 sm:p-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:gap-14">
           <div className="flex min-w-0 flex-col gap-6">
             <h1 className="max-w-4xl text-4xl font-semibold text-balance sm:text-5xl">{note.title}</h1>
             {note.audio && <Listen src={note.audio.src} seconds={note.audio.seconds} title={note.title} />}
@@ -64,6 +67,14 @@ export function NoteHeader({ note, number }: { note: Note; number: number }) {
       </div>
     </header>
   );
+}
+
+// The note's own fingerprint behind the title block (P9.7, concept C):
+// the same drawing as its share card, inline (no extra download), decorative.
+function NotePrint({ note, number }: { note: Note; number: number }) {
+  const card = noteCard(note, number);
+  const svg = fingerprint(card.seed, { id: "cover", cx: 320, cy: 240, scale: 1.3, hue: card.hue, dots: card.dots, rings: 18, points: 30 });
+  return <svg aria-hidden="true" focusable="false" viewBox="0 0 640 480" className="note-print" dangerouslySetInnerHTML={{ __html: svg }} />;
 }
 
 export function NoteBody({ note }: { note: Note }) {

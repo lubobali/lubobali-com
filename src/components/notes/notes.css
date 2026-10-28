@@ -855,3 +855,25 @@
   outline: 2px solid var(--ring);
   outline-offset: 3px;
 }
+
+/* The note's fingerprint (P9.7): behind the title block, on the right,
+   fading out under the text. Phone: smaller and fainter. */
+.note-print {
+  position: absolute;
+  z-index: 0;
+  top: -2rem;
+  right: -6rem;
+  width: min(44rem, 70%);
+  height: auto;
+  opacity: 0.55;
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse 70% 70% at 55% 50%, black 40%, transparent 85%);
+}
+@media (max-width: 1023px) {
+  .note-print {
+    top: -1rem;
+    right: -9rem;
+    width: 30rem;
+    opacity: 0.3;
+  }
+}

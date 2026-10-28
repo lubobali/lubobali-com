@@ -134,7 +134,11 @@ for (const file of files) {
   } else if (path.startsWith("/notes/")) {
     const html = await readFile(join(out, file), "utf8");
     notePaths.push(path);
-    fail(path, checkNotePage(parsePage(html), path, h1Text(html)));
+    const page = parsePage(html);
+    fail(path, checkNotePage(page, path, h1Text(html)));
+    // Its own share card (P9.7), not the site one.
+    for (const k of ["og:image", "twitter:image"])
+      if (page.metas[k] !== `${ORIGIN}${path}/card.jpg`) fail(path, [`${k} is ${page.metas[k] ?? "missing"}, want its own card ${path}/card.jpg`]);
   }
 }
 if (notePaths.length) {

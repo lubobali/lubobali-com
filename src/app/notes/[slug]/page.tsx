@@ -6,6 +6,7 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { NoteBody, NoteFacts, NoteHeader, NoteNav } from "@/components/notes/note-parts";
 import { notesCopy as copy } from "@/lib/notes/copy";
 import { loadNotes } from "@/lib/notes/load";
+import type { Note } from "@/lib/notes/note";
 import { noteGraph } from "@/lib/schema";
 import { site } from "@/lib/site";
 
@@ -18,6 +19,8 @@ export function generateStaticParams() {
 }
 
 type Props = { params: Promise<{ slug: string }> };
+
+const shareImage = (n: Note) => ({ url: `/notes/${n.slug}/card.jpg`, width: 1200, height: 630, alt: `${n.title}: ${n.hero.value} ${n.hero.label}` });
 
 const find = (slug: string) => {
   const notes = loadNotes(); // newest first
@@ -43,11 +46,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: note.description,
       publishedTime: note.date,
       ...(note.updated ? { modifiedTime: note.updated } : {}),
-      // The site card until notes get their own (P9.7). A page that sets
-      // openGraph must repeat images (layout.tsx note).
-      images: [{ url: "/og.png", width: 1200, height: 630, alt: `${site.name}, ${site.jobTitle}` }],
+      // Its own card (P9.7, concept C): scripts/brand/note-cards.sh.
+      images: [shareImage(note)],
     },
-    twitter: { card: "summary_large_image", creator: "@Lubo_Bali" },
+    twitter: { card: "summary_large_image", creator: "@Lubo_Bali", images: [shareImage(note)] },
   };
 }
 

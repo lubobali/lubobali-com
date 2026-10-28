@@ -292,7 +292,7 @@ export function noteGraph(n: Note): Graph {
         dateModified: n.updated ?? n.date,
         inLanguage: "en",
         wordCount: n.words,
-        image: `${site.url}/og.png`,
+        image: `${site.url}/notes/${n.slug}/card.jpg`,
         keywords: [notesCopy.clusters[n.cluster], ...n.stack].join(", "),
         articleSection: notesCopy.clusters[n.cluster],
         author: { "@id": id("person") },

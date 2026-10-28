@@ -141,7 +141,7 @@ test("broken YAML is a clear error, not a crash", () => {
 });
 
 // ---- loader: every note in content/notes, any problem fails the build ----
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, mkdirSync, readFileSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -340,4 +340,56 @@ test("JSON-LD: /notes is a Blog listing every note", () => {
   const blog = notesGraph([n])["@graph"].find((g) => g["@type"] === "Blog");
   assert.equal(blog.blogPost.length, 1);
   assert.equal(blog.blogPost[0].url, "https://lubobali.com/notes/shipped-or-hype");
+});
+
+// ---- Cover cards (P9.7, Lubo picked C: spec sheet + the note's own fingerprint) ----
+const { fingerprint, CLUSTER_HUE } = await import("../../src/lib/notes/fingerprint.ts");
+const { noteCard, noteCardHash } = await import("../../src/lib/notes/card.ts");
+
+const fpOpts = { id: "t", cx: 300, cy: 210, scale: 1, hue: "#38bdf8", dots: 3 };
+
+test("fingerprint: same note = same drawing, another note = another drawing", () => {
+  const a = fingerprint("shipped-or-hype|2026-10-27", fpOpts);
+  assert.equal(a, fingerprint("shipped-or-hype|2026-10-27", fpOpts));
+  assert.notEqual(a, fingerprint("another-note|2026-11-03", fpOpts));
+  assert.ok(!/NaN|undefined|Infinity/.test(a));
+});
+
+test("fingerprint: ids are prefixed (two on one page never clash), dots = the number's digits", () => {
+  const a = fingerprint("x|2026-10-27", { ...fpOpts, id: "cover" });
+  assert.ok(a.includes('id="cover-grad"') && a.includes('url(#cover-grad)'));
+  assert.equal((a.match(/<circle /g) ?? []).length, 3 * 2); // dot + halo per digit
+});
+
+test("fingerprint: small enough to draw inline on the page", () => {
+  assert.ok(fingerprint("shipped-or-hype|2026-10-27", fpOpts).length < 20_000);
+});
+
+test("every topic has its own fingerprint colour", () => {
+  assert.deepEqual(Object.keys(CLUSTER_HUE).sort(), [...CLUSTERS].sort());
+  assert.equal(new Set(Object.values(CLUSTER_HUE)).size, CLUSTERS.length);
+});
+
+test("card data: what the share card shows, from the note; the hash changes when it does", () => {
+  const n = noteWith({ audio: { src: "/notes/shipped-or-hype/listen.mp3", seconds: 236 } });
+  const card = noteCard(n, 1);
+  assert.equal(card.number, "Note 01");
+  assert.equal(card.week, "Week 45");
+  assert.equal(card.listen, "▶ Listen 3:56");
+  assert.equal(card.value, FRONT.hero.value);
+  assert.equal(card.dots, 3);
+  assert.notEqual(noteCardHash(card), noteCardHash(noteCard({ ...n, title: "Another title here" }, 1)));
+  assert.equal(noteCard({ ...n, audio: undefined }, 1).listen, "");
+});
+
+test("every real note has a share card that matches what it shows today", () => {
+  const notes = loadNotes();
+  const manifest = existsSync("content/notes/cards.json") ? JSON.parse(readFileSync("content/notes/cards.json", "utf8")) : {};
+  const problems = [];
+  notes.forEach((n, i) => {
+    const card = noteCard(n, notes.length - i);
+    if (!existsSync(`public/notes/${n.slug}/card.jpg`)) problems.push(`${n.slug}: no card (run scripts/brand/note-cards.sh)`);
+    else if (manifest[n.slug] !== noteCardHash(card)) problems.push(`${n.slug}: card is stale (run scripts/brand/note-cards.sh)`);
+  });
+  assert.deepEqual(problems, []);
 });
