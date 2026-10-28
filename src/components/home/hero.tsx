@@ -67,7 +67,8 @@ function NoteLine() {
   if (!latest) return null;
   return (
     <a href={`/notes/${latest.slug}`} className="hero-building group inline-flex w-fit flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
-      <span className="font-mono text-xs tracking-wide uppercase">{notesCopy.home}</span>
+      {/* Normal font on purpose: mono here = one more font download on home (over its 20-request budget). */}
+      <span className="text-xs font-semibold tracking-wide uppercase">{notesCopy.home}</span>
       <span className="text-link underline decoration-link/40 underline-offset-4 transition-colors group-hover:decoration-link">
         {latest.title}
       </span>
