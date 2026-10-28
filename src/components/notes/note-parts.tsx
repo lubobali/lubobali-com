@@ -124,27 +124,40 @@ export function NoteNav({ older, newer }: { older?: Note; newer?: Note }) {
 }
 
 export function NoteRow({ note, number }: { note: Note; number: number }) {
+  // Tap anywhere: the note opens (one invisible link covers the card). The
+  // Listen pill sits above it as its own button: it plays right here, no
+  // page change (Lubo 2026-10-28). A button can't live inside a link.
   return (
-    <li className="note-row relative flex flex-col gap-4 rounded-3xl p-6 sm:flex-row sm:items-end sm:justify-between sm:gap-10 sm:p-8">
-      <div className="flex min-w-0 flex-col gap-3">
-        <p className="note-eyebrow">
-          {copy.note.eyebrow(number, note.week)} · {copy.clusters[note.cluster]}
-        </p>
-        <h2 className="text-2xl font-semibold text-balance">
-          {/* The whole card is the link (the ::after covers it). */}
-          <Link href={`/notes/${note.slug}`} prefetch={false} className="after:absolute after:inset-0 after:rounded-3xl">
-            {note.title}
-          </Link>
-        </h2>
-        <p className="max-w-[68ch] text-muted-foreground">{note.tldr}</p>
-        <p className="text-sm text-muted-foreground">
-          <time dateTime={note.date}>{longDate(note.date)}</time> · {copy.note.minutes(note.readMinutes)}
+    <li className="note-row group relative rounded-3xl">
+      <Link href={`/notes/${note.slug}`} prefetch={false} className="note-row-link absolute inset-0 z-0 rounded-3xl">
+        <span className="sr-only">{note.title}</span>
+      </Link>
+      <div className="pointer-events-none relative z-10 flex flex-col gap-4 p-6 sm:flex-row sm:items-end sm:justify-between sm:gap-10 sm:p-8">
+        <div className="flex min-w-0 flex-col gap-3">
+          <p className="note-eyebrow">
+            {copy.note.eyebrow(number, note.week)} · {copy.clusters[note.cluster]}
+          </p>
+          <h2 className="text-2xl font-semibold text-balance">{note.title}</h2>
+          <p className="max-w-[68ch] text-muted-foreground">{note.tldr}</p>
+          <p className="text-sm text-muted-foreground">
+            <time dateTime={note.date}>{longDate(note.date)}</time> · {copy.note.minutes(note.readMinutes)}
+          </p>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-3 pt-1">
+            {note.audio && (
+              <div className="pointer-events-auto">
+                <Listen src={note.audio.src} seconds={note.audio.seconds} title={note.title} compact />
+              </div>
+            )}
+            <span aria-hidden="true" className="font-semibold text-link underline decoration-link/40 underline-offset-4 group-hover:decoration-link">
+              {copy.list.read} <span>→</span>
+            </span>
+          </div>
+        </div>
+        <p className="flex shrink-0 flex-col gap-1 sm:items-end sm:text-right">
+          <span className="note-figure tabular-nums">{note.hero.value}</span>
+          <span className="text-sm text-muted-foreground">{note.hero.label}</span>
         </p>
       </div>
-      <p className="flex shrink-0 flex-col gap-1 sm:items-end sm:text-right">
-        <span className="note-figure tabular-nums">{note.hero.value}</span>
-        <span className="text-sm text-muted-foreground">{note.hero.label}</span>
-      </p>
     </li>
   );
 }

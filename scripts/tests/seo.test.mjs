@@ -205,3 +205,41 @@ test("checkShareImage: /resume must use its own card on LinkedIn and X", () => {
   assert.equal(checkShareImage({ metas: { "og:image": "https://lubobali.com/og.png" } }, "/resume").length, 2);
   assert.deepEqual(checkShareImage({ metas: {} }, "/about"), []);
 });
+
+// ---- Notes (Phase 9 P9.6) ----
+import { checkNotePage, checkFeed } from "../lib/seo.mjs";
+
+const notePage = (ld, rss = true) =>
+  parsePage(`<head><title>T</title><link rel="canonical" href="https://lubobali.com/notes/x"/>${
+    rss ? '<link rel="alternate" type="application/rss+xml" title="Notes" href="https://lubobali.com/notes/feed.xml"/>' : ""
+  }<script type="application/ld+json">${JSON.stringify(ld)}</script></head><h1>Hello</h1>`);
+const goodLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "BreadcrumbList", itemListElement: [] },
+    {
+      "@type": "BlogPosting",
+      headline: "Hello",
+      datePublished: "2026-11-02",
+      mainEntityOfPage: "https://lubobali.com/notes/x",
+      author: { "@id": "https://lubobali.com/#person" },
+    },
+  ],
+};
+
+test("a note page needs its BlogPosting, matching the h1 and the canonical URL, and the RSS link", () => {
+  assert.deepEqual(checkNotePage(notePage(goodLd), "/notes/x", "Hello"), []);
+  assert.ok(checkNotePage(notePage(goodLd, false), "/notes/x", "Hello").some((p) => p.includes("RSS")));
+  const g = structuredClone(goodLd);
+  g["@graph"][1].headline = "Other";
+  assert.ok(checkNotePage(notePage(g), "/notes/x", "Hello").some((p) => p.includes("headline")));
+  const noPost = { ...goodLd, "@graph": [goodLd["@graph"][0]] };
+  assert.ok(checkNotePage(notePage(noPost), "/notes/x", "Hello").some((p) => p.includes("BlogPosting")));
+});
+
+test("the feed lists every note page and nothing else", () => {
+  const xml = `<rss version="2.0"><channel><item><link>https://lubobali.com/notes/x</link></item></channel></rss>`;
+  assert.deepEqual(checkFeed(xml, ["/notes/x"]), []);
+  assert.ok(checkFeed(xml, ["/notes/x", "/notes/y"]).some((p) => p.includes("/notes/y")));
+  assert.ok(checkFeed("not xml", ["/notes/x"]).some((p) => p.includes("rss")));
+});

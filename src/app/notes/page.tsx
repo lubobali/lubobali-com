@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { FinalCta } from "@/components/home/final-cta";
+import { JsonLd } from "@/components/seo/json-ld";
 import { NoteRow } from "@/components/notes/note-parts";
 import { notesCopy as copy } from "@/lib/notes/copy";
 import { loadNotes } from "@/lib/notes/load";
+import { notesGraph } from "@/lib/schema";
 import { site } from "@/lib/site";
 
 // /notes (Phase 9 P9.5): every weekly note, newest first. Notes are
@@ -13,6 +15,8 @@ const notes = loadNotes();
 export const metadata: Metadata = {
   title: copy.title,
   description: copy.description,
+  // Canonical repeated: a page that sets alternates replaces the layout's.
+  alternates: { canonical: "./", types: { "application/rss+xml": [{ url: "/notes/feed.xml", title: `${copy.title} by ${site.name}` }] } },
   openGraph: {
     type: "website",
     url: "./",
@@ -30,6 +34,7 @@ export const metadata: Metadata = {
 export default function NotesPage() {
   return (
     <main className="flex flex-1 flex-col">
+      <JsonLd data={notesGraph(notes)} />
       <section aria-labelledby="notes-title" className="relative overflow-hidden">
         <div
           aria-hidden="true"

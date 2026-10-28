@@ -721,6 +721,14 @@
   border-color: var(--sky);
   box-shadow: 0 10px 44px -14px color-mix(in oklch, var(--sky) 90%, transparent);
 }
+.listen-pill[data-compact] {
+  gap: 0.6rem;
+  padding: 0.3rem 0.85rem 0.3rem 0.3rem;
+}
+.listen-pill[data-compact] .listen-pill-play {
+  width: 2rem;
+  height: 2rem;
+}
 .listen-pill-play {
   display: grid;
   place-items: center;
@@ -841,4 +849,9 @@
   border: 0;
   border-radius: 50%;
   background: var(--foreground);
+}
+/* The card's link is invisible; show keyboard focus on the whole card. */
+.note-row-link:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
 }

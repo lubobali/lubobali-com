@@ -193,3 +193,39 @@ export function assetPath(url) {
   if (!url?.startsWith(ORIGIN + "/")) return null;
   return url.slice(ORIGIN.length + 1).split(/[?#]/)[0];
 }
+
+// Notes (Phase 9 P9.6). A note page: its BlogPosting matches what the page
+// shows (headline = the h1, URL = the canonical), has a date and Lubo as
+// author, sits under breadcrumbs, and the page links the RSS feed.
+export const FEED = `${ORIGIN}/notes/feed.xml`;
+export function checkNotePage(page, path, h1) {
+  const p = [];
+  if (page.links.alternate !== FEED) p.push(`no RSS link (<link rel="alternate" href="${FEED}">)`);
+  if (page.jsonLd.length !== 1) return [...p, `want 1 JSON-LD block, found ${page.jsonLd.length}`];
+  if (page.jsonLd[0].includes("<")) return [...p, "JSON-LD contains a raw '<' (must be \\u003c)"];
+  let graph;
+  try {
+    graph = JSON.parse(page.jsonLd[0])["@graph"] ?? [];
+  } catch (e) {
+    return [...p, `JSON-LD is not valid JSON: ${e.message}`];
+  }
+  const post = graph.find((n) => n["@type"] === "BlogPosting");
+  if (!post) return [...p, "JSON-LD has no BlogPosting"];
+  if (post.headline !== h1) p.push(`BlogPosting headline "${post.headline}" is not the h1 "${h1}"`);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(post.datePublished ?? "")) p.push("BlogPosting has no datePublished (YYYY-MM-DD)");
+  if (post.mainEntityOfPage !== ORIGIN + path) p.push(`BlogPosting URL is ${post.mainEntityOfPage}, want ${ORIGIN + path}`);
+  if (post.author?.["@id"] !== `${ORIGIN}/#person`) p.push("BlogPosting author is not Lubo (the site Person)");
+  if (!graph.some((n) => n["@type"] === "BreadcrumbList")) p.push("no BreadcrumbList");
+  return p;
+}
+
+/** The RSS feed lists exactly the note pages that were built. */
+export function checkFeed(xml, notePaths) {
+  if (!/<rss[\s>]/.test(xml)) return ["not an rss feed"];
+  const listed = new Set([...xml.matchAll(/<item>[\s\S]*?<link>([^<]+)<\/link>/g)].map((m) => m[1]));
+  const want = new Set(notePaths.map((path) => ORIGIN + path));
+  return [
+    ...[...want].filter((u) => !listed.has(u)).map((u) => `feed is missing ${u.slice(ORIGIN.length)}`),
+    ...[...listed].filter((u) => !want.has(u)).map((u) => `feed lists ${u} but no such note page`),
+  ];
+}

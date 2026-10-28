@@ -35,7 +35,7 @@ export type ExploreItem = {
   number?: { value: string; label: string }; // a story's headline number
   // Pages (Lubo 2026-10-24: "every page a different colour so it's easy to
   // spot"): each row gets its own tone (explore.css [data-tone]).
-  tone?: "amber" | "violet" | "sky" | "green" | "teal" | "ice" | "brand" | "lime";
+  tone?: "amber" | "violet" | "sky" | "green" | "teal" | "ice" | "brand" | "lime" | "rose";
   // Phase 7: a live card. Its dot and subtitle come from the daily data
   // (header -> Explore props), the subtitle below is the plain fallback.
   live?: boolean;
@@ -121,6 +121,16 @@ const pages: ExploreItem[] = [
     href: "/building",
     keywords: ["building", "now", "active", "current projects", "working on", "tests", "TDD", "CI", "uptime", "commits"],
     text: "live activity what are you working on right now this week shipped updates automated tests test-first CI runs LuBot uptime milestones",
+  },
+  // Phase 9: the weekly notes (each note is also in the whole-site search).
+  {
+    group: "start",
+    tone: "rose",
+    title: "Notes",
+    subtitle: "One build a week with the newest AI: real numbers, what broke, the code",
+    href: "/notes",
+    keywords: ["notes", "blog", "articles", "weekly", "AI news", "build log", "RSS", "listen", "audio"],
+    text: "what I learned this week newest AI tested hands-on experiments write-ups podcast claims checked",
   },
   {
     group: "start",

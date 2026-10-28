@@ -91,6 +91,14 @@ jobs:
           node scripts/check-seo.mjs out
           node scripts/csp.mjs check out
 
+      # Phase 9 P9.6: no private name (mystery clients, people) anywhere a
+      # visitor or crawler can read. The list is a repo secret Lubo sets;
+      # it is never in the repo or printed. Missing secret = fail.
+      - name: Private-name guard (list from a repo secret, never printed)
+        run: node scripts/check-private.mjs out content --require
+        env:
+          NOTES_PRIVATE_TERMS: ${{ secrets.NOTES_PRIVATE_TERMS }}
+
       - name: Test deploy scripts
         run: bash scripts/tests/test-deploy.sh
 

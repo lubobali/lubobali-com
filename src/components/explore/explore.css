@@ -260,6 +260,7 @@ html.explore-open {
 .explore-hit[data-tone="ice"] { --g: var(--tone-ice); }
 .explore-hit[data-tone="brand"] { --g: var(--brand-light); }
 .explore-hit[data-tone="lime"] { --g: var(--tone-live); }
+.explore-hit[data-tone="rose"] { --g: var(--tone-rose); }
 .explore-section .explore-hit[data-tone] {
   border-color: color-mix(in oklch, var(--g) 45%, var(--border));
   background: linear-gradient(160deg, color-mix(in oklch, var(--g) 30%, var(--card)), color-mix(in oklch, var(--g) 10%, var(--background)));

@@ -295,3 +295,49 @@ test("audio must match the words: a stale or missing file fails the build", () =
   assert.throws(() => withAudio(good, false), /listen\.mp3 is missing/);
   assert.equal(withDir({ [FILE]: raw() }, (dir) => load(dir))[0].audio, undefined); // no audio = no pill
 });
+
+// ---- RSS (P9.6): /notes/feed.xml, built from the notes, never from the clock ----
+const { buildFeed } = await import("../../src/lib/notes/feed.ts");
+const { noteGraph, notesGraph } = await import("../../src/lib/schema.ts");
+
+const noteWith = (over = {}) => ({ ...parseNote(FILE, raw()).note, ...over });
+
+test("feed: one item per note, absolute links, RFC-822 dates, text escaped", () => {
+  const n = noteWith({ title: "A & B <tested>", audio: { src: "/notes/shipped-or-hype/listen.mp3", seconds: 236 } });
+  const xml = buildFeed([n], { "shipped-or-hype": 1891676 });
+  assert.match(xml, /^<\?xml version="1.0" encoding="UTF-8"\?>\n<rss version="2.0"/);
+  assert.ok(xml.includes("<title>A &amp; B &lt;tested&gt;</title>"));
+  assert.ok(xml.includes("<link>https://lubobali.com/notes/shipped-or-hype</link>"));
+  assert.ok(xml.includes('<guid isPermaLink="true">https://lubobali.com/notes/shipped-or-hype</guid>'));
+  assert.ok(xml.includes("<pubDate>Mon, 02 Nov 2026 12:00:00 GMT</pubDate>"));
+  assert.ok(xml.includes('<enclosure url="https://lubobali.com/notes/shipped-or-hype/listen.mp3" length="1891676" type="audio/mpeg"/>'));
+  assert.ok(xml.includes('<atom:link href="https://lubobali.com/notes/feed.xml" rel="self" type="application/rss+xml"/>'));
+});
+
+test("feed: the same notes give the same file (no build time inside)", () => {
+  const n = noteWith();
+  assert.equal(buildFeed([n], {}), buildFeed([n], {}));
+  assert.ok(buildFeed([n], {}).includes("<lastBuildDate>Mon, 02 Nov 2026 12:00:00 GMT</lastBuildDate>"));
+  assert.ok(!buildFeed([n], {}).includes("<enclosure")); // no audio, no enclosure
+});
+
+test("JSON-LD: a note is a BlogPosting by Lubo, with breadcrumbs, sources and its audio", () => {
+  const n = noteWith({ audio: { src: "/notes/shipped-or-hype/listen.mp3", seconds: 236 } });
+  const graph = noteGraph(n)["@graph"];
+  const post = graph.find((g) => g["@type"] === "BlogPosting");
+  assert.equal(post.headline, n.title);
+  assert.equal(post.datePublished, "2026-11-02");
+  assert.equal(post.mainEntityOfPage, "https://lubobali.com/notes/shipped-or-hype");
+  assert.deepEqual(post.author, { "@id": "https://lubobali.com/#person" });
+  assert.deepEqual(post.citation, n.sources.map((s) => s.url));
+  assert.equal(post.audio.duration, "PT3M56S");
+  assert.equal(post.audio.contentUrl, "https://lubobali.com/notes/shipped-or-hype/listen.mp3");
+  assert.ok(graph.some((g) => g["@type"] === "BreadcrumbList"));
+});
+
+test("JSON-LD: /notes is a Blog listing every note", () => {
+  const n = noteWith();
+  const blog = notesGraph([n])["@graph"].find((g) => g["@type"] === "Blog");
+  assert.equal(blog.blogPost.length, 1);
+  assert.equal(blog.blogPost[0].url, "https://lubobali.com/notes/shipped-or-hype");
+});

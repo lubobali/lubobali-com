@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BlueprintSpot } from "@/components/blueprint-spot";
 import { FinalCta } from "@/components/home/final-cta";
+import { JsonLd } from "@/components/seo/json-ld";
 import { NoteBody, NoteFacts, NoteHeader, NoteNav } from "@/components/notes/note-parts";
 import { notesCopy as copy } from "@/lib/notes/copy";
 import { loadNotes } from "@/lib/notes/load";
+import { noteGraph } from "@/lib/schema";
 import { site } from "@/lib/site";
 
 // /notes/<slug> (Phase 9 P9.5): one weekly note. Text from
@@ -30,6 +32,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: note.title,
     description: note.description,
+    // Canonical repeated: a page that sets alternates replaces the layout's.
+    alternates: { canonical: "./", types: { "application/rss+xml": [{ url: "/notes/feed.xml", title: `${copy.title} by ${site.name}` }] } },
     openGraph: {
       type: "article",
       url: "./",
@@ -53,6 +57,7 @@ export default async function NotePage({ params }: Props) {
   const { note, number, newer, older } = hit;
   return (
     <main className="note-page flex flex-1 flex-col">
+      <JsonLd data={noteGraph(note)} />
       <article className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 py-12 sm:px-6 lg:py-16">
         <NoteHeader note={note} number={number} />
         <NoteBody note={note} />

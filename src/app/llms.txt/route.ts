@@ -2,6 +2,8 @@ import { liveSummary } from "@/lib/building/format";
 import { loadLive } from "@/lib/building/load";
 import { storyPath } from "@/lib/case-studies";
 import { intro } from "@/lib/intro";
+import { notesCopy } from "@/lib/notes/copy";
+import { loadNotes } from "@/lib/notes/load";
 import { now, steps, terms } from "@/lib/process";
 import { projectsIn } from "@/lib/projects";
 import { resume, resumePdfPath } from "@/lib/resume";
@@ -26,6 +28,18 @@ const links = (w: (typeof work)[number]) => {
 const plain = (t: string) => t.replace(/\u2060/g, "").replace(/\u00a0/g, " ");
 
 const live = liveSummary(loadLive());
+// Notes (Phase 9 P9.6): every weekly note, newest first, with its TL;DR.
+const notes = loadNotes();
+const notesSection = notes.length
+  ? `## Notes
+
+${notesCopy.description} RSS: ${site.url}/notes/feed.xml
+${site.url}/notes
+
+${notes.map((n) => `- [${n.title}](${site.url}/notes/${n.slug}) (${n.date}): ${n.tldr}`).join("\n")}
+
+`
+  : "";
 
 const body = `# ${site.name}
 
@@ -59,7 +73,7 @@ morning from git, my CI server and LuBot's monitor (commits, automated
 tests, CI runs, uptime, milestones). ${live.line}.
 ${site.url}/building
 
-## Contact
+${notesSection}## Contact
 
 - [${site.bookCall.label}](${site.bookCall.url})
 - Email: ${site.email}

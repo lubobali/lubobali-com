@@ -35,6 +35,7 @@ const PROFILES = [
 const LINKS = [
   { label: "About", href: "/about" },
   { label: building.nav, href: "/building" }, // Phase 7: with the live dot
+  { label: "Notes", href: "/notes" }, // Phase 9
   { label: "FAQ", href: "/#questions" },
   { label: "Resume", href: "/resume" },
   { label: "All projects", href: "/projects" },

@@ -38,11 +38,13 @@ export function Listen({
   seconds,
   title,
   voice = copy.listen.voice,
+  compact = false,
 }: {
   src: string;
   seconds: number;
   title: string;
   voice?: string;
+  compact?: boolean; // the small pill on a /notes list card
 }) {
   const audio = useRef<HTMLAudioElement>(null);
   const [open, setOpen] = useState(false);
@@ -113,6 +115,7 @@ export function Listen({
         type="button"
         onClick={toggle}
         className="listen-pill"
+        data-compact={compact || undefined}
         data-playing={playing || undefined}
       >
         <span className="listen-pill-play">

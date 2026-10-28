@@ -13,6 +13,10 @@ export const notesCopy = {
     sub: "Real numbers, what broke, and the code. No hype, no recaps.",
   },
   empty: "The first note is coming soon.",
+  home: "Latest note", // the line under the home hero buttons
+  list: {
+    read: "Read the note",
+  },
   clusters: {
     agents: "AI agents",
     rag: "RAG",

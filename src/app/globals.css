@@ -115,6 +115,7 @@
   --bubble-a: oklch(0.9 0.06 228);
   --bubble-ink: oklch(0.2 0.045 268);
   --tone-ice: oklch(0.8 0.1 228); /* #8ccaf0-ish */
+  --tone-rose: oklch(0.8 0.11 352); /* Notes in Explore (Phase 9): the 9th page colour */
   --tone-live: oklch(0.87 0.16 128); /* lime: "Building now" (Phase 7), apart from the green/teal tones */
   /* The 3 chapter colours (Phase 5, Lubo 2026-10-22, from colour research):
      the same worlds as the brand cards (brand-card.css), a little lighter

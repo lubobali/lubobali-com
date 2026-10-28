@@ -1,4 +1,6 @@
 import { type ExploreItem, exploreItems } from "@/lib/explore";
+import { notesCopy } from "@/lib/notes/copy";
+import { loadNotes } from "@/lib/notes/load";
 import { projects, projectSearchDoc } from "@/lib/projects";
 import { createSearch, type SearchDoc } from "./engine";
 import { synonyms } from "./synonyms";
@@ -41,6 +43,18 @@ export const siteDocs: readonly SiteEntry[] = [
     subtitle: p.oneLine,
     href: `/projects/${p.slug}`,
     number: p.number,
+  })),
+  // Phase 9: every weekly note, by its title, stack, topic and TL;DR.
+  ...loadNotes().map((n, i, all) => ({
+    id: `notes/${n.slug}`,
+    title: n.title,
+    keywords: [notesCopy.clusters[n.cluster], ...n.stack, "note"],
+    text: `${n.tldr} ${n.description}`,
+    group: "pages" as const,
+    subtitle: `${notesCopy.note.eyebrow(all.length - i, n.week)} · ${notesCopy.note.minutes(n.readMinutes)}`,
+    href: `/notes/${n.slug}`,
+    number: n.hero,
+    tone: "rose" as const,
   })),
 ];
 

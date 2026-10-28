@@ -16,6 +16,9 @@ import {
   checkShareImage,
   assetPath,
   checkPage,
+  checkNotePage,
+  checkFeed,
+  FEED,
   checkRobots,
   checkSitemap,
   parsePage,
@@ -24,6 +27,16 @@ import {
 import { PHONE } from "./lib/resume.mjs";
 
 const out = process.argv[2] ?? "out";
+// The h1 as a reader sees it: tags stripped, the few entities React writes decoded.
+const h1Text = (html) =>
+  (html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)?.[1] ?? "")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&#x27;|&#39;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&")
+    .trim();
 const problems = [];
 const fail = (where, list) => list.forEach((p) => problems.push(`${where}: ${p}`));
 
@@ -110,6 +123,26 @@ for (const file of files) {
   const img = assetPath(page.metas["og:image"]);
   if (img && !existsSync(join(out, img))) fail(path, [`og:image file missing in the build: ${img}`]);
 }
+// Notes (Phase 9 P9.6): every note page's BlogPosting + RSS link, the
+// list page's RSS link, and a feed that lists exactly the built notes.
+const notePaths = [];
+for (const file of files) {
+  const path = "/" + file.replace(/\.html$/, "");
+  if (path === "/notes") {
+    const page = parsePage(await readFile(join(out, file), "utf8"));
+    if (page.links.alternate !== FEED) fail(path, ["no RSS link"]);
+  } else if (path.startsWith("/notes/")) {
+    const html = await readFile(join(out, file), "utf8");
+    notePaths.push(path);
+    fail(path, checkNotePage(parsePage(html), path, h1Text(html)));
+  }
+}
+if (notePaths.length) {
+  const feed = await readFile(join(out, "notes", "feed.xml"), "utf8").catch(() => null);
+  if (feed === null) fail("notes/feed.xml", ["missing"]);
+  else fail("notes/feed.xml", checkFeed(feed, notePaths));
+}
+
 if (!home) fail("/", ["no index.html"]);
 else {
   fail("/ JSON-LD", checkJsonLd(home.jsonLd));
@@ -133,6 +166,8 @@ if (robots === null) fail("robots.txt", ["missing"]);
 else fail("robots.txt", checkRobots(robots));
 if (sitemap === null) fail("sitemap.xml", ["missing"]);
 else fail("sitemap.xml", checkSitemap(sitemap, indexable));
+// Every note is listed for AI assistants (Phase 9 P9.6).
+for (const path of notePaths) if (llms && !llms.includes(ORIGIN + path)) fail("llms.txt", [`does not list ${path}`]);
 if (llms === null) fail("llms.txt", ["missing"]);
 else fail("llms.txt", [...checkLlmsTxt(llms), ...(hasPhone(llms, PHONE) ? ["the phone number is in llms.txt (PDF only)"] : [])]);
 

@@ -16,7 +16,8 @@ test("Explore: 'Building now' is 2nd in Get to know me, after the CEO questions"
   assert.equal(card.group, "start");
   assert.deepEqual(
     start.map((i) => i.title),
-    ["Questions CEOs ask me", "Building now", "About me", "Resume"],
+    // Phase 9: Notes right after Building now (both say what Lubo is doing now).
+    ["Questions CEOs ask me", "Building now", "Notes", "About me", "Resume"],
   );
 });
 
@@ -37,4 +38,10 @@ test("llms.txt points AI assistants to /building", async () => {
   const text = await GET().text();
   assert.match(text, /## Building now/);
   assert.match(text, /https:\/\/lubobali\.com\/building/);
+});
+
+// Lubo 2026-10-24: every page in Explore its own colour, so it's easy to spot.
+test("Explore: no two page cards share a colour", () => {
+  const tones = exploreItems.filter((i) => i.tone).map((i) => i.tone);
+  assert.deepEqual(tones.filter((t, i) => tones.indexOf(t) !== i), []);
 });

@@ -1,5 +1,7 @@
 import type { Graph } from "schema-dts";
 import type { CaseStudy } from "@/lib/case-studies/types";
+import { notesCopy } from "@/lib/notes/copy";
+import type { Note } from "@/lib/notes/note";
 import type { Project } from "@/lib/projects/model";
 import { imageUrl } from "@/lib/images";
 import { intro } from "@/lib/intro";
@@ -253,6 +255,99 @@ export function shelfGraph(projects: readonly Project[], stories: readonly CaseS
           numberOfItems: items.length,
           itemListElement: items.map((it, i) => ({ "@type": "ListItem", position: i + 1, name: it.name, url: it.url })),
         },
+      },
+    ],
+  };
+}
+
+// A weekly note (Phase 9 P9.6): breadcrumbs (Home › Notes › title) + a
+// BlogPosting by the same Person as the rest of the site, with its sources
+// as citations, the repo it is about, and the Listen audio. Only what the
+// page itself shows; dates are the note's own (published, updated).
+const isoDuration = (s: number) => `PT${Math.floor(s / 60)}M${s % 60}S`;
+
+export function noteGraph(n: Note): Graph {
+  const url = `${site.url}/notes/${n.slug}`;
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${url}#breadcrumbs`,
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${site.url}/` },
+          { "@type": "ListItem", position: 2, name: notesCopy.title, item: `${site.url}/notes` },
+          { "@type": "ListItem", position: 3, name: n.title, item: url },
+        ],
+      },
+      {
+        "@type": "BlogPosting",
+        "@id": `${url}#post`,
+        headline: n.title,
+        description: n.description,
+        abstract: n.tldr,
+        url,
+        mainEntityOfPage: url,
+        datePublished: n.date,
+        dateModified: n.updated ?? n.date,
+        inLanguage: "en",
+        wordCount: n.words,
+        image: `${site.url}/og.png`,
+        keywords: [notesCopy.clusters[n.cluster], ...n.stack].join(", "),
+        articleSection: notesCopy.clusters[n.cluster],
+        author: { "@id": id("person") },
+        publisher: { "@id": id("person") },
+        isPartOf: { "@id": `${site.url}/notes#blog` },
+        citation: n.sources.map((s) => s.url),
+        about: { "@type": "SoftwareSourceCode", codeRepository: n.repo, programmingLanguage: n.stack.join(", ") },
+        ...(n.audio
+          ? {
+              audio: {
+                "@type": "AudioObject",
+                name: `Listen: ${n.title}`,
+                description: `${notesCopy.listen.voice} (${site.name})`,
+                contentUrl: `${site.url}${n.audio.src}`,
+                encodingFormat: "audio/mpeg",
+                duration: isoDuration(n.audio.seconds),
+              },
+            }
+          : {}),
+      },
+    ],
+  };
+}
+
+// /notes (Phase 9 P9.6): the Blog itself, listing every note newest first.
+export function notesGraph(notes: readonly Note[]): Graph {
+  const url = `${site.url}/notes`;
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${url}#breadcrumbs`,
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${site.url}/` },
+          { "@type": "ListItem", position: 2, name: notesCopy.title, item: url },
+        ],
+      },
+      {
+        "@type": "Blog",
+        "@id": `${url}#blog`,
+        name: `${notesCopy.title} by ${site.name}`,
+        description: notesCopy.description,
+        url,
+        inLanguage: "en",
+        author: { "@id": id("person") },
+        publisher: { "@id": id("person") },
+        isPartOf: { "@id": id("website") },
+        blogPost: notes.map((n) => ({
+          "@type": "BlogPosting",
+          "@id": `${url}/${n.slug}#post`,
+          headline: n.title,
+          url: `${url}/${n.slug}`,
+          datePublished: n.date,
+        })),
       },
     ],
   };
