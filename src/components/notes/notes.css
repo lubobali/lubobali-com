@@ -865,15 +865,22 @@
   right: -6rem;
   width: min(44rem, 70%);
   height: auto;
-  opacity: 0.55;
+  opacity: 0;
   pointer-events: none;
-  mask-image: radial-gradient(ellipse 70% 70% at 55% 50%, black 40%, transparent 85%);
+  /* Painted just after the text: the title (the LCP) never waits for ~18
+     curves on a slow phone (P9.7: LCP went 2.25 s -> 2.6 s with it at once). */
+  animation: note-print-in 0.9s ease-out 0.4s forwards;
+}
+@keyframes note-print-in {
+  to {
+    opacity: var(--print-opacity, 0.55);
+  }
 }
 @media (max-width: 1023px) {
   .note-print {
     top: -1rem;
     right: -9rem;
     width: 30rem;
-    opacity: 0.3;
+    --print-opacity: 0.3;
   }
 }
