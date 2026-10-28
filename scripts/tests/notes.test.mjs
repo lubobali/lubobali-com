@@ -407,3 +407,33 @@ test("terms only change the narration, never the page", () => {
   const n = parseNote(FILE, raw(FRONT, `${BODY}\n\nIt strips URLs.`)).note;
   assert.ok(n.html.includes("URLs"));
 });
+
+// ---- Sharing (P9.9, option A): a pending LinkedIn draft + an X thread to paste ----
+const { shareTexts, tweetLength } = await import("../../src/lib/notes/share.ts");
+
+test("share: LinkedIn text has the hook, the number, the link and the code; under the limit", () => {
+  const n = noteWith({ audio: { src: "/notes/shipped-or-hype/listen.mp3", seconds: 256 } });
+  const s = shareTexts(n);
+  assert.ok(s.linkedin.text.startsWith(n.title));
+  assert.ok(s.linkedin.text.includes(`${n.hero.value} ${n.hero.label}`));
+  assert.ok(s.linkedin.text.includes("https://lubobali.com/notes/shipped-or-hype"));
+  assert.ok(s.linkedin.text.includes(n.repo));
+  assert.ok(s.linkedin.text.includes("listen"));
+  assert.ok(s.linkedin.text.length <= 3000);
+  assert.ok(s.linkedin.hashtags.length >= 2 && s.linkedin.hashtags.every((h) => /^[A-Za-z0-9]+$/.test(h)));
+});
+
+test("share: no audio, no listen line", () => {
+  assert.ok(!shareTexts(noteWith({ audio: undefined })).linkedin.text.includes("listen"));
+});
+
+test("share: every tweet fits X (a link counts 23), the last one has the link", () => {
+  const long = noteWith({ tldr: "x ".repeat(190).trim() });
+  for (const n of [noteWith(), long]) {
+    const t = shareTexts(n).x;
+    assert.ok(t.length >= 2 && t.length <= 4);
+    assert.ok(t.every((tw) => tweetLength(tw) <= 280), t.map(tweetLength).join(","));
+    assert.ok(t.at(-1).includes("https://lubobali.com/notes/shipped-or-hype"));
+  }
+  assert.equal(tweetLength("see https://example.com/a/very/long/path/that/is/long ok"), "see ".length + 23 + " ok".length);
+});
