@@ -149,7 +149,7 @@ export default function ExplorePanel({ onClose }: { onClose: () => void }) {
           </div>
         )}
       </div>
-      {location.search.includes("debug") && <ExploreDebug dialog={dialog} />}
+      <ExploreDebug where="panel" />
     </dialog>
   );
 }

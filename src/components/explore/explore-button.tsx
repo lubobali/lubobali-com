@@ -1,6 +1,7 @@
 "use client";
 
 import { lazy, Suspense, useEffect, useState } from "react";
+import { ExploreDebug } from "./explore-debug";
 import { LiveContext, type LiveLine } from "./live-context";
 
 // "Explore" next to the logo (Phase 4 C6, Lubo: keep the header clean, the
@@ -40,6 +41,7 @@ export function ExploreButton({ live = null }: { live?: LiveLine | null }) {
         <span className="max-sm:sr-only">Explore</span>
         <kbd className="explore-kbd hidden rounded px-1.5 text-[11px] lg:inline">⌘K</kbd>
       </button>
+      <ExploreDebug where="page" />
       {open && (
         <Suspense fallback={null}>
           <LiveContext value={live}>
