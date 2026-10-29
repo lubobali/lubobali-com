@@ -33,6 +33,15 @@ html.explore-open {
   background: color-mix(in oklch, var(--background) 70%, transparent);
   backdrop-filter: blur(8px);
 }
+/* iPad (touch, wider than a phone): a fixed height like phones. With an
+   auto height iPad Safari/Chrome drew the dialog 50px tall while its
+   content needed ~450px, so only the search bar showed (measured on
+   Lubo's iPad mini with ?debug, 2026-10-29). Desktop keeps auto height. */
+@media (min-width: 640px) and (pointer: coarse) {
+  .explore-dialog {
+    height: min(100svh - 2rem, 52rem);
+  }
+}
 @media (max-width: 639px) {
   .explore-dialog {
     width: 100%;

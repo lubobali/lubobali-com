@@ -22,7 +22,7 @@ export function ExploreDebug({ where }: { where: "page" | "panel" }) {
       const cs = d ? getComputedStyle(d) : null;
       const vv = window.visualViewport;
       setLines([
-        `BUILD ipad-debug-5 | ${where} | dialog open: ${!!d?.open}`,
+        `BUILD ipad-debug-6 | ${where} | dialog open: ${!!d?.open}`,
         `pointer fine: ${matchMedia("(pointer: fine)").matches} | coarse: ${matchMedia("(pointer: coarse)").matches} | any-fine: ${matchMedia("(any-pointer: fine)").matches}`,
         `hover: ${matchMedia("(hover: hover)").matches} | touch points: ${navigator.maxTouchPoints}`,
         `window: ${innerWidth} x ${innerHeight} | visual: ${vv ? `${Math.round(vv.width)} x ${Math.round(vv.height)}` : "none"} | zoom: ${vv ? vv.scale.toFixed(2) : "?"}`,
