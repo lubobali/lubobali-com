@@ -22,7 +22,7 @@ export function ExploreDebug({ where }: { where: "page" | "panel" }) {
       const cs = d ? getComputedStyle(d) : null;
       const vv = window.visualViewport;
       setLines([
-        `BUILD ipad-debug-4 | ${where} | dialog open: ${!!d?.open}`,
+        `BUILD ipad-debug-5 | ${where} | dialog open: ${!!d?.open}`,
         `pointer fine: ${matchMedia("(pointer: fine)").matches} | coarse: ${matchMedia("(pointer: coarse)").matches} | any-fine: ${matchMedia("(any-pointer: fine)").matches}`,
         `hover: ${matchMedia("(hover: hover)").matches} | touch points: ${navigator.maxTouchPoints}`,
         `window: ${innerWidth} x ${innerHeight} | visual: ${vv ? `${Math.round(vv.width)} x ${Math.round(vv.height)}` : "none"} | zoom: ${vv ? vv.scale.toFixed(2) : "?"}`,
@@ -33,7 +33,22 @@ export function ExploreDebug({ where }: { where: "page" | "panel" }) {
         `ua: ${navigator.userAgent.slice(0, 120)}`,
       ]);
     };
-    const t = setInterval(measure, 700);
+    // The only part of the panel visible on the iPad is the search bar,
+    // so the key numbers also go into its placeholder and the tab title.
+    const short = () => {
+      const d = document.querySelector<HTMLDialogElement>("dialog.explore-dialog");
+      const input = d?.querySelector("input");
+      if (!d || !input) return;
+      const kids = [...(d.querySelector(".explore-panel")?.children ?? [])].map((k) => Math.round(k.getBoundingClientRect().height)).join(",");
+      const vv = window.visualViewport;
+      const txt = `D${Math.round(d.getBoundingClientRect().height)} M${getComputedStyle(d).maxHeight} K[${kids}] W${innerHeight} V${vv ? Math.round(vv.height) : "-"} F${document.activeElement?.tagName}`;
+      input.placeholder = txt;
+      document.title = txt;
+    };
+    const t = setInterval(() => {
+      measure();
+      short();
+    }, 700);
     measure();
     return () => clearInterval(t);
   }, [where]);
