@@ -15,7 +15,10 @@ html.explore-open {
 }
 .explore-dialog {
   width: min(100% - 2rem, 62rem);
-  max-height: min(100dvh - 2rem, 52rem);
+  /* svh, not dvh: the smallest screen height, so the on-screen keyboard
+     can't shrink the panel to the search bar (iPad, 2026-10-29). */
+  max-height: min(100svh - 2rem, 52rem);
+  overflow-y: auto;
   margin: max(1rem, 4vh) auto auto;
   padding: 0;
   border-radius: 1.5rem;
@@ -43,6 +46,11 @@ html.explore-open {
 .explore-panel {
   max-height: inherit;
   height: 100%;
+}
+/* Never squeeze the results away: a few cards always show (the dialog
+   scrolls when the screen is shorter than that). */
+.explore-results {
+  min-height: min(14rem, 40svh);
 }
 /* The light line along the top, like the case-study screens. */
 .explore-dialog::before {

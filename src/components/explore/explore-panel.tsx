@@ -42,9 +42,14 @@ export default function ExplorePanel({ onClose }: { onClose: () => void }) {
   useEffect(load, [load]);
   useEffect(() => {
     const d = dialog.current;
+    // showModal focuses the [autofocus] element (else the first one, the
+    // search box). Mouse/trackpad: start in the search box. Touch: start on
+    // the X, because focusing the box opens the keyboard, and on iPad that
+    // squeezed the panel to the search bar only (Lubo's iPad mini,
+    // 2026-10-29). Touch: the cards show, tap the box to type.
+    const start = matchMedia("(pointer: fine)").matches ? "input" : ".explore-close";
+    d?.querySelector(start)?.setAttribute("autofocus", "");
     d?.showModal();
-    // showModal focuses the first button (the X): start in the search box.
-    d?.querySelector("input")?.focus();
     document.documentElement.classList.add("explore-open");
     return () => document.documentElement.classList.remove("explore-open");
   }, []);
@@ -80,7 +85,6 @@ export default function ExplorePanel({ onClose }: { onClose: () => void }) {
             </svg>
             <input
               type="search"
-              autoFocus
               data-track-box="explore search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
