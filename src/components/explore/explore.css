@@ -15,7 +15,10 @@ html.explore-open {
 }
 .explore-dialog {
   width: min(100% - 2rem, 62rem);
-  max-height: min(100dvh - 2rem, 52rem);
+  /* svh, not dvh: the smallest screen height, so the on-screen keyboard
+     can't shrink the panel to the search bar (iPad, 2026-10-29). */
+  max-height: min(100svh - 2rem, 52rem);
+  overflow-y: auto;
   margin: max(1rem, 4vh) auto auto;
   padding: 0;
   border-radius: 1.5rem;
@@ -30,6 +33,15 @@ html.explore-open {
   background: color-mix(in oklch, var(--background) 70%, transparent);
   backdrop-filter: blur(8px);
 }
+/* iPad (touch, wider than a phone): a fixed height like phones. With an
+   auto height iPad Safari/Chrome drew the dialog 50px tall while its
+   content needed ~450px, so only the search bar showed (measured on
+   Lubo's iPad mini with ?debug, 2026-10-29). Desktop keeps auto height. */
+@media (min-width: 640px) and (pointer: coarse) {
+  .explore-dialog {
+    height: min(100svh - 2rem, 52rem);
+  }
+}
 @media (max-width: 639px) {
   .explore-dialog {
     width: 100%;
@@ -43,6 +55,11 @@ html.explore-open {
 .explore-panel {
   max-height: inherit;
   height: 100%;
+}
+/* Never squeeze the results away: a few cards always show (the dialog
+   scrolls when the screen is shorter than that). */
+.explore-results {
+  min-height: min(14rem, 40svh);
 }
 /* The light line along the top, like the case-study screens. */
 .explore-dialog::before {
