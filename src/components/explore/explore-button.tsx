@@ -1,6 +1,7 @@
 "use client";
 
 import { lazy, Suspense, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { ExploreDebug } from "./explore-debug";
 import { LiveContext, type LiveLine } from "./live-context";
 
@@ -42,13 +43,19 @@ export function ExploreButton({ live = null }: { live?: LiveLine | null }) {
         <kbd className="explore-kbd hidden rounded px-1.5 text-[11px] lg:inline">⌘K</kbd>
       </button>
       <ExploreDebug where="page" />
-      {open && (
-        <Suspense fallback={null}>
-          <LiveContext value={live}>
-            <ExplorePanel onClose={() => setOpen(false)} />
-          </LiveContext>
-        </Suspense>
-      )}
+      {/* The panel goes on <body>, not inside the header: the header's
+          backdrop-blur traps it, and iPad Safari cut it to the header's
+          height (only the search bar showed, Lubo's iPad mini 2026-10-29).
+          Same fix as the Listen bar. */}
+      {open &&
+        createPortal(
+          <Suspense fallback={null}>
+            <LiveContext value={live}>
+              <ExplorePanel onClose={() => setOpen(false)} />
+            </LiveContext>
+          </Suspense>,
+          document.body,
+        )}
     </>
   );
 }

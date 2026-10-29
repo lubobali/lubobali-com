@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 // TEMPORARY (2026-10-29): Explore shows only the search bar on Lubo's iPad
 // mini, and a test browser can't reproduce it. With ?debug in the URL this
@@ -21,7 +22,7 @@ export function ExploreDebug({ where }: { where: "page" | "panel" }) {
       const cs = d ? getComputedStyle(d) : null;
       const vv = window.visualViewport;
       setLines([
-        `BUILD ipad-debug-2 | ${where} | dialog open: ${!!d?.open}`,
+        `BUILD ipad-debug-3 | ${where} | dialog open: ${!!d?.open}`,
         `pointer fine: ${matchMedia("(pointer: fine)").matches} | coarse: ${matchMedia("(pointer: coarse)").matches} | any-fine: ${matchMedia("(any-pointer: fine)").matches}`,
         `hover: ${matchMedia("(hover: hover)").matches} | touch points: ${navigator.maxTouchPoints}`,
         `window: ${innerWidth} x ${innerHeight} | visual: ${vv ? `${Math.round(vv.width)} x ${Math.round(vv.height)}` : "none"} | zoom: ${vv ? vv.scale.toFixed(2) : "?"}`,
@@ -38,7 +39,7 @@ export function ExploreDebug({ where }: { where: "page" | "panel" }) {
   }, [where]);
 
   if (!lines.length) return null;
-  return (
+  return createPortal(
     <pre
       style={{
         position: "fixed",
@@ -57,6 +58,7 @@ export function ExploreDebug({ where }: { where: "page" | "panel" }) {
       }}
     >
       {lines.join("\n")}
-    </pre>
+    </pre>,
+    where === "page" ? document.body : (document.querySelector("dialog.explore-dialog") ?? document.body),
   );
 }
