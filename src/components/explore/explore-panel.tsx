@@ -7,6 +7,7 @@ import { exploreGroups, exploreTry, searchExplore } from "@/lib/explore";
 import type { SearchHit } from "@/lib/search/engine";
 import { useSiteSearch } from "@/lib/search/use-site-search";
 import { Featured, Hit, NotBuilt, type Tile } from "./explore-hits";
+import { ExploreDebug } from "./explore-debug";
 
 // The Explore panel: a search over Lubo's work that reads like a query
 // (Lubo: "something different than the others"): explore("fraud") ->
@@ -47,7 +48,9 @@ export default function ExplorePanel({ onClose }: { onClose: () => void }) {
     // the X, because focusing the box opens the keyboard, and on iPad that
     // squeezed the panel to the search bar only (Lubo's iPad mini,
     // 2026-10-29). Touch: the cards show, tap the box to type.
-    const start = matchMedia("(pointer: fine)").matches ? "input" : ".explore-close";
+    // iPads can report a fine pointer, but never zero touch points.
+    const touch = navigator.maxTouchPoints > 0 || !matchMedia("(pointer: fine)").matches;
+    const start = touch ? ".explore-close" : "input";
     d?.querySelector(start)?.setAttribute("autofocus", "");
     d?.showModal();
     document.documentElement.classList.add("explore-open");
@@ -146,6 +149,7 @@ export default function ExplorePanel({ onClose }: { onClose: () => void }) {
           </div>
         )}
       </div>
+      {location.search.includes("debug") && <ExploreDebug dialog={dialog} />}
     </dialog>
   );
 }
