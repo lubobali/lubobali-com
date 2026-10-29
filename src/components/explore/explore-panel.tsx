@@ -7,7 +7,6 @@ import { exploreGroups, exploreTry, searchExplore } from "@/lib/explore";
 import type { SearchHit } from "@/lib/search/engine";
 import { useSiteSearch } from "@/lib/search/use-site-search";
 import { Featured, Hit, NotBuilt, type Tile } from "./explore-hits";
-import { ExploreDebug } from "./explore-debug";
 
 // The Explore panel: a search over Lubo's work that reads like a query
 // (Lubo: "something different than the others"): explore("fraud") ->
@@ -149,7 +148,6 @@ export default function ExplorePanel({ onClose }: { onClose: () => void }) {
           </div>
         )}
       </div>
-      <ExploreDebug where="panel" />
     </dialog>
   );
 }
